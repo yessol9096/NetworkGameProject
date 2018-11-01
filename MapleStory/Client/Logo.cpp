@@ -1,0 +1,243 @@
+#include "StdAfx.h"
+#include "Logo.h"
+#include "Mouse.h"
+
+CLogo::CLogo(void)
+{
+}
+
+CLogo::~CLogo(void)
+{
+	Release();
+}
+
+void CLogo::Initialize()
+{
+	CSoundMgr::GetInstance()->PlayBGM(L"BGM_Logo.mp3");
+
+	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_LOGO);
+
+	// 마우스
+	CObjMgr::GetInstance()->AddObject(
+		CAbstractFactory<CMouse>::CreateObj(), OBJ_MOUSE);
+
+	// Login
+// 	CObjMgr::GetInstance()->AddObject(
+// 		CAbstractFactory<CLogin>::CreateObj(), OBJ_BUTTON);
+
+
+	m_dwFrameOldTime = GetTickCount();
+	m_dwFrameCurTime = 0;
+
+	m_tFrame.iFrameStart = 0;
+	m_tFrame.iFrameEnd = 9;
+	m_tFrame.iScene = 0;
+	m_tFrame.dwFrameSpd = 200;
+
+	m_bIsMouseInExit = false;
+	m_bIsMouseInLogin = false;
+
+
+	m_ImgCX = 800;
+	m_ImgCY = 600;
+
+
+	m_pImgName = L"Logo1";
+
+	m_eRenderType = RENDER_OBJ;
+
+	// 버튼
+	m_tLoginInfo.fCX = 50.f;
+	m_tLoginInfo.fCY = 50.f;
+	m_tLoginInfo.fX = 476.f;
+	m_tLoginInfo.fY = 307.f;
+	
+	m_tLoginRect.left = static_cast<LONG>(m_tLoginInfo.fX - m_tLoginInfo.fCX * 0.5f);
+	m_tLoginRect.right = static_cast<LONG>(m_tLoginInfo.fX + m_tLoginInfo.fCX * 0.5f);
+	m_tLoginRect.top = static_cast<LONG>(m_tLoginInfo.fY - m_tLoginInfo.fCY * 0.5f);
+	m_tLoginRect.bottom = static_cast<LONG>(m_tLoginInfo.fY + m_tLoginInfo.fCY * 0.5f);
+
+	m_tExitInfo.fCX = 69.f;
+	m_tExitInfo.fCY = 30.f;
+	m_tExitInfo.fX = 466.f;
+	m_tExitInfo.fY = 373.f;
+	m_tExitRect.left = static_cast<LONG>(m_tExitInfo.fX - m_tExitInfo.fCX * 0.5f);
+	m_tExitRect.right = static_cast<LONG>(m_tExitInfo.fX + m_tExitInfo.fCX * 0.5f);
+	m_tExitRect.top = static_cast<LONG>(m_tExitInfo.fY - m_tExitInfo.fCY * 0.5f);
+	m_tExitRect.bottom = static_cast<LONG>(m_tExitInfo.fY + m_tExitInfo.fCY * 0.5f);
+
+}
+
+int CLogo::Update()
+{
+	if(CKeyMgr::GetInstance()->OnceKeyUp(VK_RETURN))
+	{
+		CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+		CSoundMgr::GetInstance()->StopSoundAll();
+		CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.wav");
+		return 0;
+	}
+
+	m_dwFrameCurTime = GetTickCount();
+	m_dwLogo2CurTime = GetTickCount();
+
+	if(m_pImgName == L"Logo1")
+	{
+		if(m_dwFrameOldTime + m_tFrame.dwFrameSpd < m_dwFrameCurTime)
+		{
+			++(m_tFrame.iFrameStart);
+			m_dwFrameOldTime = m_dwFrameCurTime;
+		}
+	}
+
+
+	if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
+	{
+		m_pImgName = L"Logo2";
+
+		m_ImgCX = 800;
+		m_ImgCY = 600;
+
+		m_tFrame.iFrameStart = 0;
+		m_tFrame.iFrameEnd = 0;
+		m_tFrame.iScene = 0;
+
+		m_dwLogo2OldTime = GetTickCount();
+	}
+
+
+	if(m_dwLogo2OldTime + 7000 < m_dwLogo2CurTime)
+	{
+		m_pImgName = L"Logo3";
+	}
+
+	CObjMgr::GetInstance()->UpdateObj();
+
+
+
+
+
+	return 0;
+}
+
+void CLogo::Render(HDC hDc)
+{
+	CMyBmp* pBmp = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
+
+	if(NULL == pBmp)
+		return;
+
+	TransparentBlt(hDc, 0, 0, WINCX, WINCY,
+		pBmp->GetMemDC(), 
+		m_ImgCX * m_tFrame.iFrameStart, 0, 
+		m_ImgCX, WINCY, RGB(255, 255, 255));
+
+	if(m_pImgName == L"Logo3")
+	{
+		if(true == MouseInLogin())
+		{
+			// login 버튼
+			CMyBmp* pBmp2 = CBitmapMgr::GetInstance()->FindImage(L"Login");
+
+			if(NULL == pBmp2)
+				return;
+
+			TransparentBlt(hDc, m_tLoginRect.left, m_tLoginRect.top, static_cast<int>(m_tLoginInfo.fCX), static_cast<int>(m_tLoginInfo.fCY),
+				pBmp2->GetMemDC(), 
+				0, 0, 
+				static_cast<int>(m_tLoginInfo.fCX), static_cast<int>(m_tLoginInfo.fCY), NULL);
+		}
+	
+		if(true == MouseInExit())
+		{
+			// exit 버튼
+			CMyBmp* pBmp3 = CBitmapMgr::GetInstance()->FindImage(L"Exit");
+
+			if(NULL == pBmp3)
+				return;
+
+			TransparentBlt(hDc, m_tExitRect.left, m_tExitRect.top, static_cast<int>(m_tExitInfo.fCX), static_cast<int>(m_tExitInfo.fCY),
+				pBmp3->GetMemDC(), 
+				0, 0, 
+				static_cast<int>(m_tExitInfo.fCX), static_cast<int>(m_tExitInfo.fCY), NULL);
+		}
+		
+	}
+
+
+	CObjMgr::GetInstance()->RenderObj(hDc);
+
+}
+
+void CLogo::Release()
+{
+CObjMgr::GetInstance()->ReleaseAll();
+}
+
+bool CLogo::MouseInLogin(void)
+{
+	POINT pt;
+	POINT pt2;
+	GetCursorPos(&pt);
+	ScreenToClient(g_hWnd, &pt);
+
+	pt2.x = static_cast<LONG>(pt.x - g_fScrollX) - 10 + static_cast<LONG>(g_fScrollX);
+	pt2.y = static_cast<LONG>(pt.y - g_fScrollY) - 21 + static_cast<LONG>(g_fScrollY);
+
+
+	if(PtInRect(&m_tLoginRect, pt2))
+	{
+		if(m_bIsMouseInLogin == false)
+		{	
+			CSoundMgr::GetInstance()->PlaySound(L"Button.mp3", CSoundMgr::CHANNEL_EFFECT);
+			m_bIsMouseInLogin = true;
+		}
+
+		if(CKeyMgr::GetInstance()->OnceKeyUp(VK_LBUTTON))
+		{
+			CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+			CSoundMgr::GetInstance()->StopSoundAll();
+			CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+			CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+		}
+
+		return true;
+	}
+	else
+		m_bIsMouseInLogin = false;
+
+	return false;
+
+}
+
+bool CLogo::MouseInExit(void)
+{
+	POINT pt;
+	POINT pt2;
+	GetCursorPos(&pt);
+	ScreenToClient(g_hWnd, &pt);
+
+	pt2.x = static_cast<LONG>(pt.x - g_fScrollX) - 10 + static_cast<LONG>(g_fScrollX);
+	pt2.y = static_cast<LONG>(pt.y - g_fScrollY) - 21 + static_cast<LONG>(g_fScrollY);
+
+	if(PtInRect(&m_tExitRect, pt2))
+	{
+		if(m_bIsMouseInExit == false)
+		{	
+			CSoundMgr::GetInstance()->PlaySound(L"Button.mp3", CSoundMgr::CHANNEL_EFFECT);
+			m_bIsMouseInExit = true;
+		}
+		if(CKeyMgr::GetInstance()->OnceKeyUp(VK_LBUTTON))
+		{
+			DestroyWindow(g_hWnd);
+		}
+
+		return true;
+	}
+	else
+	{
+		m_bIsMouseInExit = false;
+	}
+
+	return false;
+}
