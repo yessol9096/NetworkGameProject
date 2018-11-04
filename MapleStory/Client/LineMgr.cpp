@@ -130,12 +130,12 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 	// 방법1.
 // 	pLine = (*iter_begin);
-// 	//fFirstLineY = (*iter_begin)->GetInfo().tLPoint.fY;
+// 	//fFirstLineY = (*iter_begin)->GetInfo().tLPoint.size.cy;
 // 
 // 	// FirstLine 걸러내기
 // 	for(; iter_begin != iter_end; ++iter_begin)
 // 	{
-// 		if(pLine->GetInfo().tLPoint.fY < (*iter_begin)->GetInfo().tLPoint.fY)
+// 		if(pLine->GetInfo().tLPoint.size.cy < (*iter_begin)->GetInfo().tLPoint.size.cy)
 // 		{
 // 			pLine = (*iter_begin);
 // 			break;
@@ -151,12 +151,12 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 // 	for(; iter_begin != iter_end; ++iter_begin)
 // 	{
 // 		// 첫번째 라인보다 위에 있으면 우선 line2에 넣고
-// 		if(pLine->GetInfo().tLPoint.fY > (*iter_begin)->GetInfo().tLPoint.fY)
+// 		if(pLine->GetInfo().tLPoint.size.cy > (*iter_begin)->GetInfo().tLPoint.size.cy)
 // 		{
 // 			pLine2 = (*iter_begin);
 // 
 // 			// 근데 들어온 iter_begin이 기존 pLine2보다 더 위에 있으면
-// 			if(pLine2->GetInfo().tLPoint.fY > (*iter_begin)->GetInfo().tLPoint.fY)
+// 			if(pLine2->GetInfo().tLPoint.size.cy > (*iter_begin)->GetInfo().tLPoint.size.cy)
 // 			{
 // 				continue;
 // 			}
@@ -173,28 +173,28 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 // 방법2.
 		// 1층, 2층 나누기
-// 		if(fFirstLineY > (*iter_begin)->GetInfo().tLPoint.fY)
+// 		if(fFirstLineY > (*iter_begin)->GetInfo().tLPoint.size.cy)
 // 		{
-// 			fSecondLineY = (*iter_begin)->GetInfo().tLPoint.fY;
+// 			fSecondLineY = (*iter_begin)->GetInfo().tLPoint.size.cy;
 // 			
 // 			// 플레이어 - 라인 Lpoint RPoint 비교
-// 			if(fX >= (*iter_begin)->GetInfo().tLPoint.fX &&
-// 				fX <= (*iter_begin)->GetInfo().tRPoint.fX)
+// 			if(fX >= (*iter_begin)->GetInfo().tLPoint.pt.x &&
+// 				fX <= (*iter_begin)->GetInfo().tRPoint.pt.x)
 // 			{
 // 				pLine2 = (*iter_begin);
 // 				continue;
 // 			}
 // 		}
-// 		if(fFirstLineY <= (*iter_begin)->GetInfo().tLPoint.fY)
+// 		if(fFirstLineY <= (*iter_begin)->GetInfo().tLPoint.size.cy)
 // 		{
-// 			if((*iter_begin)->GetInfo().tRPoint.fX - (*iter_begin)->GetInfo().tLPoint.fX <= 50)
+// 			if((*iter_begin)->GetInfo().tRPoint.pt.x - (*iter_begin)->GetInfo().tLPoint.pt.x <= 50)
 // 				continue;
-// 			fFirstLineY = (*iter_begin)->GetInfo().tLPoint.fY;
+// 			fFirstLineY = (*iter_begin)->GetInfo().tLPoint.size.cy;
 // 			pLine = (*iter_begin);
 // 
 // 			// 플레이어 - 라인 Lpoint RPoint 비교
-// 			if(fX >= (*iter_begin)->GetInfo().tLPoint.fX &&
-// 				fX <= (*iter_begin)->GetInfo().tRPoint.fX)
+// 			if(fX >= (*iter_begin)->GetInfo().tLPoint.pt.x &&
+// 				fX <= (*iter_begin)->GetInfo().tRPoint.pt.x)
 // 			{
 // 				pLine = (*iter_begin);
 // 				continue;
@@ -207,10 +207,10 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 	if(1 == dynamic_cast<CPlayer*>(pPlayer)->GetPlayerFloor() && pLine != NULL)
 	{
-		float x1 = pLine->GetInfo().tLPoint.fX;
-		float y1 = pLine->GetInfo().tLPoint.fY;
-		float x2 = pLine->GetInfo().tRPoint.fX;
-		float y2 = pLine->GetInfo().tRPoint.fY;
+		float x1 = pLine->GetInfo().tLPoint.x;
+		float y1 = pLine->GetInfo().tLPoint.y;
+		float x2 = pLine->GetInfo().tRPoint.x;
+		float y2 = pLine->GetInfo().tRPoint.y;
 
 
 		float fGradient = float(y2 - y1) / (x2 - x1);
@@ -221,10 +221,10 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 	else if(2 == dynamic_cast<CPlayer*>(pPlayer)->GetPlayerFloor() && pLine2 != NULL)
 	{
-		float x1 = pLine2->GetInfo().tLPoint.fX;
-		float y1 = pLine2->GetInfo().tLPoint.fY;
-		float x2 = pLine2->GetInfo().tRPoint.fX;
-		float y2 = pLine2->GetInfo().tRPoint.fY;
+		float x1 = pLine2->GetInfo().tLPoint.x;
+		float y1 = pLine2->GetInfo().tLPoint.y;
+		float x2 = pLine2->GetInfo().tRPoint.x;
+		float y2 = pLine2->GetInfo().tRPoint.y;
 
 
 		float fGradient = float(y2 - y1) / (x2 - x1);
@@ -235,10 +235,10 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 	else if(3 == dynamic_cast<CPlayer*>(pPlayer)->GetPlayerFloor() && pLine3 != NULL)
 	{
-		float x1 = pLine3->GetInfo().tLPoint.fX;
-		float y1 = pLine3->GetInfo().tLPoint.fY;
-		float x2 = pLine3->GetInfo().tRPoint.fX;
-		float y2 = pLine3->GetInfo().tRPoint.fY;
+		float x1 = pLine3->GetInfo().tLPoint.x;
+		float y1 = pLine3->GetInfo().tLPoint.y;
+		float x2 = pLine3->GetInfo().tRPoint.x;
+		float y2 = pLine3->GetInfo().tRPoint.y;
 
 
 		float fGradient = float(y2 - y1) / (x2 - x1);
@@ -250,10 +250,10 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 	else if(4 == dynamic_cast<CPlayer*>(pPlayer)->GetPlayerFloor() && pLine4 != NULL)
 	{
-		float x1 = pLine4->GetInfo().tLPoint.fX;
-		float y1 = pLine4->GetInfo().tLPoint.fY;
-		float x2 = pLine4->GetInfo().tRPoint.fX;
-		float y2 = pLine4->GetInfo().tRPoint.fY;
+		float x1 = pLine4->GetInfo().tLPoint.x;
+		float y1 = pLine4->GetInfo().tLPoint.y;
+		float x2 = pLine4->GetInfo().tRPoint.x;
+		float y2 = pLine4->GetInfo().tRPoint.y;
 
 
 		float fGradient = float(y2 - y1) / (x2 - x1);
@@ -264,10 +264,10 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 
 	else if(5 == dynamic_cast<CPlayer*>(pPlayer)->GetPlayerFloor() && pLine5 != NULL)
 	{
-		float x1 = pLine5->GetInfo().tLPoint.fX;
-		float y1 = pLine5->GetInfo().tLPoint.fY;
-		float x2 = pLine5->GetInfo().tRPoint.fX;
-		float y2 = pLine5->GetInfo().tRPoint.fY;
+		float x1 = pLine5->GetInfo().tLPoint.x;
+		float y1 = pLine5->GetInfo().tLPoint.y;
+		float x2 = pLine5->GetInfo().tRPoint.x;
+		float y2 = pLine5->GetInfo().tRPoint.y;
 
 
 		float fGradient = float(y2 - y1) / (x2 - x1);

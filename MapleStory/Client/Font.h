@@ -36,12 +36,8 @@ public:
 private:
 	typedef struct tagPos
 	{
-		tagPos() {}
-		tagPos(float _fX, float _fY)
-		: fX(_fX), fY(_fY) {}
 
-		float fX;
-		float fY;
+		MYPOINT pt;
 	}POS;
 
 private:

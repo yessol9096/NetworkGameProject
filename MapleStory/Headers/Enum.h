@@ -75,13 +75,19 @@ enum FLOORBOX_ID { FLOORBOX_HEIGHT, FLOORBOX_WIDTH, FLOORBOX_END };
 
 enum FONT_ID { FONTID_DAMAGED, FONTID_ATTACK, FONTID_CRITICAL };
 
+//--------------------------------------------------------------
 // 충돌 체크 관련해서 폰트 띄울 때.
 enum FONT_TYPE { FONTTYPE_UNIT, FONTTYPE_TENS, FONTTYPE_HUND, FONTTYPE_THOU, FONTTYPE_TENTH };
 
 enum FONT_FLOOR { FONT_FIRSTFLOOR, FONT_SECONDFLOOR, FONT_THIRDFLOOR, FONT_FOURTHFLOOR, FONT_FIFTHFLOOR };
 
-//////// ITEM
+//--------------------------------------------------------------
+// ITEM
 
 enum ITEM_TYPE { ACCESSORY, CLOTHES, GLOVE, GOLD, SHOES, WEAPON, PET, PORTION, ITEM_END };
 enum ITEM_LEV { BASIC, ADVANDED, EXPERT, LEV_END };
 enum ITEM_STATE { EQUIP, UNEQUIP, STATE_END };
+
+//--------------------------------------------------------------
+// Player
+enum PLAYER_JOB {  };

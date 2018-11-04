@@ -34,9 +34,9 @@ public:
 		float fHeight =  static_cast<float>(m_tCollRect.bottom - 17.5 * 0.5f);
 		float fWidth = 15.f;
 		CObj* pGold = CAbstractFactory<T>::CreateObj(
-			m_tInfo.fX - fWidth, fHeight);
+			m_tInfo.pt.x - fWidth, fHeight);
 		dynamic_cast<CGold*>(pGold)->SetGold(m_tState.iGold);
-		dynamic_cast<CGold*>(pGold)->SetOriginalY(m_tInfo.fY);
+		dynamic_cast<CGold*>(pGold)->SetOriginalY(m_tInfo.pt.y);
 		return pGold;
 	}
 
@@ -49,7 +49,7 @@ public:
 		CObj* pGold = CAbstractFactory<T>::CreateObj(
 			m_tCollRect.left - fWidth, fHeight);
 		dynamic_cast<CGold*>(pGold)->SetGold(m_tState.iGold);
-		dynamic_cast<CGold*>(pGold)->SetOriginalY(m_tInfo.fY);
+		dynamic_cast<CGold*>(pGold)->SetOriginalY(m_tInfo.pt.y);
 		dynamic_cast<CGold*>(pGold)->SetBossGold(true);
 		dynamic_cast<CGold*>(pGold)->SetIsXReverse(bIsXReverse);
 		pGold->SetSpeed(fSpeed);
@@ -64,8 +64,8 @@ public:
 		float fHeight =  static_cast<float>(m_tCollRect.bottom - 17.5 * 0.5f);
 		float fWidth = 15.f;
 		CObj* pItem = CAbstractFactory<T>::CreateObj(
-			m_tInfo.fX + fWidth, fHeight);
-		dynamic_cast<CItem*>(pItem)->SetOriginalY(m_tInfo.fY);
+			m_tInfo.pt.x + fWidth, fHeight);
+		dynamic_cast<CItem*>(pItem)->SetOriginalY(m_tInfo.pt.y);
 		return pItem;
 	}
 

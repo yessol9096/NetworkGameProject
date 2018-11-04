@@ -11,10 +11,10 @@ BossHPBar::~BossHPBar(void)
 
 void BossHPBar::Initialize(void)
 {
-	m_tInfo.fCX = 597.f;
-	m_tInfo.fCY = 28.f;
-	m_tInfo.fX = 415.f;
-	m_tInfo.fY = 40.f;
+	m_tInfo.size.cx = 597.f;
+	m_tInfo.size.cy = 28.f;
+	m_tInfo.pt.x = 415.f;
+	m_tInfo.pt.y = 40.f;
 
 	m_iBossHp = 70000;
 	m_iBossHpMax = 70000;
@@ -22,15 +22,15 @@ void BossHPBar::Initialize(void)
 	m_pImgName = L"BossHP";
 
 	// µÚ¿¡ HP¹Ù
-	m_tBarInfo.fCX = 634.f;
-	m_tBarInfo.fCY = 35.f;
-	m_tBarInfo.fX = 400.f;
-	m_tBarInfo.fY = 40.f;
+	m_tBarInfo.size.cx = 634.f;
+	m_tBarInfo.size.cy = 35.f;
+	m_tBarInfo.pt.x = 400.f;
+	m_tBarInfo.pt.y = 40.f;
 
-	m_tBarRect.left = static_cast<LONG>(m_tBarInfo.fX - m_tBarInfo.fCX / 2);
-	m_tBarRect.top = static_cast<LONG>(m_tBarInfo.fY - m_tBarInfo.fCY / 2);
-	m_tBarRect.right = static_cast<LONG>(m_tBarInfo.fX + m_tBarInfo.fCX / 2);
-	m_tBarRect.bottom = static_cast<LONG>(m_tBarInfo.fY + m_tBarInfo.fCY / 2);
+	m_tBarRect.left = static_cast<LONG>(m_tBarInfo.pt.x - m_tBarInfo.size.cx / 2);
+	m_tBarRect.top = static_cast<LONG>(m_tBarInfo.pt.y - m_tBarInfo.size.cy / 2);
+	m_tBarRect.right = static_cast<LONG>(m_tBarInfo.pt.x + m_tBarInfo.size.cx / 2);
+	m_tBarRect.bottom = static_cast<LONG>(m_tBarInfo.pt.y + m_tBarInfo.size.cy / 2);
 	//
 
 	m_eRenderType = RENDER_OBJ;
@@ -54,13 +54,13 @@ void BossHPBar::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tBarRect.left ),
 		static_cast<int>(m_tBarRect.top ), 
-		static_cast<int>(m_tBarInfo.fCX),
-		static_cast<int>(m_tBarInfo.fCY),
+		static_cast<int>(m_tBarInfo.size.cx),
+		static_cast<int>(m_tBarInfo.size.cy),
 		pBit2->GetMemDC(),
 		0,
 		0,
-		static_cast<int>(m_tBarInfo.fCX),
-		static_cast<int>(m_tBarInfo.fCY),
+		static_cast<int>(m_tBarInfo.size.cx),
+		static_cast<int>(m_tBarInfo.size.cy),
 		RGB(0, 0, 255));
 
 	// HpBar
@@ -68,19 +68,19 @@ void BossHPBar::Render(HDC hDc)
 
 	if(NULL == pBit)  return;
 
-	float fHpBarCX = m_tInfo.fCX * ((float)m_iBossHp / (float)m_iBossHpMax);
+	float fHpBarCX = m_tInfo.size.cx * ((float)m_iBossHp / (float)m_iBossHpMax);
 	
 
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left),
 		static_cast<int>(m_tRect.top), 
 		static_cast<int>(fHpBarCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
 		0,
 		0,
 		static_cast<int>(fHpBarCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 0, 255));
 
 }

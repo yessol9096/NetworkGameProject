@@ -19,8 +19,8 @@ CLeaf::~CLeaf(void)
 
 void CLeaf::Initialize(void)
 {
-	m_tInfo.fCX = 69.f;
-	m_tInfo.fCY = 66.f;
+	m_tInfo.size.cx = 69.f;
+	m_tInfo.size.cy = 66.f;
 
 	m_tFrame.iFrameStart = 0;
 	m_tFrame.iFrameEnd = 0;
@@ -91,13 +91,13 @@ void CLeaf::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 
@@ -121,17 +121,17 @@ void CLeaf::Render(HDC hDc)
 
 // 	POINT pt;
 // 	RECT ptRect;
-// 	float fCX = 10.f;
-// 	float fCY = 10.f;
+// 	float size.cx = 10.f;
+// 	float size.cy = 10.f;
 // 	GetCursorPos(&pt);
 // 	ScreenToClient(g_hWnd, &pt);
 // // 	pt.x += g_fScrollX;
 // // 	pt.y += g_fScrollY;
 // 
-// 	ptRect.left = pt.x - fCX;
-// 	ptRect.right = pt.x + fCX;
-// 	ptRect.top = pt.y - fCY;
-// 	ptRect.bottom = pt.y + fCY;
+// 	ptRect.left = pt.x - size.cx;
+// 	ptRect.right = pt.x + size.cx;
+// 	ptRect.top = pt.y - size.cy;
+// 	ptRect.bottom = pt.y + size.cy;
 // 
 // 
 // 	Rectangle(hDc, ptRect.left, ptRect.top, ptRect.right, ptRect.bottom );

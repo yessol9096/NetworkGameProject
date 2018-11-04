@@ -11,15 +11,15 @@ CAccessory::~CAccessory(void)
 
 void CAccessory::Initialize(void)
 {
-	m_tInfo.fCX = 32.f;
-	m_tInfo.fCY = 32.f;
+	m_tInfo.size.cx = 32.f;
+	m_tInfo.size.cy = 32.f;
 
 	m_tState.iAtt = 20000;
 	m_tState.pName = L"Accessory";
 
 	m_pImgName = L"Accessory";
 
-	m_fOriginalY = m_tInfo.fY;
+	m_fOriginalY = m_tInfo.pt.y;
 
 	m_fJumpAcc = 0.f;
 	m_fJumpSpeed = 13.f;
@@ -69,13 +69,13 @@ void CAccessory::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
 		0,
 		0,
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 }
@@ -106,9 +106,9 @@ void CAccessory::Move()
 		else
 			m_bIsJumpUp = true;
 
-		m_tInfo.fY -= fY;
+		m_tInfo.pt.y -= fY;
 
-		if(m_tInfo.fY > m_fOriginalY + 10.f && !m_bIsJumpUp)
+		if(m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
 		{
 			m_fJumpAcc = 0.f;
 			m_bIsJump = 0.f;

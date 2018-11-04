@@ -13,8 +13,8 @@ CArrow::~CArrow(void)
 
 void CArrow::Initialize(void)
 {
-	m_tInfo.fCX = 86.f;
-	m_tInfo.fCY = 23.f;
+	m_tInfo.size.cx = 86.f;
+	m_tInfo.size.cy = 23.f;
 
 	m_fSpeed = 17.f;
 
@@ -43,7 +43,7 @@ void CArrow::Initialize(void)
 int CArrow::Update(void)
 {
 	
-	/*this->SetPos(m_pPlayer->GetInfo().fX, m_pPlayer->GetInfo().fY);*/
+	/*this->SetPos(m_pPlayer->GetInfo().pt.x, m_pPlayer->GetInfo().size.cy);*/
 
 	//m_eDir = m_pPlayer->GetDir();
 
@@ -58,9 +58,9 @@ int CArrow::Update(void)
 
 
 	if(DIR_LEFT == m_eDir)
-		m_tInfo.fX -= m_fSpeed;
+		m_tInfo.pt.x -= m_fSpeed;
 	else
-		m_tInfo.fX += m_fSpeed;
+		m_tInfo.pt.x += m_fSpeed;
 
 	CObj::UpdateRect();
 
@@ -91,13 +91,13 @@ void CArrow::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 	if(GetAsyncKeyState('2'))

@@ -11,10 +11,10 @@ CPlayerExp::~CPlayerExp(void)
 
 void CPlayerExp::Initialize(void)
 {
-	m_tInfo.fCX = 310.f;
-	m_tInfo.fCY = 14.f;
-	m_tInfo.fX = 404.f;
-	m_tInfo.fY = 585.f;
+	m_tInfo.size.cx = 310.f;
+	m_tInfo.size.cy = 14.f;
+	m_tInfo.pt.x = 404.f;
+	m_tInfo.pt.y = 585.f;
 
 	m_iExp = 0;
 	m_iExpMax = 3000;
@@ -44,13 +44,13 @@ void CPlayerExp::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left),
 		static_cast<int>(m_tRect.top), 
-		static_cast<int>(m_tInfo.fCX * ((float)g_iExp / (float)m_iExpMax)),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx * ((float)g_iExp / (float)m_iExpMax)),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
 		0,
 		0,
-		static_cast<int>(m_tInfo.fCX * ((float)g_iExp / (float)m_iExpMax)),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx * ((float)g_iExp / (float)m_iExpMax)),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 0, 255));
 
 }

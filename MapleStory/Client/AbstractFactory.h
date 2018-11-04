@@ -41,17 +41,17 @@ public:
 		pObj->Initialize();
 		return pObj;
 	}
-	static CObj* CreateObj(float fX, float fY, float fCX, float fCY)
+	static CObj* CreateObj(float fX, float fY, float cx, float cy)
 	{
 		CObj* pObj = new T;
 		pObj->Initialize();
 		pObj->SetPos(fX, fY);
-		pObj->SetSize(fCX, fCY);
+		pObj->SetSize(cx, cy);
 		return pObj;
 	}
-	static CObj* CreateObj(TCHAR* pName, float fX, float fY, float fCX, float fCY)
+	static CObj* CreateObj(TCHAR* pName, float fX, float fY, float cx, float cy)
 	{
-		CObj* pObj = new T(pName, fX, fY, fCX, fCY);
+		CObj* pObj = new T(pName, fX, fY, cx, cy);
 		pObj->Initialize();
 		return pObj;
 	}
@@ -63,12 +63,12 @@ public:
 		(dynamic_cast<CPortal*>(pObj))->SetWhereTogo(iWhereTogo);
 		return pObj;
 	}
-	static CObj* CreateFloorBox(float fX, float fY, float fCX, float fCY, FLOORBOX_ID eID)
+	static CObj* CreateFloorBox(float fX, float fY, float cx, float cy, FLOORBOX_ID eID)
 	{
 		CObj* pObj = new T;
 		pObj->Initialize();
 		pObj->SetPos(fX, fY);
-		pObj->SetSize(fCX, fCY);
+		pObj->SetSize(cx, cy);
 		(dynamic_cast<CFloorBox*>(pObj))->SetFloorBoxID(eID);
 		return pObj;
 	}

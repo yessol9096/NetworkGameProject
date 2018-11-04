@@ -11,15 +11,15 @@ CHPPortion::~CHPPortion(void)
 
 void CHPPortion::Initialize(void)
 {
-	m_tInfo.fCX = 32.f;
-	m_tInfo.fCY = 32.f;
+	m_tInfo.size.cx = 32.f;
+	m_tInfo.size.cy = 32.f;
 
 	m_tState.iHp = 1000;
 	m_tState.pName = L"HPPortion";
 
 	m_pImgName = L"HPPortion";
 
-	m_fOriginalY = m_tInfo.fY;
+	m_fOriginalY = m_tInfo.pt.y;
 
 	m_fJumpAcc = 0.f;
 	m_fJumpSpeed = 13.f;
@@ -84,13 +84,13 @@ void CHPPortion::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left),
 		static_cast<int>(m_tRect.top), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tInfo.fCX) * m_tFrame.iFrameStart,
+		static_cast<int>(m_tInfo.size.cx) * m_tFrame.iFrameStart,
 		0,
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 }
 
@@ -120,9 +120,9 @@ void CHPPortion::Move()
 		else
 			m_bIsJumpUp = true;
 
-		m_tInfo.fY -= fY;
+		m_tInfo.pt.y -= fY;
 
-		if(m_tInfo.fY > m_fOriginalY + 10.f && !m_bIsJumpUp)
+		if(m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
 		{
 			m_fJumpAcc = 0.f;
 			m_bIsJump = 0.f;

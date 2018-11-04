@@ -13,8 +13,8 @@ CGreen::~CGreen(void)
 
 void CGreen::Initialize( void )
 {
-	m_tInfo.fCX = 60.f;
-	m_tInfo.fCY = 60.f;
+	m_tInfo.size.cx = 60.f;
+	m_tInfo.size.cy = 60.f;
 
 	m_fSpeed = 4.f;
 	//
@@ -81,7 +81,7 @@ int CGreen::Update( void )
 		g_iTakedMob1++;	
 		g_iExp += m_tState.iExp;
 // 		CObjMgr::GetInstance()->AddObject(
-//  			CAbstractFactory<CGold>::CreateGold(m_tInfo.fX, m_tInfo.fY, GOLD_0), OBJ_ITEM);	
+//  			CAbstractFactory<CGold>::CreateGold(m_tInfo.pt.x, m_tInfo.pt.y, GOLD_0), OBJ_ITEM);	
 		CSoundMgr::GetInstance()->PlaySound(L"MonsterDead.MP3", CSoundMgr::CHANNEL_EFFECT);
 		
 		if(m_iPattern != 3)
@@ -149,13 +149,13 @@ void CGreen::Render( HDC hDc )
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(255, 0, 255));
 
 	// 히트박스
@@ -227,9 +227,9 @@ void CGreen::MoveInPattern()
 		{
 		case MONSTER_WALK:
 			{
-				m_tInfo.fX -= m_fSpeed;
+				m_tInfo.pt.x -= m_fSpeed;
 
-				if(m_tInfo.fX < 465.f)
+				if(m_tInfo.pt.x < 465.f)
 					m_eDir = DIR_RIGHT;
 			}
 			break;
@@ -244,8 +244,8 @@ void CGreen::MoveInPattern()
 		{
 		case MONSTER_WALK:
 			{
-				m_tInfo.fX += m_fSpeed;
-				if(m_tInfo.fX > 1390.f)
+				m_tInfo.pt.x += m_fSpeed;
+				if(m_tInfo.pt.x > 1390.f)
 					m_eDir = DIR_LEFT;
 			}
 			break;
@@ -385,9 +385,9 @@ void CGreen::KnockBack()
 	if(MONSTER_DAMAGED == m_eCurState)
 	{
 		if(DIR_RIGHT == this->GetDir())
-			m_tInfo.fX -= m_fKnockBack * 0.5f;
+			m_tInfo.pt.x -= m_fKnockBack * 0.5f;
 		else
-			m_tInfo.fX += m_fKnockBack * 0.5f;
+			m_tInfo.pt.x += m_fKnockBack * 0.5f;
 
 		if(m_fKnockBack > m_fKnockBackMax)
 		{

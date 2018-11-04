@@ -47,24 +47,24 @@ void CLogo::Initialize()
 	m_eRenderType = RENDER_OBJ;
 
 	// ¹öÆ°
-	m_tLoginInfo.fCX = 50.f;
-	m_tLoginInfo.fCY = 50.f;
-	m_tLoginInfo.fX = 476.f;
-	m_tLoginInfo.fY = 307.f;
+	m_tLoginInfo.size.cx = 50.f;
+	m_tLoginInfo.size.cy = 50.f;
+	m_tLoginInfo.pt.x = 476.f;
+	m_tLoginInfo.pt.y = 307.f;
 	
-	m_tLoginRect.left = static_cast<LONG>(m_tLoginInfo.fX - m_tLoginInfo.fCX * 0.5f);
-	m_tLoginRect.right = static_cast<LONG>(m_tLoginInfo.fX + m_tLoginInfo.fCX * 0.5f);
-	m_tLoginRect.top = static_cast<LONG>(m_tLoginInfo.fY - m_tLoginInfo.fCY * 0.5f);
-	m_tLoginRect.bottom = static_cast<LONG>(m_tLoginInfo.fY + m_tLoginInfo.fCY * 0.5f);
+	m_tLoginRect.left = static_cast<LONG>(m_tLoginInfo.pt.x - m_tLoginInfo.size.cx * 0.5f);
+	m_tLoginRect.right = static_cast<LONG>(m_tLoginInfo.pt.x + m_tLoginInfo.size.cx * 0.5f);
+	m_tLoginRect.top = static_cast<LONG>(m_tLoginInfo.pt.y - m_tLoginInfo.size.cy * 0.5f);
+	m_tLoginRect.bottom = static_cast<LONG>(m_tLoginInfo.pt.y + m_tLoginInfo.size.cy * 0.5f);
 
-	m_tExitInfo.fCX = 69.f;
-	m_tExitInfo.fCY = 30.f;
-	m_tExitInfo.fX = 466.f;
-	m_tExitInfo.fY = 373.f;
-	m_tExitRect.left = static_cast<LONG>(m_tExitInfo.fX - m_tExitInfo.fCX * 0.5f);
-	m_tExitRect.right = static_cast<LONG>(m_tExitInfo.fX + m_tExitInfo.fCX * 0.5f);
-	m_tExitRect.top = static_cast<LONG>(m_tExitInfo.fY - m_tExitInfo.fCY * 0.5f);
-	m_tExitRect.bottom = static_cast<LONG>(m_tExitInfo.fY + m_tExitInfo.fCY * 0.5f);
+	m_tExitInfo.size.cx = 69.f;
+	m_tExitInfo.size.cy = 30.f;
+	m_tExitInfo.pt.x = 466.f;
+	m_tExitInfo.pt.y = 373.f;
+	m_tExitRect.left = static_cast<LONG>(m_tExitInfo.pt.x - m_tExitInfo.size.cx * 0.5f);
+	m_tExitRect.right = static_cast<LONG>(m_tExitInfo.pt.x + m_tExitInfo.size.cx * 0.5f);
+	m_tExitRect.top = static_cast<LONG>(m_tExitInfo.pt.y - m_tExitInfo.size.cy * 0.5f);
+	m_tExitRect.bottom = static_cast<LONG>(m_tExitInfo.pt.y + m_tExitInfo.size.cy * 0.5f);
 
 }
 
@@ -142,10 +142,10 @@ void CLogo::Render(HDC hDc)
 			if(NULL == pBmp2)
 				return;
 
-			TransparentBlt(hDc, m_tLoginRect.left, m_tLoginRect.top, static_cast<int>(m_tLoginInfo.fCX), static_cast<int>(m_tLoginInfo.fCY),
+			TransparentBlt(hDc, m_tLoginRect.left, m_tLoginRect.top, static_cast<int>(m_tLoginInfo.size.cx), static_cast<int>(m_tLoginInfo.size.cy),
 				pBmp2->GetMemDC(), 
 				0, 0, 
-				static_cast<int>(m_tLoginInfo.fCX), static_cast<int>(m_tLoginInfo.fCY), NULL);
+				static_cast<int>(m_tLoginInfo.size.cx), static_cast<int>(m_tLoginInfo.size.cy), NULL);
 		}
 	
 		if(true == MouseInExit())
@@ -156,10 +156,10 @@ void CLogo::Render(HDC hDc)
 			if(NULL == pBmp3)
 				return;
 
-			TransparentBlt(hDc, m_tExitRect.left, m_tExitRect.top, static_cast<int>(m_tExitInfo.fCX), static_cast<int>(m_tExitInfo.fCY),
+			TransparentBlt(hDc, m_tExitRect.left, m_tExitRect.top, static_cast<int>(m_tExitInfo.size.cx), static_cast<int>(m_tExitInfo.size.cy),
 				pBmp3->GetMemDC(), 
 				0, 0, 
-				static_cast<int>(m_tExitInfo.fCX), static_cast<int>(m_tExitInfo.fCY), NULL);
+				static_cast<int>(m_tExitInfo.size.cx), static_cast<int>(m_tExitInfo.size.cy), NULL);
 		}
 		
 	}

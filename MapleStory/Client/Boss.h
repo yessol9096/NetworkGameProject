@@ -38,7 +38,7 @@ private:
 		if(DIR_LEFT == m_eDir)
 		{
 			CObj* pEffect = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX - SWINGEFFECTX, m_tInfo.fY);
+				m_tInfo.pt.x - SWINGEFFECTX, m_tInfo.pt.y);
 			pEffect->SetAtt(this->GetState().iAtt);
 			pEffect->SetDir(m_eDir);
 			return pEffect;
@@ -46,7 +46,7 @@ private:
 		else
 		{
 			CObj* pEffect = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX + SWINGEFFECTX, m_tInfo.fY);
+				m_tInfo.pt.x + SWINGEFFECTX, m_tInfo.pt.y);
 			pEffect->SetAtt(this->GetState().iAtt);
 			pEffect->SetDir(m_eDir);
 			return pEffect;

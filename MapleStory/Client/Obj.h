@@ -24,8 +24,8 @@ public:
 	OBJECT_DIR  GetDir() { return m_eDir; }
 
 public:
-	void SetPos(float fX, float fY) { m_tInfo.fX = fX, m_tInfo.fY = fY; }
-	void SetSize(float fCX, float fCY) { m_tInfo.fCX = fCX, m_tInfo.fCY = fCY; }
+	void SetPos(float fX, float fY) { m_tInfo.pt.x = fX, m_tInfo.pt.y = fY; }
+	void SetSize(float cx, float cy) { m_tInfo.size.cx = cx, m_tInfo.size.cy = cy; }
 	void SetAngle(float fAngle) { m_fAngle = fAngle; }
 	void SetTarget(CObj* pTarget) { m_pTarget = pTarget; }
 	void SetInfo(INFO& rInfo) { m_tInfo = rInfo; }
@@ -51,7 +51,7 @@ public:
 	void UpdateRect();
 
 protected:
-	INFO		m_tInfo;
+	INFO			m_tInfo;
 	RECT		m_tRect;
 	RECT		m_tCollRect;
 	// ป๓ลย

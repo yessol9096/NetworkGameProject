@@ -97,14 +97,14 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						// 몬스터 방향을 기준으로 플레이어를 밀어낸다
 						if(DIR_RIGHT == (*src_begin)->GetDir())
 						{
-//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.3f, (*dst_begin)->GetInfo().fY);
+//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
 							/*dynamic_cast<CPlayer*>(*dst_begin)->SetMinusAngle(3.f);*/
 						}
 						else
 						{
-						//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.3f, (*dst_begin)->GetInfo().fY);
+						//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
 							/*dynamic_cast<CPlayer*>(*dst_begin)->SetPlusAngle(3.f);*/
@@ -145,14 +145,14 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						// 몬스터 방향을 기준으로 플레이어를 밀어낸다
 						if(DIR_RIGHT == (*src_begin)->GetDir())
 						{
-							//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.3f, (*dst_begin)->GetInfo().fY);
+							//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
 							/*dynamic_cast<CPlayer*>(*dst_begin)->SetMinusAngle(3.f);*/
 						}
 						else
 						{
-							//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.3f, (*dst_begin)->GetInfo().fY);
+							//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
 							/*dynamic_cast<CPlayer*>(*dst_begin)->SetPlusAngle(3.f);*/
@@ -329,8 +329,8 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 							(*dst_begin)->SetDir(DIR_LEFT);
 							if((*src_begin)->GetDir() != (*dst_begin)->GetDir())
 							{
-// 								(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.6f,
-// 									(*dst_begin)->GetInfo().fY);
+// 								(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.6f,
+// 									(*dst_begin)->GetInfo().pt.y);
 							}
 							
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
@@ -342,8 +342,8 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 							if((*src_begin)->GetDir() != (*dst_begin)->GetDir())
 							{
 								
-// 								(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.6f,
-// 									(*dst_begin)->GetInfo().fY);
+// 								(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.6f,
+// 									(*dst_begin)->GetInfo().pt.y);
 							}
 							
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
@@ -398,16 +398,16 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						if(DIR_RIGHT == (*src_begin)->GetDir())
 						{
 							(*dst_begin)->SetDir(DIR_LEFT);
-// 							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.6f,
-// 								(*dst_begin)->GetInfo().fY);
+// 							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.6f,
+// 								(*dst_begin)->GetInfo().pt.y);
 // 							// 							dynamic_cast<CMonster*>(*dst_begin)->
 //							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
 						}
 						else
 						{
 							(*dst_begin)->SetDir(DIR_RIGHT);
-//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.6f,
-//								(*dst_begin)->GetInfo().fY);
+//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.6f,
+//								(*dst_begin)->GetInfo().pt.y);
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
 							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
 						}
@@ -438,16 +438,16 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						if(DIR_RIGHT == (*src_begin)->GetDir())
 						{
 							(*dst_begin)->SetDir(DIR_LEFT);
-//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.6f,
-//								(*dst_begin)->GetInfo().fY);
+//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.6f,
+//								(*dst_begin)->GetInfo().pt.y);
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
 							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
 						}
 						else
 						{
 							(*dst_begin)->SetDir(DIR_RIGHT);
-//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.6f,
-//								(*dst_begin)->GetInfo().fY);
+//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.6f,
+//								(*dst_begin)->GetInfo().pt.y);
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
 							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
 						}
@@ -479,16 +479,16 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						if(DIR_RIGHT == (*src_begin)->GetDir())
 						{
 							(*dst_begin)->SetDir(DIR_LEFT);
-//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.6f,
-//								(*dst_begin)->GetInfo().fY);
+//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.6f,
+//								(*dst_begin)->GetInfo().pt.y);
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
 							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
 						}
 						else
 						{
 							(*dst_begin)->SetDir(DIR_RIGHT);
-// 							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.6f,
-//								(*dst_begin)->GetInfo().fY);
+// 							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.6f,
+//								(*dst_begin)->GetInfo().pt.y);
 							// 							dynamic_cast<CMonster*>(*dst_begin)->
 							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
 						}
@@ -612,12 +612,12 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 					{
 						if(DIR_RIGHT == (*dst_begin)->GetDir())
 						{
-							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 							eDir = DIR_LEFT;
 						}
 						else
 						{
-							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 							eDir = DIR_RIGHT;
 						}
 
@@ -634,14 +634,14 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						{
 							eDir = DIR_LEFT;
 							(*dst_begin)->SetDir(eDir);
-							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 							
 						}
 						else
 						{
 							eDir = DIR_RIGHT;
 							(*dst_begin)->SetDir(eDir);
-							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 							
 						}
 						
@@ -657,13 +657,13 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						{
 							eDir = DIR_LEFT;
 							(*dst_begin)->SetDir(eDir);
-							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 						}
 						else
 						{
 							eDir = DIR_RIGHT;
 							(*dst_begin)->SetDir(eDir);
-							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 						}
 
 						
@@ -678,12 +678,12 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						if(DIR_RIGHT == (*dst_begin)->GetDir())
 						{
 							eDir = DIR_LEFT;
-							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);	
+							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);	
 						}
 						else
 						{
 							eDir = DIR_RIGHT;
-							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 						}
 
 						(*dst_begin)->SetDir(eDir);
@@ -697,12 +697,12 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 					{
 						if(DIR_RIGHT == (*dst_begin)->GetDir())
 						{
-							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().left - (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 							eDir = DIR_LEFT;
 						}
 						else
 						{
-							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().fCX / 2.f, (*dst_begin)->GetInfo().fY);
+							(*dst_begin)->SetPos((*src_begin)->GetRect().right + (*dst_begin)->GetInfo().size.cx / 2.f, (*dst_begin)->GetInfo().pt.y);
 							eDir = DIR_RIGHT;
 						}
 
@@ -755,20 +755,20 @@ void CollisionMgr::CollisionRectEX(OBJLIST& DstList, OBJLIST& SrcList, COLLISION
 	
 				if(iMoveX > iMoveY)
 				{
-					int fX = static_cast<int>((*src_begin)->GetInfo().fX);
-					int fY = static_cast<int>((*src_begin)->GetInfo().fY);
+					int fX = static_cast<int>((*src_begin)->GetInfo().pt.x);
+					int fY = static_cast<int>((*src_begin)->GetInfo().pt.y);
 
-					if(fY < (*dst_begin)->GetInfo().fY)
+					if(fY < (*dst_begin)->GetInfo().pt.y)
 						iMoveY *= -1;
 
 					(*src_begin)->SetPos(static_cast<float>(fX), static_cast<float>(fY) + static_cast<float>(iMoveY));
 				}
 				else
 				{
-					int fX = static_cast<int>((*src_begin)->GetInfo().fX);
-					int fY = static_cast<int>((*src_begin)->GetInfo().fY);
+					int fX = static_cast<int>((*src_begin)->GetInfo().pt.x);
+					int fY = static_cast<int>((*src_begin)->GetInfo().pt.y);
 
-					if(fX < (*dst_begin)->GetInfo().fX)
+					if(fX < (*dst_begin)->GetInfo().pt.x)
 						iMoveX *= -1;
 
 					(*src_begin)->SetPos(static_cast<float>(fX) + static_cast<float>(iMoveX), static_cast<float>(fY));
@@ -781,15 +781,15 @@ void CollisionMgr::CollisionRectEX(OBJLIST& DstList, OBJLIST& SrcList, COLLISION
 bool CollisionMgr::CheckSphere(CObj* pDst, CObj* pSrc)
 {
 	// 객체 간 거리부터구한다.
-	float fWidth = float( pDst->GetInfo().fX - pSrc->GetInfo().fX );
-	float fHeight = float( pDst->GetInfo().fY - pSrc->GetInfo().fY );
+	float fWidth = float( pDst->GetInfo().pt.x - pSrc->GetInfo().pt.x );
+	float fHeight = float( pDst->GetInfo().pt.y - pSrc->GetInfo().pt.y );
 
 	// 피타고라스를 이용하여 두 점 간의 거리를 구한다.
 	float fDist = sqrtf(fWidth * fWidth + fHeight * fHeight);
 
 
 	// 반지름의 합을 구한다.
-	float fRadSum = float( pDst->GetInfo().fCX / 2 + pSrc->GetInfo().fCX / 2 );
+	float fRadSum = float( pDst->GetInfo().size.cx / 2 + pSrc->GetInfo().size.cx / 2 );
 
 	if(fRadSum >= fDist)
 		return true;
@@ -800,14 +800,14 @@ bool CollisionMgr::CheckSphere(CObj* pDst, CObj* pSrc)
 bool CollisionMgr::CheckRect(CObj* pDst, CObj* pSrc, int* pMoveX, int* pMoveY)
 {
 	// 두 사각형의 가로 반지름 합.
-	int iWidth =  static_cast<int>(pDst->GetInfo().fCX / 2 + pSrc->GetInfo().fCX / 2);
+	int iWidth =  static_cast<int>(pDst->GetInfo().size.cx / 2 + pSrc->GetInfo().size.cx / 2);
 
 	// 두 사각형의 세로 반지름 합.
-	int iHeigth =  static_cast<int>(pDst->GetInfo().fCY / 2 + pSrc->GetInfo().fCY / 2);
+	int iHeigth =  static_cast<int>(pDst->GetInfo().size.cy / 2 + pSrc->GetInfo().size.cy / 2);
 
 	// 두 사각형의 x, y축 각 거리를 구한다.
-	int iDistX = static_cast<int>(abs(pDst->GetInfo().fX - pSrc->GetInfo().fX));
-	int iDistY = static_cast<int>(abs(pDst->GetInfo().fY - pSrc->GetInfo().fY));
+	int iDistX = static_cast<int>(abs(pDst->GetInfo().pt.x - pSrc->GetInfo().pt.x));
+	int iDistY = static_cast<int>(abs(pDst->GetInfo().pt.y - pSrc->GetInfo().pt.y));
 
 	if((iWidth >= iDistX) && (iHeigth >= iDistY))
 	{
@@ -986,14 +986,14 @@ void CollisionMgr::CollisionPlayerBoss(OBJLIST& DstList, OBJLIST& SrcList)
 					// 몬스터 방향을 기준으로 플레이어를 밀어낸다
 					if(DIR_RIGHT == (*src_begin)->GetDir())
 					{
-						//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX + (*dst_begin)->GetInfo().fCX * 0.3f, (*dst_begin)->GetInfo().fY);
+						//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 						dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 						dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
 						/*dynamic_cast<CPlayer*>(*dst_begin)->SetMinusAngle(3.f);*/
 					}
 					else
 					{
-						//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().fX - (*dst_begin)->GetInfo().fCX * 0.3f, (*dst_begin)->GetInfo().fY);
+						//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 						dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 						dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
 						/*dynamic_cast<CPlayer*>(*dst_begin)->SetPlusAngle(3.f);*/

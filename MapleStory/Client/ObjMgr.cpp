@@ -150,7 +150,7 @@ void CObjMgr::ReleaseAll()
 
 bool CObjMgr::CompareY(CObj* pDest, CObj* pSour)
 {
-	return pDest->GetInfo().fY < pSour->GetInfo().fY;
+	return pDest->GetInfo().size.cy < pSour->GetInfo().size.cy;
 }
 
 CObjMgr::CObjMgr(void)

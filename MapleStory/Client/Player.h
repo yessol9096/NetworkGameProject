@@ -103,7 +103,7 @@ private:
 	CObj*	CreateArrow(float fX = 0.f, float fY = 0.f, ARROW_ID eID = ARROW_BASIC, int iOrder = 0)
 	{
 		CObj* pArrow = CAbstractFactory<T>::CreateObj(
-			m_tInfo.fX + fX, m_tInfo.fY + fY);
+			m_tInfo.pt.x + fX, m_tInfo.pt.y + fY);
 		pArrow->SetAtt(this->GetState().iAtt);
 		pArrow->SetDir(m_eDir);
 		dynamic_cast<CArrow*>(pArrow)->SetID(eID);
@@ -117,7 +117,7 @@ private:
 	CObj*	CreateSkill()
 	{
 		CObj* pSkill = CAbstractFactory<T>::CreateObj(
-			m_tInfo.fX, m_tInfo.fY);
+			m_tInfo.pt.x, m_tInfo.pt.y);
 		pSkill->SetDir(m_eDir);
 		pSkill->SetAtt(this->GetState().iAtt);
 		dynamic_cast<CSkill*>(pSkill)->SetPlayer(this);
@@ -131,7 +131,7 @@ private:
 		if(DIR_LEFT == m_eDir)
 		{
 			CObj* pSkill = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX - DRAGONX, m_tInfo.fY);
+				m_tInfo.pt.x - DRAGONX, m_tInfo.pt.y);
 			pSkill->SetAtt(this->GetState().iAtt);
 			pSkill->SetDir(m_eDir);
 			return pSkill;
@@ -139,7 +139,7 @@ private:
 		else
 		{
 			CObj* pSkill = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX + DRAGONX, m_tInfo.fY);
+				m_tInfo.pt.x + DRAGONX, m_tInfo.pt.y);
 			pSkill->SetAtt(this->GetState().iAtt);
 			pSkill->SetDir(m_eDir);
 			return pSkill;
@@ -156,8 +156,8 @@ private:
 		if(DIR_LEFT == m_eDir)
 		{
 			CObj* pSkill = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX - FIREX, m_tInfo.fY - FIREY);
-//			pSkill->SetPos(m_tInfo.fX - FIREX, m_tInfo.fY - 350.f);
+				m_tInfo.pt.x - FIREX, m_tInfo.pt.y - FIREY);
+//			pSkill->SetPos(m_tInfo.pt.x - FIREX, m_tInfo.pt.y - 350.f);
 			pSkill->SetAtt(this->GetState().iAtt);
 			pSkill->SetDir(m_eDir);
 			return pSkill;
@@ -165,8 +165,8 @@ private:
 		else
 		{
 			CObj* pSkill = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX + FIREX, m_tInfo.fY- FIREY);
-//			pSkill->SetPos(m_tInfo.fX + FIREX, m_tInfo.fY - 350.f);
+				m_tInfo.pt.x + FIREX, m_tInfo.pt.y- FIREY);
+//			pSkill->SetPos(m_tInfo.pt.x + FIREX, m_tInfo.pt.y - 350.f);
 			pSkill->SetAtt(this->GetState().iAtt);
 			pSkill->SetDir(m_eDir);
 			return pSkill;
@@ -182,7 +182,7 @@ private:
 		if(DIR_LEFT == m_eDir)
 		{
 			CObj* pEffect = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX - SWINGEFFECTX, m_tInfo.fY);
+				m_tInfo.pt.x - SWINGEFFECTX, m_tInfo.pt.y);
 			pEffect->SetAtt(this->GetState().iAtt);
 			pEffect->SetDir(m_eDir);
 			return pEffect;
@@ -190,7 +190,7 @@ private:
 		else
 		{
 			CObj* pEffect = CAbstractFactory<T>::CreateObj(
-				m_tInfo.fX + SWINGEFFECTX, m_tInfo.fY);
+				m_tInfo.pt.x + SWINGEFFECTX, m_tInfo.pt.y);
 			pEffect->SetAtt(this->GetState().iAtt);
 			pEffect->SetDir(m_eDir);
 			return pEffect;

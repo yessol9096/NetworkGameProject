@@ -11,8 +11,8 @@ CSwing::~CSwing(void)
 
 void CSwing::Initialize(void)
 {
-	m_tInfo.fCX = 206.f;
-	m_tInfo.fCY = 143.f;
+	m_tInfo.size.cx = 206.f;
+	m_tInfo.size.cy = 143.f;
 
 	m_dwFrameOldTime = GetTickCount();
 	m_dwFrameCurTime = 0;
@@ -32,7 +32,7 @@ void CSwing::Initialize(void)
 
 int CSwing::Update(void)
 {
-	this->SetPos(m_pPlayer->GetInfo().fX, m_pPlayer->GetInfo().fY);
+	this->SetPos(m_pPlayer->GetInfo().pt.x, m_pPlayer->GetInfo().size.cy);
 
 	m_eDir = m_pPlayer->GetDir();
 
@@ -71,13 +71,13 @@ void CSwing::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 	// 히트박스
@@ -106,14 +106,14 @@ void CSwing::UpdateCollRect()
 
 	if(DIR_RIGHT == m_eDir)
 	{
-		m_tCollRect.left = static_cast<LONG>(m_tInfo.fX);
+		m_tCollRect.left = static_cast<LONG>(m_tInfo.pt.x);
 		m_tCollRect.top = m_tRect.top;
 		m_tCollRect.bottom = m_tRect.bottom;
 		m_tCollRect.right = m_tRect.right;
 	}
 	else
 	{
-		m_tCollRect.right = static_cast<LONG>(m_tInfo.fX);
+		m_tCollRect.right = static_cast<LONG>(m_tInfo.pt.x);
 		m_tCollRect.top = m_tRect.top;
 		m_tCollRect.bottom = m_tRect.bottom;
 		m_tCollRect.left = m_tRect.left;

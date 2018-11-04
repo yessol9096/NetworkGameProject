@@ -11,8 +11,8 @@ CLeafCommunication::~CLeafCommunication(void)
 
 void CLeafCommunication::Initialize(void)
 {
-	m_tInfo.fCX = 517.f;
-	m_tInfo.fCY = 189.f;	
+	m_tInfo.size.cx = 517.f;
+	m_tInfo.size.cy = 189.f;	
 
 	// 버튼 렉트
 	m_bIsNextButtonActivated = false;
@@ -32,13 +32,13 @@ void CLeafCommunication::Initialize(void)
 	m_tFrame.iScene = 0;
 	m_tFrame.dwFrameSpd = 250;
 
-	m_tInfo.fX = WINCX * 0.5f;
-	m_tInfo.fY = WINCY * 0.5f;
+	m_tInfo.pt.x = WINCX * 0.5f;
+	m_tInfo.pt.y = WINCY * 0.5f;
 
 	SetNextButtonRect();
 
-	m_tInfo.fX -= g_fScrollX;
-	m_tInfo.fY -= g_fScrollY;
+	m_tInfo.pt.x -= g_fScrollX;
+	m_tInfo.pt.y -= g_fScrollY;
 
 	
 
@@ -49,11 +49,11 @@ void CLeafCommunication::Initialize(void)
 
 int CLeafCommunication::Update(void)
 {
-// 	float fX = m_tInfo.fX - g_fScrollX;
-// 	float fY = m_tInfo.fY - g_fScrollY;
+// 	float fX = m_tInfo.pt.x - g_fScrollX;
+// 	float fY = m_tInfo.pt.y - g_fScrollY;
 // 
-// 	m_tInfo.fX = fX;
-// 	m_tInfo.fY = fY;
+// 	m_tInfo.pt.x = fX;
+// 	m_tInfo.pt.y = fY;
 	if(m_bIsDead)
 		return 1;
 
@@ -127,13 +127,13 @@ void CLeafCommunication::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left /*+ g_fScrollX*/),
 		static_cast<int>(m_tRect.top /*+ g_fScrollY*/), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(255, 0, 255));
 
 	//Rectangle(hDc,m_tNextButton.left, m_tNextButton.top, m_tNextButton.right, m_tNextButton.bottom);

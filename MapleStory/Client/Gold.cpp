@@ -12,12 +12,12 @@ CGold::~CGold(void)
 
 void CGold::Initialize(void)
 {
-	m_tInfo.fCX = 35.f;
-	m_tInfo.fCY = 35.f;
+	m_tInfo.size.cx = 35.f;
+	m_tInfo.size.cy = 35.f;
 
 	m_tState.iGold = m_iGold;
 
-	m_fOriginalY = m_tInfo.fY;
+	m_fOriginalY = m_tInfo.pt.y;
 
 	m_fSpeed = 0.f;
 
@@ -124,13 +124,13 @@ void CGold::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 	// 히트박스
@@ -207,10 +207,10 @@ void CGold::Move()
 			else
 				m_bIsJumpUp = true;
 
-			m_tInfo.fY -= fY;
-			m_tInfo.fX += fX;
+			m_tInfo.pt.y -= fY;
+			m_tInfo.pt.x += fX;
 
-			if(m_tInfo.fY > m_fOriginalY + 10.f && !m_bIsJumpUp)
+			if(m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
 			{
 				m_fJumpAcc = 0.f;
 				m_bIsJump = 0.f;
@@ -234,18 +234,18 @@ void CGold::Move()
 			else
 				m_bIsJumpUp = true;
 
-			m_tInfo.fY -= fY;
+			m_tInfo.pt.y -= fY;
 
 			if(!m_bIsXReverse)
-				m_tInfo.fX += fX;
+				m_tInfo.pt.x += fX;
 			else
-				m_tInfo.fX -= fX;
+				m_tInfo.pt.x -= fX;
 
-			if(m_tInfo.fY > 450.f && !m_bIsJumpUp)
+			if(m_tInfo.pt.y > 450.f && !m_bIsJumpUp)
 			{
 				m_fJumpAcc = 0.f;
 				m_bIsJump = 0.f;
-				m_tInfo.fY = 450.f;
+				m_tInfo.pt.y = 450.f;
 			}
 		}
 		

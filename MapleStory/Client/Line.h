@@ -4,7 +4,7 @@ class CLine
 {
 public:
 	CLine(void);
-	CLine(LINEPOINT tLPoint, LINEPOINT tRPoint);
+	CLine(MYPOINT tLPoint, MYPOINT tRPoint);
 	~CLine(void);
 
 public:

@@ -12,8 +12,8 @@ CBoss::~CBoss(void)
 
 void CBoss::Initialize( void )
 {
-	m_tInfo.fCX = 1260.f;
-	m_tInfo.fCY = 577.f;
+	m_tInfo.size.cx = 1260.f;
+	m_tInfo.size.cy = 577.f;
 
 	m_fSpeed = 4.f;
 	
@@ -149,13 +149,13 @@ void CBoss::Render( HDC hDc )
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(255, 250, 255));
 
 	// 히트박스
@@ -353,14 +353,14 @@ void CBoss::MoveInPattern()
 		case MONSTER_WALK:
 			{
 				m_pImgName = L"Walk_LEFT";
-				if(m_tInfo.fX - 100.f < 100.f)
+				if(m_tInfo.pt.x - 100.f < 100.f)
 				{
-					m_tInfo.fX = m_tInfo.fX + m_tInfo.fCX * 0.6f;
+					m_tInfo.pt.x = m_tInfo.pt.x + m_tInfo.size.cx * 0.6f;
 					m_eDir = DIR_RIGHT;
 					m_pImgName = L"Walk_RIGHT";
 				}
 				else
-					m_tInfo.fX -= m_fSpeed;
+					m_tInfo.pt.x -= m_fSpeed;
 				m_tFrame.iFrameEnd = 6;
 			}
 			break;
@@ -378,14 +378,14 @@ void CBoss::MoveInPattern()
 			{
 				m_pImgName = L"Walk_RIGHT";
 
-				if(m_tInfo.fX + 100.f > BOSSMAPCX/* - 100.f*/)
+				if(m_tInfo.pt.x + 100.f > BOSSMAPCX/* - 100.f*/)
 				{
-					m_tInfo.fX = m_tInfo.fX - m_tInfo.fCX * 0.6f;
+					m_tInfo.pt.x = m_tInfo.pt.x - m_tInfo.size.cx * 0.6f;
 					m_eDir = DIR_LEFT;
 					m_pImgName = L"Walk_LEFT";
 				}
 				else
-					m_tInfo.fX += m_fSpeed;
+					m_tInfo.pt.x += m_fSpeed;
 
 				m_tFrame.iFrameEnd = 6;
 			}
@@ -513,17 +513,17 @@ void CBoss::UpdateCollRect()
 {
 	if(DIR_LEFT == m_eDir)
 	{
-		m_tCollRect.top =  static_cast<LONG>(m_tInfo.fY + 107.f);
-		m_tCollRect.bottom = static_cast<LONG>(m_tInfo.fY + 260.f);
-		m_tCollRect.left = static_cast<LONG>(m_tInfo.fX + 352.f);
-		m_tCollRect.right = static_cast<LONG>(m_tInfo.fX + 500.f);
+		m_tCollRect.top =  static_cast<LONG>(m_tInfo.pt.y + 107.f);
+		m_tCollRect.bottom = static_cast<LONG>(m_tInfo.pt.y + 260.f);
+		m_tCollRect.left = static_cast<LONG>(m_tInfo.pt.x + 352.f);
+		m_tCollRect.right = static_cast<LONG>(m_tInfo.pt.x + 500.f);
 	}
 	else
 	{
-		m_tCollRect.top = static_cast<LONG>(m_tInfo.fY + 107.f);
-		m_tCollRect.bottom = static_cast<LONG>(m_tInfo.fY + 260.f);
-		m_tCollRect.left = static_cast<LONG>(m_tInfo.fX - 490.f);
-		m_tCollRect.right = static_cast<LONG>(m_tInfo.fX - 340.f);
+		m_tCollRect.top = static_cast<LONG>(m_tInfo.pt.y + 107.f);
+		m_tCollRect.bottom = static_cast<LONG>(m_tInfo.pt.y + 260.f);
+		m_tCollRect.left = static_cast<LONG>(m_tInfo.pt.x - 490.f);
+		m_tCollRect.right = static_cast<LONG>(m_tInfo.pt.x - 340.f);
 	}
 
 	// 스킬 히트 박스
@@ -531,18 +531,18 @@ void CBoss::UpdateCollRect()
 	{
 		if(m_tFrame.iFrameStart >= 13 && m_tFrame.iFrameStart <= 16)
 		{
-			m_tSkillRect.top = static_cast<LONG>(m_tInfo.fY);
-			m_tSkillRect.bottom = static_cast<LONG>(m_tInfo.fY + 280.f);
+			m_tSkillRect.top = static_cast<LONG>(m_tInfo.pt.y);
+			m_tSkillRect.bottom = static_cast<LONG>(m_tInfo.pt.y + 280.f);
 
 			if(m_eDir == DIR_LEFT)
 			{
-				m_tSkillRect.left = static_cast<LONG>(m_tInfo.fX - 300.f);
-				m_tSkillRect.right = static_cast<LONG>(m_tInfo.fX);
+				m_tSkillRect.left = static_cast<LONG>(m_tInfo.pt.x - 300.f);
+				m_tSkillRect.right = static_cast<LONG>(m_tInfo.pt.x);
 			}
 			else if(m_eDir == DIR_RIGHT)
 			{
-				m_tSkillRect.left = static_cast<LONG>(m_tInfo.fX);
-				m_tSkillRect.right = static_cast<LONG>(m_tInfo.fX + 300.f);
+				m_tSkillRect.left = static_cast<LONG>(m_tInfo.pt.x);
+				m_tSkillRect.right = static_cast<LONG>(m_tInfo.pt.x + 300.f);
 			}
 		}
 
@@ -559,11 +559,11 @@ void CBoss::UpdateCollRect()
 	{
 		if(m_tFrame.iFrameStart >= 15 && m_tFrame.iFrameStart <= 16)
 		{
-			m_tSkillRect.top = static_cast<LONG>(m_tInfo.fY + 95.f);
-			m_tSkillRect.bottom = static_cast<LONG>(m_tInfo.fY + 275.f);
+			m_tSkillRect.top = static_cast<LONG>(m_tInfo.pt.y + 95.f);
+			m_tSkillRect.bottom = static_cast<LONG>(m_tInfo.pt.y + 275.f);
 
-			m_tSkillRect.left = static_cast<LONG>(m_tInfo.fX - 150.f);
-			m_tSkillRect.right = static_cast<LONG>(m_tInfo.fX + 150.f);
+			m_tSkillRect.left = static_cast<LONG>(m_tInfo.pt.x - 150.f);
+			m_tSkillRect.right = static_cast<LONG>(m_tInfo.pt.x + 150.f);
 		}
 		else
 		{
@@ -579,18 +579,18 @@ void CBoss::UpdateCollRect()
 	{
 		if(m_tFrame.iFrameStart >= 13 && m_tFrame.iFrameStart <= 16)
 		{
-			m_tSkillRect.top = static_cast<LONG>(m_tInfo.fY);
-			m_tSkillRect.bottom = static_cast<LONG>(m_tInfo.fY + 290.f);
+			m_tSkillRect.top = static_cast<LONG>(m_tInfo.pt.y);
+			m_tSkillRect.bottom = static_cast<LONG>(m_tInfo.pt.y + 290.f);
 
 			if(m_eDir == DIR_LEFT)
 			{
-				m_tSkillRect.left = static_cast<LONG>(m_tInfo.fX - 350.f);
-				m_tSkillRect.right = static_cast<LONG>(m_tInfo.fX);
+				m_tSkillRect.left = static_cast<LONG>(m_tInfo.pt.x - 350.f);
+				m_tSkillRect.right = static_cast<LONG>(m_tInfo.pt.x);
 			}
 			else if(m_eDir == DIR_RIGHT)
 			{
-				m_tSkillRect.left = static_cast<LONG>(m_tInfo.fX);
-				m_tSkillRect.right = static_cast<LONG>(m_tInfo.fX + 350.f);
+				m_tSkillRect.left = static_cast<LONG>(m_tInfo.pt.x);
+				m_tSkillRect.right = static_cast<LONG>(m_tInfo.pt.x + 350.f);
 			}
 			
 		}

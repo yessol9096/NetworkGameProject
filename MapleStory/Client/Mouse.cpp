@@ -11,8 +11,8 @@ CMouse::~CMouse(void)
 
 void CMouse::Initialize(void)
 {
-	m_tInfo.fCX = 26.f;
-	m_tInfo.fCY = 30.f;
+	m_tInfo.size.cx = 26.f;
+	m_tInfo.size.cy = 30.f;
 
 	m_fSpeed = 0.f;
 
@@ -39,13 +39,13 @@ int CMouse::Update(void)
 
 	if(m_eCurState == MOUSE_BASIC)
 	{
-		m_tInfo.fX = static_cast<float>(m_ptMouse.x);
-		m_tInfo.fY = static_cast<float>(m_ptMouse.y);
+		m_tInfo.pt.x = static_cast<float>(m_ptMouse.x);
+		m_tInfo.pt.y = static_cast<float>(m_ptMouse.y);
 	}
 	else if(m_eCurState == MOUSE_GRAB)
 	{
-		m_tInfo.fX = static_cast<float>(m_ptMouse.x) - WINCX;
-		m_tInfo.fY = static_cast<float>(m_ptMouse.y);
+		m_tInfo.pt.x = static_cast<float>(m_ptMouse.x) - WINCX;
+		m_tInfo.pt.y = static_cast<float>(m_ptMouse.y);
 	}
 	
 
@@ -74,13 +74,13 @@ void CMouse::Render(HDC hDc)
 	// ** 付快胶 胶农费 贸府 林狼且巴
 	TransparentBlt(hDc, static_cast<int>(m_tRect.left),
 		static_cast<int>(m_tRect.top),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 }
 

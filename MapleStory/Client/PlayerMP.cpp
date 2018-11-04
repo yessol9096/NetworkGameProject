@@ -11,10 +11,10 @@ CPlayerMP::~CPlayerMP(void)
 
 void CPlayerMP::Initialize(void)
 {
-	m_tInfo.fCX = 141.f;
-	m_tInfo.fCY = 14.f;
-	m_tInfo.fX = 490.3f;
-	m_tInfo.fY = 567.5f;
+	m_tInfo.size.cx = 141.f;
+	m_tInfo.size.cy = 14.f;
+	m_tInfo.pt.x = 490.3f;
+	m_tInfo.pt.y = 567.5f;
 
 	m_iMp = 8000;
 	m_iMpMax = 8000;
@@ -43,13 +43,13 @@ void CPlayerMP::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left),
 		static_cast<int>(m_tRect.top), 
-		static_cast<int>(m_tInfo.fCX * ( (float)m_iMp / (float)m_iMpMax)),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx * ( (float)m_iMp / (float)m_iMpMax)),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
 		0,
 		0,
-		static_cast<int>(m_tInfo.fCX * ( (float)m_iMp / (float)m_iMpMax)),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx * ( (float)m_iMp / (float)m_iMpMax)),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 0, 255));
 }
 

@@ -12,8 +12,8 @@ CMushCouple::~CMushCouple(void)
 
 void CMushCouple::Initialize( void )
 {
-	m_tInfo.fCX = 170.f;
-	m_tInfo.fCY = 170.f;
+	m_tInfo.size.cx = 170.f;
+	m_tInfo.size.cy = 170.f;
 
 	m_fSpeed = 4.f;
 	//
@@ -125,13 +125,13 @@ void CMushCouple::Render( HDC hDc )
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(255, 0, 255));
 
 	// 히트박스
@@ -209,11 +209,11 @@ void CMushCouple::MoveInPattern()
 		{
 		case MONSTER_WALK:
 			{
-				m_tInfo.fX -= m_fSpeed;
+				m_tInfo.pt.x -= m_fSpeed;
 
-				if(m_tInfo.fX < 465.f){
+				if(m_tInfo.pt.x < 465.f){
 					m_eDir = DIR_RIGHT;
-					m_tInfo.fX += m_fSpeed;
+					m_tInfo.pt.x += m_fSpeed;
 				}
 			}
 			break;
@@ -228,11 +228,11 @@ void CMushCouple::MoveInPattern()
 		{
 		case MONSTER_WALK:
 			{
-				m_tInfo.fX += m_fSpeed;
+				m_tInfo.pt.x += m_fSpeed;
 
-				if(m_tInfo.fX > 1390.f){
+				if(m_tInfo.pt.x > 1390.f){
 					m_eDir = DIR_LEFT;
-					m_tInfo.fX += m_fSpeed;
+					m_tInfo.pt.x += m_fSpeed;
 				}
 			}
 			break;
@@ -364,9 +364,9 @@ void CMushCouple::KnockBack()
 	if(MONSTER_DAMAGED == m_eCurState)
 	{
 		if(DIR_RIGHT == this->GetDir())
-			m_tInfo.fX -= m_fKnockBack * 0.5f;
+			m_tInfo.pt.x -= m_fKnockBack * 0.5f;
 		else
-			m_tInfo.fX += m_fKnockBack * 0.5f;
+			m_tInfo.pt.x += m_fKnockBack * 0.5f;
 
 		if(m_fKnockBack > m_fKnockBackMax)
 		{

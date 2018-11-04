@@ -25,11 +25,11 @@ CPlayer::~CPlayer(void)
 
 void CPlayer::Initialize(void)
 {
-	m_tInfo.fX = 100.f;
-	m_tInfo.fY = 500.f;
+	m_tInfo.pt.x = 100.f;
+	m_tInfo.pt.y = 500.f;
 
-	m_tInfo.fCX = 100.f;
-	m_tInfo.fCY = 100.f;
+	m_tInfo.size.cx = 100.f;
+	m_tInfo.size.cy = 100.f;
 
 	// 스테이터스 초기설정
 	m_tState.iAtt = 300;
@@ -129,27 +129,27 @@ int CPlayer::Update(void)
 	//
 
 	// 화면 밖으로 못나가게끔
-	if(m_tInfo.fX <= 30)
-		m_tInfo.fX = 30;
+	if(m_tInfo.pt.x <= 30)
+		m_tInfo.pt.x = 30;
 
 	switch(g_eScene)
 	{
 	case SCENE_FIELD:
 		{
-			if(m_tInfo.fX >= FIELDCX - 30)
-				m_tInfo.fX = FIELDCX - 30;
+			if(m_tInfo.pt.x >= FIELDCX - 30)
+				m_tInfo.pt.x = FIELDCX - 30;
 		}
 		break;
 	case SCENE_STAGE1:
 		{
-			if(m_tInfo.fX >= HENESISCX - 30)
-				m_tInfo.fX = HENESISCX - 30;
+			if(m_tInfo.pt.x >= HENESISCX - 30)
+				m_tInfo.pt.x = HENESISCX - 30;
 		}
 		break;
 	case SCENE_BOSS:
 		{
-			if(m_tInfo.fX >= BOSSMAPCX - 30)
-				m_tInfo.fX = BOSSMAPCX - 30;
+			if(m_tInfo.pt.x >= BOSSMAPCX - 30)
+				m_tInfo.pt.x = BOSSMAPCX - 30;
 		}
 		break;
 	}
@@ -158,8 +158,8 @@ int CPlayer::Update(void)
 	if(true == g_bIsSceneChange)
 	{
 		// 플레이어 좌표 설정
-		m_tInfo.fX = 100.f;
-		m_tInfo.fY = 100.f;
+		m_tInfo.pt.x = 100.f;
+		m_tInfo.pt.y = 100.f;
 		// 오프셋 값 원위치
 		m_fOffSet = WINCX / 2.f;
 
@@ -225,13 +225,13 @@ void CPlayer::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 	 	RGB(0, 255, 0));
 
 	// 히트박스
@@ -316,7 +316,7 @@ void CPlayer::Jump()
 		else
 			m_bIsJumpUp = true;
 
-		m_tInfo.fY -= fY;
+		m_tInfo.pt.y -= fY;
 
 		// if(0 >= m_fJumpSpeed * m_fJumpAcc - 9.8f * m_fJumpAcc * m_fJumpAcc * 0.5f)
 		//		m_bIsUp = true;
@@ -342,26 +342,26 @@ void CPlayer::Scroll()
 		break;
 	}
 	// Player 좌표가 Offset에서 200만큼 이동할 경우 스크롤을 진행한다.
-	if(m_tInfo.fX > m_fOffSet + 200.f)
+	if(m_tInfo.pt.x > m_fOffSet + 200.f)
 	{
 		g_fScrollX -= m_fSpeed;
 		m_fOffSet  += m_fSpeed;
 		// 스크롤 좀만 움직이면 포탈 탈 준비 돼있음으로 간주
 		m_bReadyToPortal = true;
 	}
-	else if(m_tInfo.fX < m_fOffSet - 200.f)
+	else if(m_tInfo.pt.x < m_fOffSet - 200.f)
 	{
 		g_fScrollX += m_fSpeed;
 		m_fOffSet  -= m_fSpeed;
 	}
 
 
-	if(m_tInfo.fY > m_fOffSetY + m_fOffSetGapY)
+	if(m_tInfo.pt.y > m_fOffSetY + m_fOffSetGapY)
 	{
 		g_fScrollY -= m_fSpeedY;
 		m_fOffSetY  += m_fSpeedY;
 	}
-	else if(m_tInfo.fY < m_fOffSetY - m_fOffSetGapY)
+	else if(m_tInfo.pt.y < m_fOffSetY - m_fOffSetGapY)
 	{
 		g_fScrollY += m_fSpeedY;
 		m_fOffSetY  -= m_fSpeedY;
@@ -410,7 +410,7 @@ void CPlayer::KeyCheck()
 	// 플레이어 기본 동작
 	if(CKeyMgr::GetInstance()->StayKeyDown(VK_LEFT))
 	{
-		m_tInfo.fX -= m_fSpeed;
+		m_tInfo.pt.x -= m_fSpeed;
 		m_eDir = DIR_LEFT;
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
@@ -419,7 +419,7 @@ void CPlayer::KeyCheck()
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_RIGHT))
 	{
-		m_tInfo.fX += m_fSpeed;
+		m_tInfo.pt.x += m_fSpeed;
 		m_eDir = DIR_RIGHT;
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
@@ -440,7 +440,7 @@ void CPlayer::KeyCheck()
 	{
 		m_eCurState = PLAYER_ROPE;
 		m_pImgName = L"Player_ROPE";
-		m_tInfo.fY -= m_fSpeedY;
+		m_tInfo.pt.y -= m_fSpeedY;
 
 		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_SPACE))
 		{
@@ -453,7 +453,7 @@ void CPlayer::KeyCheck()
 	{
 		m_eCurState = PLAYER_ROPE;
 		m_pImgName = L"Player_ROPE";
-		m_tInfo.fY += m_fSpeedY;
+		m_tInfo.pt.y += m_fSpeedY;
 	}
 
 	// 스킬
@@ -700,10 +700,10 @@ void CPlayer::UpdateCollRect()
 	float fCollRectCX = 45.f;
 	float fCollRectCY = 70.f;
 
-	m_tCollRect.left = static_cast<LONG>(m_tInfo.fX - (fCollRectCX / 2.f));
-	m_tCollRect.right = static_cast<LONG>(m_tInfo.fX + (fCollRectCX / 2.f));
-	m_tCollRect.bottom = static_cast<LONG>(m_tInfo.fY + (fCollRectCY / 2.f));
-	m_tCollRect.top = static_cast<LONG>(m_tInfo.fY - (fCollRectCY / 2.f));
+	m_tCollRect.left = static_cast<LONG>(m_tInfo.pt.x - (fCollRectCX / 2.f));
+	m_tCollRect.right = static_cast<LONG>(m_tInfo.pt.x + (fCollRectCX / 2.f));
+	m_tCollRect.bottom = static_cast<LONG>(m_tInfo.pt.y + (fCollRectCY / 2.f));
+	m_tCollRect.top = static_cast<LONG>(m_tInfo.pt.y - (fCollRectCY / 2.f));
 }
 
 
@@ -715,15 +715,15 @@ void CPlayer::Release(void)
 void CPlayer::LineCollision()
 {
 	float fY = 0;
-	bool bLineCol = CLineMgr::GetInstance()->LineCollision(this, m_tInfo.fX, &fY);
+	bool bLineCol = CLineMgr::GetInstance()->LineCollision(this, m_tInfo.pt.x, &fY);
 
 	if(m_bIsJump)
 	{
-		if(m_tInfo.fY >= fY && bLineCol)
+		if(m_tInfo.pt.y >= fY && bLineCol)
 		{
 			m_bIsJump = false;
 			m_fJumpAcc = 0.f;
-			m_tInfo.fY = fY;
+			m_tInfo.pt.y = fY;
 			m_eCurState = PLAYER_STAND;
 		}
 	}
@@ -735,7 +735,7 @@ void CPlayer::LineCollision()
 	{
   		if(1 != m_iPlayerFloor)
  			return;
-		m_tInfo.fY = fY;
+		m_tInfo.pt.y = fY;
 	}
 	if(!bLineCol)
 	{

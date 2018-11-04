@@ -22,7 +22,7 @@ public:
 	static bool CompareY(CObj* pDest, CObj* pSour);
 
 private:
-	OBJLIST			m_ObjList[OBJ_END];
+	OBJLIST			m_ObjList[OBJ_END];  
 	vector<CObj*>	m_vecRender[RENDER_END];
 	//list<CLine*>	m_LineList[LINE_END];
 

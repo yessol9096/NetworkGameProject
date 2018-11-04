@@ -11,10 +11,10 @@ CUI::~CUI(void)
 
 void CUI::Initialize(void)
 {
-	m_tInfo.fCX = WINCX;
-	m_tInfo.fCY = WINCY;
-	m_tInfo.fX = WINCX * 0.5f;
-	m_tInfo.fY = WINCY * 0.5f;
+	m_tInfo.size.cx = WINCX;
+	m_tInfo.size.cy = WINCY;
+	m_tInfo.pt.x = WINCX * 0.5f;
+	m_tInfo.pt.y = WINCY * 0.5f;
 
 	m_pImgName = L"UI";
 
@@ -22,30 +22,30 @@ void CUI::Initialize(void)
 
 
 	// 레벨 (십의자리)
-	m_tTensLvInfo.fX = 42.f;
-	m_tTensLvInfo.fY = 575.f;
-	m_tTensLvInfo.fCX = 10.f;
-	m_tTensLvInfo.fCY = 12.f;
+	m_tTensLvInfo.pt.x = 42.f;
+	m_tTensLvInfo.pt.y = 575.f;
+	m_tTensLvInfo.size.cx = 10.f;
+	m_tTensLvInfo.size.cy = 12.f;
 
-	m_tTensLvRect.top = static_cast<LONG>(m_tTensLvInfo.fY - m_tTensLvInfo.fCY * 0.5f);
-	m_tTensLvRect.bottom = static_cast<LONG>(m_tTensLvInfo.fY + m_tTensLvInfo.fCY * 0.5f);
-	m_tTensLvRect.left = static_cast<LONG>(m_tTensLvInfo.fX - m_tTensLvInfo.fCX * 0.5f);
-	m_tTensLvRect.right = static_cast<LONG>(m_tTensLvInfo.fX + m_tTensLvInfo.fCX * 0.5f);
+	m_tTensLvRect.top = static_cast<LONG>(m_tTensLvInfo.pt.y - m_tTensLvInfo.size.cy * 0.5f);
+	m_tTensLvRect.bottom = static_cast<LONG>(m_tTensLvInfo.pt.y + m_tTensLvInfo.size.cy * 0.5f);
+	m_tTensLvRect.left = static_cast<LONG>(m_tTensLvInfo.pt.x - m_tTensLvInfo.size.cx * 0.5f);
+	m_tTensLvRect.right = static_cast<LONG>(m_tTensLvInfo.pt.x + m_tTensLvInfo.size.cx * 0.5f);
 
 	m_tTensFrame.iFrameStart = 8;
 	m_tTensFrame.iFrameEnd = 8;
 
 
 	// 레벨 (일의 자리)
-	m_tUnitLvInfo.fX = 54.f;
-	m_tUnitLvInfo.fY = 575.f;
-	m_tUnitLvInfo.fCX = 10.f;
-	m_tUnitLvInfo.fCY = 12.f;
+	m_tUnitLvInfo.pt.x = 54.f;
+	m_tUnitLvInfo.pt.y = 575.f;
+	m_tUnitLvInfo.size.cx = 10.f;
+	m_tUnitLvInfo.size.cy = 12.f;
 
-	m_tUnitLvRect.top = static_cast<LONG>(m_tUnitLvInfo.fY - m_tUnitLvInfo.fCY * 0.5f);
-	m_tUnitLvRect.bottom = static_cast<LONG>(m_tUnitLvInfo.fY + m_tUnitLvInfo.fCY * 0.5f);
-	m_tUnitLvRect.left = static_cast<LONG>(m_tUnitLvInfo.fX - m_tUnitLvInfo.fCX * 0.5f);
-	m_tUnitLvRect.right = static_cast<LONG>(m_tUnitLvInfo.fX + m_tUnitLvInfo.fCX * 0.5f);
+	m_tUnitLvRect.top = static_cast<LONG>(m_tUnitLvInfo.pt.y - m_tUnitLvInfo.size.cy * 0.5f);
+	m_tUnitLvRect.bottom = static_cast<LONG>(m_tUnitLvInfo.pt.y + m_tUnitLvInfo.size.cy * 0.5f);
+	m_tUnitLvRect.left = static_cast<LONG>(m_tUnitLvInfo.pt.x - m_tUnitLvInfo.size.cx * 0.5f);
+	m_tUnitLvRect.right = static_cast<LONG>(m_tUnitLvInfo.pt.x + m_tUnitLvInfo.size.cx * 0.5f);
 
 	m_tUnitFrame.iFrameStart = 8;
 	m_tUnitFrame.iFrameEnd = 8;
@@ -85,13 +85,13 @@ void CUI::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left ),
 		static_cast<int>(m_tRect.top ), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
 		0,
 		0,
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 0, 255));
 
 
@@ -102,13 +102,13 @@ void CUI::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tTensLvRect.left ),
 		static_cast<int>(m_tTensLvRect.top ), 
-		static_cast<int>(m_tTensLvInfo.fCX),
-		static_cast<int>(m_tTensLvInfo.fCY),
+		static_cast<int>(m_tTensLvInfo.size.cx),
+		static_cast<int>(m_tTensLvInfo.size.cy),
 		pTensBit->GetMemDC(),
-		static_cast<int>(m_tTensLvInfo.fCX * m_tTensFrame.iFrameStart),
+		static_cast<int>(m_tTensLvInfo.size.cx * m_tTensFrame.iFrameStart),
 		0,
-		static_cast<int>(m_tTensLvInfo.fCX),
-		static_cast<int>(m_tTensLvInfo.fCY),
+		static_cast<int>(m_tTensLvInfo.size.cx),
+		static_cast<int>(m_tTensLvInfo.size.cy),
 		RGB(0, 0, 0));
 
 
@@ -117,13 +117,13 @@ void CUI::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tUnitLvRect.left ),
 		static_cast<int>(m_tUnitLvRect.top ), 
-		static_cast<int>(m_tUnitLvInfo.fCX),
-		static_cast<int>(m_tUnitLvInfo.fCY),
+		static_cast<int>(m_tUnitLvInfo.size.cx),
+		static_cast<int>(m_tUnitLvInfo.size.cy),
 		pUnitBit->GetMemDC(),
-		static_cast<int>(m_tUnitLvInfo.fCX * m_tUnitFrame.iFrameStart),
+		static_cast<int>(m_tUnitLvInfo.size.cx * m_tUnitFrame.iFrameStart),
 		0,
-		static_cast<int>(m_tUnitLvInfo.fCX),
-		static_cast<int>(m_tUnitLvInfo.fCY),
+		static_cast<int>(m_tUnitLvInfo.size.cx),
+		static_cast<int>(m_tUnitLvInfo.size.cy),
 		RGB(0, 0, 0));
 
 }

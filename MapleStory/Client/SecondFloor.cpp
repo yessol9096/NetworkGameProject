@@ -13,10 +13,10 @@ void CSecondFloor::Initialize(void)
 {
 // 	if(SCENE_FIELD == g_eScene)
 // 	{
-// 		m_tInfo.fCX = 1920.f;
-// 		m_tInfo.fCY = 300.f;
-// 		m_tInfo.fX = 1920.f * 0.5f;
-// 		m_tInfo.fY = 250.f;
+// 		m_tInfo.size.cx = 1920.f;
+// 		m_tInfo.size.cy = 300.f;
+// 		m_tInfo.pt.x = 1920.f * 0.5f;
+// 		m_tInfo.pt.y = 250.f;
 // 	}
 }
 
@@ -24,10 +24,10 @@ int CSecondFloor::Update(void)
 {
 // 	if(SCENE_FIELD == g_eScene)
 // 	{
-// 		m_tInfo.fCX = 1920.f;
-// 		m_tInfo.fCY = 300.f;
-// 		m_tInfo.fX = 1920.f * 0.5f;
-// 		m_tInfo.fY = 250.f;
+// 		m_tInfo.size.cx = 1920.f;
+// 		m_tInfo.size.cy = 300.f;
+// 		m_tInfo.pt.x = 1920.f * 0.5f;
+// 		m_tInfo.pt.y = 250.f;
 // 	}
 	UpdateRect();
 	return 0;

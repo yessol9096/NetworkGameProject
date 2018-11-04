@@ -11,8 +11,8 @@ CShoot::~CShoot(void)
 
 void CShoot::Initialize(void)
 {
-	m_tInfo.fCX = 100.f;
-	m_tInfo.fCY = 100.f;
+	m_tInfo.size.cx = 100.f;
+	m_tInfo.size.cy = 100.f;
 
 	m_dwFrameOldTime = GetTickCount();
 	m_dwFrameCurTime = 0;
@@ -38,7 +38,7 @@ void CShoot::Initialize(void)
 
 int CShoot::Update(void)
 {
-	this->SetPos(m_pPlayer->GetInfo().fX, m_pPlayer->GetInfo().fY);
+	this->SetPos(m_pPlayer->GetInfo().pt.x, m_pPlayer->GetInfo().size.cy);
 
 	m_eDir = m_pPlayer->GetDir();
 
@@ -74,13 +74,13 @@ void CShoot::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 }

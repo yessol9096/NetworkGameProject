@@ -11,8 +11,8 @@ CRope::~CRope(void)
 
 void CRope::Initialize(void)
 {
-	m_tInfo.fCX = 30.f;
-	m_tInfo.fCY = 30.f;
+	m_tInfo.size.cx = 30.f;
+	m_tInfo.size.cy = 30.f;
 }
 
 int CRope::Update(void)

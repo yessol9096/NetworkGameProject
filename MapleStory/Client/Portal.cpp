@@ -11,8 +11,8 @@ CPortal::~CPortal(void)
 
 void CPortal::Initialize(void)
 {
-	m_tInfo.fCX = 89.f;
-	m_tInfo.fCY = 257.f;
+	m_tInfo.size.cx = 89.f;
+	m_tInfo.size.cy = 257.f;
 	
 	m_dwFrameOldTime = GetTickCount();
 	m_dwFrameCurTime = 0;
@@ -47,13 +47,13 @@ void CPortal::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(255, 255, 255));
 
 // 	if(GetAsyncKeyState('2'))

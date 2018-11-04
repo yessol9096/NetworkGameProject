@@ -11,8 +11,8 @@ CWing::~CWing(void)
 
 void CWing::Initialize(void)
 {
-	m_tInfo.fCX = 659.f;
-	m_tInfo.fCY = 454.f;
+	m_tInfo.size.cx = 659.f;
+	m_tInfo.size.cy = 454.f;
 
 
 	m_dwFrameOldTime = GetTickCount();
@@ -68,13 +68,13 @@ void CWing::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(m_tCollRect.left + g_fScrollX),
 		static_cast<int>(m_tCollRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.fCX),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.fCY),
-		static_cast<int>(m_tInfo.fCX),
-		static_cast<int>(m_tInfo.fCY),
+		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+		static_cast<int>(m_tInfo.size.cx),
+		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
 
 	// 히트박스
@@ -109,14 +109,14 @@ void CWing::UpdateCollRect()
 
 	// 	if(DIR_RIGHT == m_eDir)
 	// 	{
-	// 		m_tCollRect.left = static_cast<LONG>(m_tInfo.fX);
+	// 		m_tCollRect.left = static_cast<LONG>(m_tInfo.pt.x);
 	// 		m_tCollRect.top = m_tRect.top;
 	// 		m_tCollRect.bottom = m_tRect.bottom;
 	// 		m_tCollRect.right = m_tRect.right;
 	// 	}
 	// 	else
 	// 	{
-	// 		m_tCollRect.right = static_cast<LONG>(m_tInfo.fX);
+	// 		m_tCollRect.right = static_cast<LONG>(m_tInfo.pt.x);
 	// 		m_tCollRect.top = m_tRect.top;
 	// 		m_tCollRect.bottom = m_tRect.bottom;
 	// 		m_tCollRect.left = m_tRect.left;

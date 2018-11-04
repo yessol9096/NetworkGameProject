@@ -29,7 +29,7 @@ private:
 	CObj*	CreateEffect()
 	{
 		CObj* pEffect = CAbstractFactory<T>::CreateObj(
-			m_tInfo.fX, m_tInfo.fY);
+			m_tInfo.pt.x, m_tInfo.pt.y);
 		//pEffect->SetAtt(this->GetState().iAtt);
 		//pEffect->SetDir(m_eDir);
 		return pEffect;
