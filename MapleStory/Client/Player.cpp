@@ -146,12 +146,6 @@ int CPlayer::Update(void)
 				m_tInfo.pt.x = HENESISCX - 30;
 		}
 		break;
-	case SCENE_BOSS:
-		{
-			if(m_tInfo.pt.x >= BOSSMAPCX - 30)
-				m_tInfo.pt.x = BOSSMAPCX - 30;
-		}
-		break;
 	}
 
 	// 씬 바뀔 때
@@ -170,13 +164,6 @@ int CPlayer::Update(void)
 			m_fOffSetY = WINCY / 2.f + 100.f; 
 		}
 
-
-		if(g_eScene == SCENE_BOSS)
-		{
-			g_fScrollX = 0.f;
-			g_fScrollY = 0.f;
-			m_fOffSetY = WINCY / 2.f; 
-		}
 
 		g_bIsSceneChange = false;
 	}
@@ -334,12 +321,6 @@ void CPlayer::Scroll()
 	case SCENE_STAGE1:
 		m_fOffSetGapY = 50.f;
 		break;
-	case SCENE_STAGE2:
-		m_fOffSetGapY = 100.f;
-		break;
-	case SCENE_BOSS:
-		m_fOffSetGapY = 200.f;
-		break;
 	}
 	// Player 좌표가 Offset에서 200만큼 이동할 경우 스크롤을 진행한다.
 	if(m_tInfo.pt.x > m_fOffSet + 200.f)
@@ -392,15 +373,6 @@ void CPlayer::Scroll()
 			g_fScrollX = WINCX - HENESISCX;
 	}
 
-	// 보스맵일때 스크롤 막기
-	if(SCENE_BOSS == g_eScene)
-	{
-		if(g_fScrollY < WINCY - BOSSMAPCY)
-			g_fScrollY = WINCY - BOSSMAPCY;
-
-		if(g_fScrollX < WINCX - BOSSMAPCX)
-			g_fScrollX = WINCX - BOSSMAPCX;
-	}
 	
 
 }

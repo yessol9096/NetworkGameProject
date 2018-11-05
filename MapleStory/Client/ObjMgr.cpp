@@ -113,10 +113,6 @@ void CObjMgr::ReleaseAll()
 {
 	for(int i = 0 ; i < OBJ_END; ++i)
 	{
-		if((i == OBJ_PLAYER && g_eScene != SCENE_BOSS) || 
-			(i == OBJ_HPBAR && g_eScene != SCENE_BOSS) || 
-			(i == OBJ_INVENTORY && g_eScene != SCENE_BOSS))
-			continue;
 
 		for_each(m_ObjList[i].begin(), m_ObjList[i].end(), SafeDelete<CObj*>);
 		m_ObjList[i].clear();

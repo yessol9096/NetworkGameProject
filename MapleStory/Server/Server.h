@@ -1,7 +1,5 @@
 #pragma once
 
-void err_quit(const char*);
-void err_display(const char*);
 
 DWORD WINAPI ClientThread(LPVOID);
 DWORD WINAPI CalculateThread();

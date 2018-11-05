@@ -147,8 +147,6 @@ void CStage1::Initialize()
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CPortal>::CreatePortal(100.f, HENESISCY - 300.f, 1), OBJ_PORTAL);
 
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CPortal>::CreatePortal(HENESISCX - 300.f, HENESISCY - 300.f, 4), OBJ_PORTAL);
 
 
 	//LoadData();

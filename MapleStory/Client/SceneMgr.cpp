@@ -49,8 +49,8 @@ void CSceneMgr::SetScene(SCENE_TYPE eType)
 	case SCENE_STAGE1:
 		m_pScene = new CStage1;
 		break;
-	case SCENE_BOSS:
- 		m_pScene = new CBossStage;
+	//case SCENE_BOSS:
+ //		m_pScene = new CBossStage;
 	}
 	m_pScene->Initialize();
 }
@@ -60,6 +60,8 @@ void CSceneMgr::Update()
 	if(m_bChangeCheck)
 	{
 		m_bChangeCheck = false;
+
+		//
 		SetScene(m_eSceneType);
 	}
 

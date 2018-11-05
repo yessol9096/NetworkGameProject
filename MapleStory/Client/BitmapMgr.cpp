@@ -174,65 +174,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 			(L"Communication_Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Communication/Communication_Leaf.bmp")));
 		m_MapBit.insert(make_pair
 			(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
-
-
-		break;
-	case SCENE_STAGE2:
-		m_MapBit.insert(make_pair
-			(L"BackGround_Kritias", (new CMyBmp)->LoadBmp(L"../Image/Map/Kritias.bmp")));
-		break;
-	case SCENE_BOSS:
-		m_MapBit.insert(make_pair
-			(L"BackGround_Boss", (new CMyBmp)->LoadBmp(L"../Image/Map/Boss_1.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Stand_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Stand_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Stand_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Stand_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Walk_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Walk_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Walk_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Walk_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Attack1_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Attack1_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Attack1_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Attack1_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Attack2_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Attack2_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Attack2_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Attack2_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill1_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill1_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill1_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill1_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill2_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill2_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill2_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill2_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill3_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill3_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill3_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill3_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill4_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill4_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill4_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill4_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill5_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill5_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Skill5_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Skill5_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Damaged_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Damaged_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Damaged_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Damaged_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Dead_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Dead_LEFT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Dead_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/Boss/Dead_RIGHT.bmp")));
-		m_MapBit.insert(make_pair
-			(L"BossHPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/BossHpBar.bmp")));
-		m_MapBit.insert(make_pair
-			(L"BossHP", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/BossHp.bmp")));
-
 		break;
 
 	}

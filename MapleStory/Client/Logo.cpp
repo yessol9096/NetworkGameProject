@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "Logo.h"
 #include "Mouse.h"
+#include <comdef.h>
 
 CLogo::CLogo(void)
 {
@@ -13,6 +14,9 @@ CLogo::~CLogo(void)
 
 void CLogo::Initialize()
 {
+	// DC 받아오기.
+	m_hDC = GetDC(g_hWnd);
+
 	CSoundMgr::GetInstance()->PlayBGM(L"BGM_Logo.mp3");
 
 	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_LOGO);
@@ -70,6 +74,7 @@ void CLogo::Initialize()
 
 int CLogo::Update()
 {
+
 	if(CKeyMgr::GetInstance()->OnceKeyUp(VK_RETURN))
 	{
 		CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
@@ -105,16 +110,13 @@ int CLogo::Update()
 		m_dwLogo2OldTime = GetTickCount();
 	}
 
-
-	if(m_dwLogo2OldTime + 7000 < m_dwLogo2CurTime)
+	// 로고 전 이미지 잠깐 빠르게 지나가게,,
+	if(m_dwLogo2OldTime + /*7000*/ 100 < m_dwLogo2CurTime)
 	{
 		m_pImgName = L"Logo3";
 	}
 
 	CObjMgr::GetInstance()->UpdateObj();
-
-
-
 
 
 	return 0;
@@ -167,6 +169,16 @@ void CLogo::Render(HDC hDc)
 
 	CObjMgr::GetInstance()->RenderObj(hDc);
 
+	//- ----------------------------------------------------
+// 서버 추가
+	RECT rc;
+	rc.left = m_tLoginRect.left - 300;
+	rc.right = m_tLoginRect.right - 100;
+	rc.bottom = m_tLoginRect.bottom;
+	rc.top = m_tLoginRect.top;
+
+	DrawText(m_hDC, g_ipbuf, wcslen(g_ipbuf), &rc, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
 }
 
 void CLogo::Release()
@@ -195,10 +207,28 @@ bool CLogo::MouseInLogin(void)
 
 		if(CKeyMgr::GetInstance()->OnceKeyUp(VK_LBUTTON))
 		{
-			CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-			CSoundMgr::GetInstance()->StopSoundAll();
-			CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-			CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+			// 서버와의 연결을 설정 한다. (connect)
+			SOCKADDR_IN serveraddr;
+			ZeroMemory(&serveraddr, sizeof(serveraddr));
+			serveraddr.sin_family = AF_INET;
+			// convert wchar_t to char 
+			_bstr_t b(g_ipbuf);
+			serveraddr.sin_addr.s_addr = inet_addr(b);
+			serveraddr.sin_port = htons(SERVERPORT);
+			g_retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd,L"connect()", MB_OK, MB_OK);
+
+			// connect 성공하면
+			else {
+				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+				CSoundMgr::GetInstance()->StopSoundAll();
+				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+			}
+
+
 		}
 
 		return true;

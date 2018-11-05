@@ -66,7 +66,7 @@ int main()
 
 	// socket()
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (listen_sock == INVALID_SOCKET) 
+	if (listen_sock == INVALID_SOCKET)
 		err_quit("socket()");
 
 	// 주소 구조체 생성
@@ -78,12 +78,12 @@ int main()
 
 	// bind()
 	retval = bind(listen_sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) 
+	if (retval == SOCKET_ERROR)
 		err_quit("bind()");
 
 	// listen()
 	retval = listen(listen_sock, SOMAXCONN);
-	if (retval == SOCKET_ERROR) 
+	if (retval == SOCKET_ERROR)
 		err_quit("listen()");
 
 	// 데이터 통신에 사용할 변수
@@ -104,7 +104,7 @@ int main()
 		// 접속한 클라이언트 정보 출력
 		cout << "[클라이언트 접속]" << endl;
 		cout << "IP 주소 (" << inet_ntoa(clientaddr.sin_addr) << "), 포트 번호 ("
-			<< ntohs(clientaddr.sin_port) << endl;
+			<< ntohs(clientaddr.sin_port) << ") " << endl;
 
 		// 스레드 생성
 		hThread = CreateThread(
@@ -125,33 +125,6 @@ int main()
 	return 0;
 }
 
-
-// 소켓 함수 오류 출력 후 종료
-void err_quit(const char *msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf, 0, NULL);
-	MessageBox(NULL, (LPCTSTR)lpMsgBuf, msg, MB_ICONERROR);
-	LocalFree(lpMsgBuf);
-	exit(1);
-}
-
-// 소켓 함수 오류 출력
-void err_display(const char *msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s", msg, (char *)lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
 
 
 void InitializeNetwork()
@@ -187,4 +160,3 @@ void WorkerThread()
 void AcceptThread()
 {
 }
-		

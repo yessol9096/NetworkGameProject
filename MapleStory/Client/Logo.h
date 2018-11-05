@@ -15,6 +15,8 @@ public:
 	virtual void Release();
 
 private:
+	HDC		m_hDC;
+
 	FRAME	m_tFrame;
 	const TCHAR*	m_pImgName;
 	RENDER_TYPE m_eRenderType;

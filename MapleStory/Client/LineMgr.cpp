@@ -32,12 +32,6 @@ void CLineMgr::Render(HDC hDC)
 	case SCENE_STAGE1:
 		m_eLineID = LINE_STAGE1;
 		break;
-	case SCENE_STAGE2:
-		m_eLineID = LINE_STAGE2;
-		break;
-	case SCENE_BOSS:
-		m_eLineID = LINE_BOSS;
-		break;
 	}
 	list<CLine*>::iterator iter_begin = m_LineList[m_eLineID].begin();
 	list<CLine*>::iterator iter_end = m_LineList[m_eLineID].end();
@@ -102,29 +96,6 @@ bool CLineMgr::LineCollision(CObj* pPlayer, float fX, float* pY)
 		++iter_begin;
 		++iter_begin;
 		pLine5 = (*iter_begin);
-	}
-	if(SCENE_STAGE2 == g_eScene)
-	{
-		m_eLineID = LINE_STAGE2;
-		list<CLine*>::iterator iter_begin = (m_LineList[m_eLineID]).begin();
-		list<CLine*>::iterator iter_end = (m_LineList[m_eLineID]).end();
-		pLine = (*iter_begin);
-		++iter_begin;
-		++iter_begin;
-		pLine2 = (*iter_begin);
-		++iter_begin;
-		++iter_begin;
-		pLine3 = (*iter_begin);
-		++iter_begin;
-		++iter_begin;
-		pLine4 = (*iter_begin);
-	}
-	if(SCENE_BOSS == g_eScene)
-	{
-		m_eLineID = LINE_BOSS;
-		list<CLine*>::iterator iter_begin = (m_LineList[m_eLineID]).begin();
-		list<CLine*>::iterator iter_end = (m_LineList[m_eLineID]).end();
-		pLine = (*iter_begin);
 	}
 
 

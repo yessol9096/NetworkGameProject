@@ -153,9 +153,7 @@
     <ClInclude Include="Accessory.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="BitmapMgr.h" />
-    <ClInclude Include="Boss.h" />
     <ClInclude Include="BossHPBar.h" />
-    <ClInclude Include="BossStage.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="Commuication.h" />
@@ -216,9 +214,7 @@
     <ClCompile Include="Accessory.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="BitmapMgr.cpp" />
-    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="BossHPBar.cpp" />
-    <ClCompile Include="BossStage.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="Commuication.cpp" />

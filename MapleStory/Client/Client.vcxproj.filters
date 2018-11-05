@@ -64,9 +64,6 @@
     <Filter Include="01. Object\02. Monster\01. MushCouple">
       <UniqueIdentifier>{34501254-3496-488d-bf8b-e9f049748137}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\02. Monster\02. Boss">
-      <UniqueIdentifier>{c6e1899c-7fe2-4c72-bcd2-cf12601b7a93}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Object\04. Skills\00. Shoot">
       <UniqueIdentifier>{51097f39-9fb2-45d6-ab99-ad5f116a9567}</UniqueIdentifier>
     </Filter>
@@ -163,9 +160,6 @@
     <Filter Include="03. Scene\03. Stage">
       <UniqueIdentifier>{0941f907-4d75-4da3-9319-6be21dcac0ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Scene\04. BossStage">
-      <UniqueIdentifier>{3d7dce5c-eb9f-4d9b-8a61-528645f5765d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98. Managers\00. AbstractFactory">
       <UniqueIdentifier>{d8c0eccf-b9fb-4299-a15d-db18f394e854}</UniqueIdentifier>
     </Filter>
@@ -230,9 +224,6 @@
     </ClInclude>
     <ClInclude Include="Mouse.h">
       <Filter>01. Object\03. Mouse</Filter>
-    </ClInclude>
-    <ClInclude Include="Boss.h">
-      <Filter>01. Object\02. Monster\02. Boss</Filter>
     </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>01. Object\02. Monster</Filter>
@@ -339,9 +330,6 @@
     <ClInclude Include="BossHPBar.h">
       <Filter>01. Object\10. UI</Filter>
     </ClInclude>
-    <ClInclude Include="BossStage.h">
-      <Filter>03. Scene\04. BossStage</Filter>
-    </ClInclude>
     <ClInclude Include="Field.h">
       <Filter>03. Scene\02. Field</Filter>
     </ClInclude>
@@ -412,9 +400,6 @@
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
       <Filter>01. Object\03. Mouse</Filter>
-    </ClCompile>
-    <ClCompile Include="Boss.cpp">
-      <Filter>01. Object\02. Monster\02. Boss</Filter>
     </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>01. Object\02. Monster</Filter>
@@ -520,9 +505,6 @@
     </ClCompile>
     <ClCompile Include="BossHPBar.cpp">
       <Filter>01. Object\10. UI\03. BossHPBar</Filter>
-    </ClCompile>
-    <ClCompile Include="BossStage.cpp">
-      <Filter>03. Scene\04. BossStage</Filter>
     </ClCompile>
     <ClCompile Include="Field.cpp">
       <Filter>03. Scene\02. Field</Filter>

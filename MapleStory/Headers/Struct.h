@@ -46,7 +46,7 @@ typedef struct MonsterInfo {
 }MONSTERINFO;
 
 typedef struct InitialInfo {
-	PLAYERINFO	info;
+	PLAYERINFO	playerinfo;
 	char					id;
 	PLAYER_JOB	job;
 }INITIALINFO;

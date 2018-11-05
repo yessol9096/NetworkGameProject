@@ -585,20 +585,6 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 							
 							g_eScene = SCENE_STAGE1;
 						}
-						else if(3 == dynamic_cast<CPortal*>(*src_begin)->GetWhereTogo())
-						{
-							CSceneMgr::GetInstance()->SetScene(SCENE_STAGE2);
-							g_eScene = SCENE_STAGE2;
-						}
-						else if(4 == dynamic_cast<CPortal*>(*src_begin)->GetWhereTogo())
-						{
-							CSceneMgr::GetInstance()->SetScene(SCENE_BOSS);
-							CSoundMgr::GetInstance()->StopSoundAll();
-							CSoundMgr::GetInstance()->PlayBGM(L"BGM_Boss.mp3");
-							CSoundMgr::GetInstance()->PlaySound(L"Portal.MP3", CSoundMgr::CHANNEL_EFFECT);
-							
-							g_eScene = SCENE_BOSS;
-						}
 						g_bIsSceneChange = true;
 						dynamic_cast<CPlayer*>(*dst_begin)->SetReadyToPortal(false);
 						return;
