@@ -151,9 +151,6 @@
     <Filter Include="03. Scene\00. Logo">
       <UniqueIdentifier>{530b5f92-3a84-4b4f-b7ff-73d9ac942d03}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Scene\01. Menu">
-      <UniqueIdentifier>{5e3c39de-ff0b-4819-adf9-0cb4305f6de0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Scene\02. Field">
       <UniqueIdentifier>{f0a6de2d-5561-42f6-b8c5-0d875ee053c5}</UniqueIdentifier>
     </Filter>
@@ -189,6 +186,9 @@
     </Filter>
     <Filter Include="98. Managers\05. BitMgr\00. MyBmp">
       <UniqueIdentifier>{a79c5aa2-246b-4745-bd41-3c5067de9b22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Scene\01. MakingPlayer">
+      <UniqueIdentifier>{5e3c39de-ff0b-4819-adf9-0cb4305f6de0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -336,9 +336,6 @@
     <ClInclude Include="Logo.h">
       <Filter>03. Scene\00. Logo</Filter>
     </ClInclude>
-    <ClInclude Include="MyMenu.h">
-      <Filter>03. Scene\01. Menu</Filter>
-    </ClInclude>
     <ClInclude Include="Stage1.h">
       <Filter>03. Scene\03. Stage</Filter>
     </ClInclude>
@@ -371,6 +368,9 @@
     </ClInclude>
     <ClInclude Include="MyBmp.h">
       <Filter>98. Managers\05. BitMgr\00. MyBmp</Filter>
+    </ClInclude>
+    <ClInclude Include="MakingPlayer.h">
+      <Filter>03. Scene\01. MakingPlayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -512,9 +512,6 @@
     <ClCompile Include="Logo.cpp">
       <Filter>03. Scene\00. Logo</Filter>
     </ClCompile>
-    <ClCompile Include="MyMenu.cpp">
-      <Filter>03. Scene\01. Menu</Filter>
-    </ClCompile>
     <ClCompile Include="Stage1.cpp">
       <Filter>03. Scene\03. Stage</Filter>
     </ClCompile>
@@ -544,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="MyBmp.cpp">
       <Filter>98. Managers\05. BitMgr\00. MyBmp</Filter>
+    </ClCompile>
+    <ClCompile Include="MakingPlayer.cpp">
+      <Filter>03. Scene\01. MakingPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -17,7 +17,7 @@ extern int g_iLevel;
 extern int g_iExp;
 
 // 서버 추가
-extern SOCKET sock;
+extern SOCKET g_sock;
 extern wchar_t g_ipbuf[50];
 extern int g_retval;
 

@@ -1,12 +1,11 @@
 #include "StdAfx.h"
 #include "SceneMgr.h"
 #include "Logo.h"
-//#include "MyMenu.h"
+#include "MakingPlayer.h"
 #include "Field.h"
 #include "Stage1.h"
 #include "Stage2.h"
 #include "BossStage.h"
-//#include "MyEdit.h"
 
 IMPLEMENT_SINGLETON(CSceneMgr)
 
@@ -37,9 +36,9 @@ void CSceneMgr::SetScene(SCENE_TYPE eType)
 	case SCENE_LOGO:
 		m_pScene = new CLogo;
 		break;
-// 	case SCENE_MENU:
-// 		m_pScene = new CMyMenu;
-// 		break;
+ 	case SCENE_MAKINGPLAYER:
+ 		m_pScene = new CMakingPlayer;
+ 		break;
 // 	case SCENE_EDIT:
 // 		m_pScene = new CMyEdit;
 // 		break;

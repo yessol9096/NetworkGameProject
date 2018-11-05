@@ -150,13 +150,15 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 		m_MapBit.insert(make_pair
 			(L"Exit", (new CMyBmp)->LoadBmp(L"../Image/Logo/Exit.bmp")));
 		break;
-	case SCENE_MENU:
+	case SCENE_MAKINGPLAYER:
+		m_MapBit.insert(make_pair
+		(L"MakingPlayer1", (new CMyBmp)->LoadBmp(L"../Image/MakingPlayer/MakingPlayer1.bmp")));
+		m_MapBit.insert(make_pair
+		(L"MakingPlayer2", (new CMyBmp)->LoadBmp(L"../Image/MakingPlayer/MakingPlayer2.bmp")));
 		break;
 	case SCENE_FIELD:
 		m_MapBit.insert(make_pair
 			(L"BackGround", (new CMyBmp)->LoadBmp(L"../Image/Map/Field.bmp")));
-
-
 		break;
 	case SCENE_STAGE1:
 		m_MapBit.insert(make_pair

@@ -170,7 +170,7 @@ void CLogo::Render(HDC hDc)
 	CObjMgr::GetInstance()->RenderObj(hDc);
 
 	//- ----------------------------------------------------
-// 서버 추가
+	// 서버 추가 : 사용자가 키보드로 입력한 IP 주소를 출력한다.
 	RECT rc;
 	rc.left = m_tLoginRect.left - 300;
 	rc.right = m_tLoginRect.right - 100;
@@ -183,7 +183,7 @@ void CLogo::Render(HDC hDc)
 
 void CLogo::Release()
 {
-CObjMgr::GetInstance()->ReleaseAll();
+	CObjMgr::GetInstance()->ReleaseAll();
 }
 
 bool CLogo::MouseInLogin(void)
@@ -215,17 +215,20 @@ bool CLogo::MouseInLogin(void)
 			_bstr_t b(g_ipbuf);
 			serveraddr.sin_addr.s_addr = inet_addr(b);
 			serveraddr.sin_port = htons(SERVERPORT);
-			g_retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+			g_retval = connect(g_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 
 			if (g_retval == SOCKET_ERROR)
 				MessageBoxW(g_hWnd,L"connect()", MB_OK, MB_OK);
 
 			// connect 성공하면
 			else {
-				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-				CSoundMgr::GetInstance()->StopSoundAll();
-				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+				CSceneMgr::GetInstance()->SetScene(SCENE_MAKINGPLAYER);
+
+
+				//CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+				//CSoundMgr::GetInstance()->StopSoundAll();
+				//CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+				//CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
 			}
 
 

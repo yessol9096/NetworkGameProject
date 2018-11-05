@@ -9,7 +9,7 @@ PLAYERINFO g_myinfo;
 int g_retval;
 
 // 辑滚客 烹脚 家南
-SOCKET sock;
+SOCKET g_sock;
 
 void CMaingame::Initialize(void)
 {
@@ -39,8 +39,8 @@ void CMaingame::Initialize(void)
 		return;
 
 	// 家南 积己.
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET) // 积己 角菩矫
+	g_sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (g_sock == INVALID_SOCKET) // 积己 角菩矫
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
 
 }

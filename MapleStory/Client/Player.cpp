@@ -72,7 +72,7 @@ void CPlayer::Initialize(void)
 
 	m_dwFrameOldTime = GetTickCount();
 	m_dwFrameCurTime = 0;
-
+	
 	m_pImgName = L"Player_LEFT";
 
 	m_tFrame.iFrameStart = 0;
