@@ -32,11 +32,15 @@ typedef struct Info {
 }INFO;
 
 typedef struct PlayerInfo {
-	INFO			info;
+	char			id;
+	int			key;
 	bool			ready;
-	int			InitInfokey;
+	MYPOINT pt;
+	MYSIZE		size;
+	PLAYER_JOB job;
+	int			hp;
 	int			money;
-	int			mp;
+	FRAME		frame;
 	float			attackAccValue;
 }PLAYERINFO;
 

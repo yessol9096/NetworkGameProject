@@ -95,14 +95,21 @@ int CMakingPlayer::Update()
 			int strSize = WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, NULL, 0, NULL, NULL);
 			pStr = new char[strSize];
 			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
-			// InitInfo 구조체를 서버에 send 한다.
 			for(int i = 0; i < strSize; ++i)
-				strcpy(&(m_initInfo.id), &(pStr[i])); 
-
-			CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-			CSoundMgr::GetInstance()->StopSoundAll();
-			CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-			CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+				strcpy(&(m_initInfo.id), &(pStr[i]));
+			// InitInfo 구조체를 서버에 send 한다.
+			int len = sizeof(INITIALINFO);
+			g_retval = send(g_sock, (char*)&len, sizeof(len), 0);
+			if (g_retval == SOCKET_ERROR) {
+				err_display("send()");
+			}
+			else { // send에 성공하면, 다음 필드로 넘어간다.
+				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+				CSoundMgr::GetInstance()->StopSoundAll();
+				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+				// g_myinfo에 현재까지 설정된 정보를 넣어준다.
+			}
 		}
 	}
 
