@@ -15,7 +15,8 @@ CLogo::~CLogo(void)
 void CLogo::Initialize()
 {
 	// DC 받아오기.
-	m_hDC = GetDC(g_hWnd);
+	// m_hDC = GetDC(g_hWnd);
+	m_hDC = (CBitmapMgr::GetInstance()->GetMapBit()[L"BackBuffer"])->GetMemDC(); // mem dc에 받아오는게 맞음.
 
 	CSoundMgr::GetInstance()->PlayBGM(L"BGM_Logo.mp3");
 
@@ -172,12 +173,14 @@ void CLogo::Render(HDC hDc)
 	//- ----------------------------------------------------
 	// 서버 추가 : 사용자가 키보드로 입력한 IP 주소를 출력한다.
 	RECT rc;
-	rc.left = m_tLoginRect.left - 300;
-	rc.right = m_tLoginRect.right - 100;
-	rc.bottom = m_tLoginRect.bottom;
-	rc.top = m_tLoginRect.top;
+	rc.left = m_tLoginRect.left - 160;
+	rc.right = m_tLoginRect.right - 50;
+	rc.bottom = m_tLoginRect.bottom - 10;
+	rc.top = m_tLoginRect.top + 20 ;
 
-	DrawText(m_hDC, g_ipbuf, wcslen(g_ipbuf), &rc, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	// Debugging.
+	// Rectangle(m_hDC, rc.left, rc.top, rc.right, rc.bottom);
+	DrawText(m_hDC, g_ipbuf, wcslen(g_ipbuf), &rc, DT_SINGLELINE );
 
 }
 
@@ -218,17 +221,11 @@ bool CLogo::MouseInLogin(void)
 			g_retval = connect(g_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 
 			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd,L"connect()", MB_OK, MB_OK);
+				MessageBoxW(g_hWnd,L"connect()", L"connect()", MB_OK);
 
-			// connect 성공하면
+			// connectdp 성공하면
 			else {
 				CSceneMgr::GetInstance()->SetScene(SCENE_MAKINGPLAYER);
-
-
-				//CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-				//CSoundMgr::GetInstance()->StopSoundAll();
-				//CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-				//CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
 			}
 
 

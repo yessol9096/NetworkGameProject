@@ -90,4 +90,4 @@ enum ITEM_STATE { EQUIP, UNEQUIP, STATE_END };
 
 //--------------------------------------------------------------
 // Player
-enum PLAYER_JOB {  };
+enum PLAYER_JOB { JOB_STRIKER, JOB_CAPTIN, JOB_END  };

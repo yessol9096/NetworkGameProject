@@ -15,6 +15,7 @@ public:
 	virtual void Release();
 
 private:
+	// 서버 추가.
 	HDC		m_hDC;
 
 	FRAME	m_tFrame;

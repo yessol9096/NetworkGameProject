@@ -18,7 +18,8 @@ extern int g_iExp;
 
 // 서버 추가
 extern SOCKET g_sock;
-extern wchar_t g_ipbuf[50];
+extern wchar_t g_ipbuf[50]; // 로고에서 입력하는 ip 주소 담을 버퍼.
+extern wchar_t g_idbuf[50]; // 캐릭터 생성 씬에서 입력하는 ip 주소 담을 버퍼.
 extern int g_retval;
 
 extern PLAYERINFO g_myinfo;

@@ -1,7 +1,5 @@
-d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\client.pch
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\vc141.pdb
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\vc141.idb
-d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\stdafx.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\item.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\hpportion.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\green.obj
@@ -34,6 +32,7 @@ d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\mushcouple.ob
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\mouse.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\monster.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\mathmgr.obj
+d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\maingame.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\mpportion.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\logo.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\linemgr.obj
@@ -57,7 +56,9 @@ d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\rope.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\portalbox.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\portal.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\playermp.obj
-d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\maingame.obj
+d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\makingplayer.obj
+d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\client.pch
+d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\debug\stdafx.obj
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\debug\client.exe
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\debug\client.ilk
 d:\kpu\넷겜프\텀프\networkgameproject\maplestory\debug\client.pdb

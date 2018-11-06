@@ -48,7 +48,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	closesocket(client_sock);
 	cout << "[클라이언트 종료]" << endl;
 	cout << "IP 주소 (" << inet_ntoa(clientaddr.sin_addr) << "), 포트 번호 ("
-		<< ntohs(clientaddr.sin_port) << endl;
+		<< ntohs(clientaddr.sin_port) << ")" << endl;
 
 	return 0;
 }

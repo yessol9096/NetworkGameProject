@@ -5,7 +5,7 @@ class CMaingame
 public:
 	CMaingame(void);
 	~CMaingame(void);
-
+	
 public:
 	void Initialize(void);
 	void Update(void);

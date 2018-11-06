@@ -36,6 +36,13 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	m_MapBit.insert(make_pair(
 		L"Player_ROPE", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Player_ROPE.bmp")));
 
+	m_MapBit.insert(make_pair(
+		L"Captin_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Captin_LEFT.bmp")));
+	m_MapBit.insert(make_pair(
+		L"Captin_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Captin_RIGHT.bmp")));
+	m_MapBit.insert(make_pair(
+		L"Captin_ROPE", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Captin_ROPE.bmp")));
+
 
 	m_MapBit.insert(make_pair(
 		L"Font", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/Font.bmp")));
