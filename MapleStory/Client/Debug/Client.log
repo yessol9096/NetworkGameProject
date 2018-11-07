@@ -1,5 +1,1 @@
-﻿  MakingPlayer.cpp
-d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\makingplayer.cpp(99): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\string.h(133): note: 'strcpy' 선언을 참조하십시오.
-d:\kpu\넷겜프\텀프\networkgameproject\maplestory\client\makingplayer.cpp(94): warning C4101: 'str' :참조되지 않은 지역 변수입니다.
-  Client.vcxproj -> D:\KPU\넷겜프\텀프\NetworkGameProject\MapleStory\Debug\Client.exe
+﻿  Client.vcxproj -> D:\공부\넷겜플\팀플\NetworkGameProject\MapleStory\Debug\Client.exe
