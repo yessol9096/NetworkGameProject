@@ -16,7 +16,6 @@ public:
 	
 private:
 	// 서버 추가.
-	INITIALINFO m_initInfo;
 	HDC				m_hDC;
 
 	const TCHAR*	m_pImgName;

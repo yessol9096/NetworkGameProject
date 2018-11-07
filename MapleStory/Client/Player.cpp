@@ -72,8 +72,11 @@ void CPlayer::Initialize(void)
 
 	m_dwFrameOldTime = GetTickCount();
 	m_dwFrameCurTime = 0;
-	
-	m_pImgName = L"Player_LEFT";
+
+	if(g_myinfo.job == JOB_STRIKER)
+		m_pImgName = L"Player_LEFT";
+	else
+		m_pImgName = L"Captin_LEFT";
 
 	m_tFrame.iFrameStart = 0;
 	m_tFrame.iFrameEnd = 0;
@@ -387,7 +390,10 @@ void CPlayer::KeyCheck()
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
 		m_bIsRopeColl = false;
-		m_pImgName = L"Player_LEFT";
+		if (g_myinfo.job == JOB_STRIKER)
+			m_pImgName = L"Player_LEFT";
+		else
+			m_pImgName = L"Captin_LEFT";
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_RIGHT))
 	{
@@ -396,7 +402,10 @@ void CPlayer::KeyCheck()
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
 		m_bIsRopeColl = false;
-		m_pImgName = L"Player_RIGHT";
+		if (g_myinfo.job == JOB_STRIKER)
+			m_pImgName = L"Player_RIGHT";
+		else
+			m_pImgName = L"Captin_RIGHT";
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && !m_bIsRopeColl)
 	{
@@ -411,20 +420,29 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_UP) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
-		m_pImgName = L"Player_ROPE";
+		if (g_myinfo.job == JOB_STRIKER)
+			m_pImgName = L"Player_ROPE";
+		else
+			m_pImgName = L"Captin_ROPE";
 		m_tInfo.pt.y -= m_fSpeedY;
 
 		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_SPACE))
 		{
 			m_eCurState = PLAYER_JUMP;
-			m_pImgName = L"Player_LEFT";
+			if (g_myinfo.job == JOB_STRIKER)
+				m_pImgName = L"Player_LEFT";
+			else
+				m_pImgName = L"Captin_LEFT";
 			m_bIsRopeColl = false;
 		}
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
-		m_pImgName = L"Player_ROPE";
+		if (g_myinfo.job == JOB_STRIKER)
+			m_pImgName = L"Player_ROPE";
+		else
+			m_pImgName = L"Captin_ROPE";
 		m_tInfo.pt.y += m_fSpeedY;
 	}
 

@@ -72,11 +72,11 @@ int CMakingPlayer::Update()
 	switch (sceneNum) {
 	case 0:
 		m_pImgName = L"MakingPlayer1";
-		m_initInfo.job = JOB_STRIKER;
+		g_myinfo.job = JOB_STRIKER;
 		break;
 	case 1:
 		m_pImgName = L"MakingPlayer2";
-		m_initInfo.job = JOB_CAPTIN;
+		g_myinfo.job = JOB_CAPTIN;
 		break;
 	}
 	
@@ -96,12 +96,12 @@ int CMakingPlayer::Update()
 			pStr = new char[strSize];
 			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
 			for(int i = 0; i < strSize; ++i)
-				strcpy(&(m_initInfo.id), &(pStr[i]));
+				strcpy(&(g_myinfo.id), &(pStr[i]));
 			// InitInfo 구조체를 서버에 send 한다.
-			int len = sizeof(INITIALINFO);
-			g_retval = send(g_sock, (char*)&len, sizeof(len), 0);
-			if (g_retval == SOCKET_ERROR) {
-				err_display("send()");
+			//int len = sizeof(INITIALINFO);
+			//g_retval = send(g_sock, (char*)&len, sizeof(len), 0);
+			if (0) {
+			//	err_display("send()");
 			}
 			else { // send에 성공하면, 다음 필드로 넘어간다.
 				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
