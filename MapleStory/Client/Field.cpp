@@ -8,7 +8,7 @@
 #include "Shoot.h"
 #include "Leaf.h"
 #include "UI.h"
-#include "Inven.h"
+#include "Party.h"
 
 CField::CField(void)
 {
@@ -56,9 +56,9 @@ void CField::Initialize()
 	// NPC
 	CObjMgr::GetInstance()->AddObject(CAbstractFactory<CLeaf>::CreateObj(1250.f, 475.f), OBJ_NPC);
 
-	// 인벤토리
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CInven>::CreateInventory(WINCX * 0.3f, WINCY * 0.3f, pPlayer), OBJ_INVENTORY);
+	// 파티창
+	CObjMgr::GetInstance()->AddObject(
+		CAbstractFactory<CParty>::CreateParty(pPlayer), OBJ_PARTY);
 
 	//CTileMgr::GetInstance()->LoadTile();
 

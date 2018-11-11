@@ -12,8 +12,7 @@ int g_retval;
 SOCKET g_sock;
 
 void CMaingame::Initialize(void)
-{
-
+{	
 	m_hDC = GetDC(g_hWnd);
 
 	// 관련 이미지 로드
@@ -26,12 +25,10 @@ void CMaingame::Initialize(void)
 	// 씬 바꾸기 (Logo로)
 	CSceneMgr::GetInstance()->SetScene(SCENE_LOGO);
 
-
 	CollisionMgr::InitWELLRNG512((unsigned long)time(NULL));
 
 	//-------------------------------------------------------------------------------
 	// 서버 추가.
-
 
 	// 윈속을 초기화 한다.
 	WSADATA wsa;
@@ -42,7 +39,6 @@ void CMaingame::Initialize(void)
 	g_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (g_sock == INVALID_SOCKET) // 생성 실패시
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
-
 }
 
 void CMaingame::Update(void)

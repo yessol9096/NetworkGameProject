@@ -181,6 +181,9 @@
     <Filter Include="01. Object\13. Box">
       <UniqueIdentifier>{68edeb90-37be-4427-ad1b-7a3e8e12ec16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Object\11. UI\04. Party">
+      <UniqueIdentifier>{bed6a1c8-6365-4e06-ba1d-8969128ce8e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -309,9 +312,6 @@
     <ClInclude Include="UI.h">
       <Filter>01. Object\11. UI</Filter>
     </ClInclude>
-    <ClInclude Include="BossHPBar.h">
-      <Filter>01. Object\11. UI</Filter>
-    </ClInclude>
     <ClInclude Include="Field.h">
       <Filter>03. Scene\02. Field</Filter>
     </ClInclude>
@@ -356,6 +356,12 @@
     </ClInclude>
     <ClInclude Include="FloorBox.h">
       <Filter>01. Object\13. Box</Filter>
+    </ClInclude>
+    <ClInclude Include="BossHPBar.h">
+      <Filter>01. Object\11. UI\03. BossHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Party.h">
+      <Filter>01. Object\11. UI\04. Party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -523,6 +529,9 @@
     </ClCompile>
     <ClCompile Include="FloorBox.cpp">
       <Filter>01. Object\13. Box</Filter>
+    </ClCompile>
+    <ClCompile Include="Party.cpp">
+      <Filter>01. Object\11. UI\04. Party</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

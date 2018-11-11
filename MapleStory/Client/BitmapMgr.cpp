@@ -158,9 +158,11 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 		m_MapBit.insert(make_pair
 			(L"BackGround", (new CMyBmp)->LoadBmp(L"../Image/Map/Field.bmp")));
 		m_MapBit.insert(make_pair
-		(L"Communication_Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Communication/Communication_Leaf.bmp")));
+		(L"Communication_Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Communication_Leaf.bmp")));
 		m_MapBit.insert(make_pair
 		(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
+		m_MapBit.insert(make_pair(
+			L"Party", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Party.bmp")));
 		break;
 	case SCENE_STAGE1:
 		m_MapBit.insert(make_pair

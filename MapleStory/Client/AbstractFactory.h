@@ -2,8 +2,8 @@
 
 class CObj;
 class CMonster;
-class CInven;
 class CCommuication;
+class CParty;
 class CFloorBox;
 
 template <typename T>
@@ -72,43 +72,12 @@ public:
 		(dynamic_cast<CCommuication*>(pObj))->SetRenderNumber(iRenderNumber);
 		return pObj;
 	}
-	static CObj* CreateInventory(
-		float fX, float fY, CObj* pPlayer)
+	static CObj* CreateParty(CObj* pPlayer)
 	{
 		CObj* pObj = new T;
 		pObj->Initialize();
 		if (pPlayer != nullptr)
-			(dynamic_cast<CInven*>(pObj))->SetPlayer(pPlayer);
+			(dynamic_cast<CParty*>(pObj))->SetPlayer(pPlayer);
 		return pObj;
 	}
-
-	// ÆùÆ®¿ë
-// 	static CObj* CreateObj(
-// 		CObj* pTarget, int iAtt, FONT_ID eID, FONT_TYPE eType, FONT_FLOOR eFloor)
-// 	{
-// 		CObj* pObj = new T;
-// 		dynamic_cast<Font*>(pObj)->SetNumber(iAtt);
-// 		dynamic_cast<Font*>(pObj)->SetID(eID);
-// 		dynamic_cast<Font*>(pObj)->SetType(eType);
-// 		dynamic_cast<Font*>(pObj)->SetFloor(eFloor);
-// 		pObj->Initialize();
-//		pObj->SetPos(fX, fY);
-//		dynamic_cast<CCommuication*>(pObj)->SetRenderNumber(iRenderNumber);
-//		dynamic_cast<CCommuication*>(pObj)->SetIsSucessed(bIsQuestSucessed);
-//		return pObj;
-//	}
-
-// 	static CObj* CreateGold(float fX, float fY, GOLD_ID eID)
-// 	{
-// 		CObj* pObj = new T;
-// 		dynamic_cast<CGold*>(pObj)->SetGoldID(eID);
-// 		pObj->Initialize();
-// 		return pObj;
-// 	}
-// 	static CObj* CreateSkill(float fX, float fY, int iAtt)
-// 	{
-// 		CObj* pObj = new T;
-// 		pObj->Initialize();
-// 		pObj->SetAtt(iAtt);
-// 	}
 };
