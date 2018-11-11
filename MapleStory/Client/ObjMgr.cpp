@@ -62,9 +62,6 @@ void CObjMgr::UpdateObj()
 	/////////////// 플레이어 - 보스.
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_BOSS], COL_PLAYER_BOSS);
 
-	/////////////// 플레이어 - 포탈.
-	if(g_bIsSceneChange == false)
-		CollisionMgr::CollisionRect(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_PORTAL], COL_PLAYER_PORTAL);
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_ITEM], COL_PLAYER_ITEM);
 	
 	/////////////// 몬스터 - 스킬.
@@ -83,10 +80,7 @@ void CObjMgr::UpdateObj()
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_BOSS], m_ObjList[OBJ_SKILL_WING], COL_BOSS_EFFECT);
 
 	// 플레이어 - 보스 스킬
-	CollisionMgr::CollisionPlayerBoss(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_BOSS]);
-
-
-	
+	CollisionMgr::CollisionPlayerBoss(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_BOSS]);	
 }
 
 void CObjMgr::RenderObj(HDC hDC)

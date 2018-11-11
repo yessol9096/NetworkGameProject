@@ -88,16 +88,9 @@ public:
 	// 무적 상태
 	bool		 GetIsInvincible() { return m_bIsInvincible; }
 	void		 SetIsInvincible(bool bIsInvincible) { m_bIsInvincible = bIsInvincible; }
-
-	// 포탈
-	bool	GetReadyToPortal() { return m_bReadyToPortal; }
-	void	SetReadyToPortal(bool bReadyToPortal) { m_bReadyToPortal = bReadyToPortal; }
 	
 	// 충돌박스 업데이트
 	void	UpdateCollRect();
-
-
-	// 화살 생성
 private:
 	template <typename T> 
 	CObj*	CreateArrow(float fX = 0.f, float fY = 0.f, ARROW_ID eID = ARROW_BASIC, int iOrder = 0)
@@ -301,9 +294,6 @@ private:
 
 	// 스킬
 	bool			m_bIsSkillPressed;
-
-	// 포탈
-	bool			m_bReadyToPortal;
 
 	// 미션클리어 이펙트
 	FRAME			m_tEffectFrame;

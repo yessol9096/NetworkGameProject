@@ -13,9 +13,8 @@ extern int g_iLevel = 88;
 extern int g_iExp = 0;
 
 CPlayer::CPlayer(void)
-: m_bIsRopeColl(false), m_bIsJumpUp(true), m_bLineColl(true), 
- m_fLineY(0.f), m_bIsSkillPressed(false), m_iPlayerFloor(1), m_fOffSetGapY(0.f)
-, m_bReadyToPortal(true), m_bIsInvincible(false)
+	: m_bIsRopeColl(false), m_bIsJumpUp(true), m_bLineColl(true),
+	m_fLineY(0.f), m_bIsSkillPressed(false), m_iPlayerFloor(1), m_fOffSetGapY(0.f), m_bIsInvincible(false)
 {
 }
 
@@ -330,8 +329,6 @@ void CPlayer::Scroll()
 	{
 		g_fScrollX -= m_fSpeed;
 		m_fOffSet  += m_fSpeed;
-		// 스크롤 좀만 움직이면 포탈 탈 준비 돼있음으로 간주
-		m_bReadyToPortal = true;
 	}
 	else if(m_tInfo.pt.x < m_fOffSet - 200.f)
 	{

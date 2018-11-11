@@ -10,13 +10,11 @@ public:
 
 public:
 	void SetRenderNumber(int iNumber) { m_tFrame.iFrameStart = iNumber; }
-	void SetIsSucessed(bool bIsSucessed) { m_bIsSucessed = bIsSucessed; }
 	virtual void SetNextButtonRect();
 
 protected:
 	int		m_iRenderNumber;
 	int		m_iRenderNumberOld;
 
-	bool	m_bIsSucessed;
 	RECT	m_tNextButton;
 };

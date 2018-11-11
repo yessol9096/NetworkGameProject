@@ -43,18 +43,6 @@
     <Filter Include="01. Object\07. NPC">
       <UniqueIdentifier>{8aec16a2-21a6-42ba-8180-496b26e88849}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\08. Portal">
-      <UniqueIdentifier>{d4cd0bd6-8ed3-4139-af37-977ea211e750}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\10. UI">
-      <UniqueIdentifier>{1229697e-592b-4380-a723-52dc66aacb5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\11. Rope">
-      <UniqueIdentifier>{74c47821-4d0f-4808-b03f-f7137e6e5d1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\12. Box">
-      <UniqueIdentifier>{68edeb90-37be-4427-ad1b-7a3e8e12ec16}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Object\02. Monster">
       <UniqueIdentifier>{8b78042d-8930-49f7-92a3-59e366d9707d}</UniqueIdentifier>
     </Filter>
@@ -112,42 +100,6 @@
     <Filter Include="01. Object\07. NPC\01. Communication\00. LeafCommunication">
       <UniqueIdentifier>{024d91b6-0518-44d1-842d-37cc98464e92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\10. UI\00. HPBar">
-      <UniqueIdentifier>{75d18480-f8b1-4f88-9b5a-90dcae73d024}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\10. UI\01. ExpBar">
-      <UniqueIdentifier>{b0917dc1-78c0-42d4-aafc-ca499fdf46da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\10. UI\02. MPBar">
-      <UniqueIdentifier>{67588006-4124-4f3b-94d0-04731bc9527a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\12. Box\00. FloorBox">
-      <UniqueIdentifier>{bc010ae7-4d1d-438d-b079-bca6b9f31b91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\12. Box\01. PortalBox">
-      <UniqueIdentifier>{0bfedff3-1920-4537-8473-e7164e19f91b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\09. Floor">
-      <UniqueIdentifier>{76e0dfb2-bf80-4fa6-972b-11c7649b9d71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\09. Floor\00. First">
-      <UniqueIdentifier>{d54bf3e5-189e-458a-a7d3-82964e3410dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\09. Floor\01. Second">
-      <UniqueIdentifier>{ce3d3a6e-3a1c-4e12-80ba-4659e77348e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\09. Floor\02. Third">
-      <UniqueIdentifier>{9d54332b-2c0d-4391-b23f-0298b7f1b9d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\09. Floor\04. Fifth">
-      <UniqueIdentifier>{d2018ee2-b996-495e-b3de-2e89881af223}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\09. Floor\03. Fourth">
-      <UniqueIdentifier>{08227a9a-dd3e-4a37-9e4e-f7e6d34dc72f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\10. UI\03. BossHPBar">
-      <UniqueIdentifier>{ad15fe49-d8a2-4cc4-b6c4-74568624eed6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Scene\00. Logo">
       <UniqueIdentifier>{530b5f92-3a84-4b4f-b7ff-73d9ac942d03}</UniqueIdentifier>
     </Filter>
@@ -189,6 +141,45 @@
     </Filter>
     <Filter Include="03. Scene\01. MakingPlayer">
       <UniqueIdentifier>{5e3c39de-ff0b-4819-adf9-0cb4305f6de0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\08. Floor">
+      <UniqueIdentifier>{76e0dfb2-bf80-4fa6-972b-11c7649b9d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\08. Floor\00. First">
+      <UniqueIdentifier>{d54bf3e5-189e-458a-a7d3-82964e3410dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\08. Floor\01. Second">
+      <UniqueIdentifier>{ce3d3a6e-3a1c-4e12-80ba-4659e77348e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\08. Floor\02. Third">
+      <UniqueIdentifier>{9d54332b-2c0d-4391-b23f-0298b7f1b9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\08. Floor\04. Fifth">
+      <UniqueIdentifier>{d2018ee2-b996-495e-b3de-2e89881af223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\08. Floor\03. Fourth">
+      <UniqueIdentifier>{08227a9a-dd3e-4a37-9e4e-f7e6d34dc72f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\11. UI">
+      <UniqueIdentifier>{1229697e-592b-4380-a723-52dc66aacb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\11. UI\00. HPBar">
+      <UniqueIdentifier>{75d18480-f8b1-4f88-9b5a-90dcae73d024}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\11. UI\01. ExpBar">
+      <UniqueIdentifier>{b0917dc1-78c0-42d4-aafc-ca499fdf46da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\11. UI\02. MPBar">
+      <UniqueIdentifier>{67588006-4124-4f3b-94d0-04731bc9527a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\11. UI\03. BossHPBar">
+      <UniqueIdentifier>{ad15fe49-d8a2-4cc4-b6c4-74568624eed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\12. Rope">
+      <UniqueIdentifier>{74c47821-4d0f-4808-b03f-f7137e6e5d1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Object\13. Box">
+      <UniqueIdentifier>{68edeb90-37be-4427-ad1b-7a3e8e12ec16}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -285,50 +276,41 @@
     <ClInclude Include="LeafCommunication.h">
       <Filter>01. Object\07. NPC\01. Communication\00. LeafCommunication</Filter>
     </ClInclude>
-    <ClInclude Include="Portal.h">
-      <Filter>01. Object\08. Portal</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerExp.h">
-      <Filter>01. Object\10. UI\01. ExpBar</Filter>
+      <Filter>01. Object\11. UI\01. ExpBar</Filter>
     </ClInclude>
     <ClInclude Include="PlayerHP.h">
-      <Filter>01. Object\10. UI\00. HPBar</Filter>
+      <Filter>01. Object\11. UI\00. HPBar</Filter>
     </ClInclude>
     <ClInclude Include="PlayerMP.h">
-      <Filter>01. Object\10. UI\02. MPBar</Filter>
+      <Filter>01. Object\11. UI\02. MPBar</Filter>
     </ClInclude>
     <ClInclude Include="NPC.h">
       <Filter>01. Object\07. NPC</Filter>
     </ClInclude>
     <ClInclude Include="Rope.h">
-      <Filter>01. Object\11. Rope</Filter>
-    </ClInclude>
-    <ClInclude Include="FloorBox.h">
-      <Filter>01. Object\12. Box\00. FloorBox</Filter>
-    </ClInclude>
-    <ClInclude Include="PortalBox.h">
-      <Filter>01. Object\12. Box\01. PortalBox</Filter>
+      <Filter>01. Object\12. Rope</Filter>
     </ClInclude>
     <ClInclude Include="FifthFloor.h">
-      <Filter>01. Object\09. Floor\04. Fifth</Filter>
+      <Filter>01. Object\08. Floor\04. Fifth</Filter>
     </ClInclude>
     <ClInclude Include="FirstFloor.h">
-      <Filter>01. Object\09. Floor\00. First</Filter>
+      <Filter>01. Object\08. Floor\00. First</Filter>
     </ClInclude>
     <ClInclude Include="FourthFloor.h">
-      <Filter>01. Object\09. Floor\03. Fourth</Filter>
+      <Filter>01. Object\08. Floor\03. Fourth</Filter>
     </ClInclude>
     <ClInclude Include="SecondFloor.h">
-      <Filter>01. Object\09. Floor\01. Second</Filter>
+      <Filter>01. Object\08. Floor\01. Second</Filter>
     </ClInclude>
     <ClInclude Include="ThirdFloor.h">
-      <Filter>01. Object\09. Floor\02. Third</Filter>
+      <Filter>01. Object\08. Floor\02. Third</Filter>
     </ClInclude>
     <ClInclude Include="UI.h">
-      <Filter>01. Object\10. UI</Filter>
+      <Filter>01. Object\11. UI</Filter>
     </ClInclude>
     <ClInclude Include="BossHPBar.h">
-      <Filter>01. Object\10. UI</Filter>
+      <Filter>01. Object\11. UI</Filter>
     </ClInclude>
     <ClInclude Include="Field.h">
       <Filter>03. Scene\02. Field</Filter>
@@ -371,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="MakingPlayer.h">
       <Filter>03. Scene\01. MakingPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="FloorBox.h">
+      <Filter>01. Object\13. Box</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -461,50 +446,41 @@
     <ClCompile Include="LeafCommunication.cpp">
       <Filter>01. Object\07. NPC\01. Communication\00. LeafCommunication</Filter>
     </ClCompile>
-    <ClCompile Include="Portal.cpp">
-      <Filter>01. Object\08. Portal</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerExp.cpp">
-      <Filter>01. Object\10. UI\01. ExpBar</Filter>
+      <Filter>01. Object\11. UI\01. ExpBar</Filter>
     </ClCompile>
     <ClCompile Include="PlayerMP.cpp">
-      <Filter>01. Object\10. UI\02. MPBar</Filter>
+      <Filter>01. Object\11. UI\02. MPBar</Filter>
     </ClCompile>
     <ClCompile Include="PlayerHP.cpp">
-      <Filter>01. Object\10. UI\00. HPBar</Filter>
+      <Filter>01. Object\11. UI\00. HPBar</Filter>
     </ClCompile>
     <ClCompile Include="NPC.cpp">
       <Filter>01. Object\07. NPC</Filter>
     </ClCompile>
     <ClCompile Include="Rope.cpp">
-      <Filter>01. Object\11. Rope</Filter>
-    </ClCompile>
-    <ClCompile Include="FloorBox.cpp">
-      <Filter>01. Object\12. Box\00. FloorBox</Filter>
-    </ClCompile>
-    <ClCompile Include="PortalBox.cpp">
-      <Filter>01. Object\12. Box\01. PortalBox</Filter>
+      <Filter>01. Object\12. Rope</Filter>
     </ClCompile>
     <ClCompile Include="FifthFloor.cpp">
-      <Filter>01. Object\09. Floor\04. Fifth</Filter>
+      <Filter>01. Object\08. Floor\04. Fifth</Filter>
     </ClCompile>
     <ClCompile Include="FirstFloor.cpp">
-      <Filter>01. Object\09. Floor\00. First</Filter>
+      <Filter>01. Object\08. Floor\00. First</Filter>
     </ClCompile>
     <ClCompile Include="FourthFloor.cpp">
-      <Filter>01. Object\09. Floor\03. Fourth</Filter>
+      <Filter>01. Object\08. Floor\03. Fourth</Filter>
     </ClCompile>
     <ClCompile Include="SecondFloor.cpp">
-      <Filter>01. Object\09. Floor\01. Second</Filter>
+      <Filter>01. Object\08. Floor\01. Second</Filter>
     </ClCompile>
     <ClCompile Include="ThirdFloor.cpp">
-      <Filter>01. Object\09. Floor\02. Third</Filter>
+      <Filter>01. Object\08. Floor\02. Third</Filter>
     </ClCompile>
     <ClCompile Include="UI.cpp">
-      <Filter>01. Object\10. UI</Filter>
+      <Filter>01. Object\11. UI</Filter>
     </ClCompile>
     <ClCompile Include="BossHPBar.cpp">
-      <Filter>01. Object\10. UI\03. BossHPBar</Filter>
+      <Filter>01. Object\11. UI\03. BossHPBar</Filter>
     </ClCompile>
     <ClCompile Include="Field.cpp">
       <Filter>03. Scene\02. Field</Filter>
@@ -544,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="MakingPlayer.cpp">
       <Filter>03. Scene\01. MakingPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="FloorBox.cpp">
+      <Filter>01. Object\13. Box</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

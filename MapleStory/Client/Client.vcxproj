@@ -191,8 +191,6 @@
     <ClInclude Include="PlayerExp.h" />
     <ClInclude Include="PlayerHP.h" />
     <ClInclude Include="PlayerMP.h" />
-    <ClInclude Include="Portal.h" />
-    <ClInclude Include="PortalBox.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Rope.h" />
     <ClInclude Include="Scene.h" />
@@ -252,8 +250,6 @@
     <ClCompile Include="PlayerExp.cpp" />
     <ClCompile Include="PlayerHP.cpp" />
     <ClCompile Include="PlayerMP.cpp" />
-    <ClCompile Include="Portal.cpp" />
-    <ClCompile Include="PortalBox.cpp" />
     <ClCompile Include="Rope.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />

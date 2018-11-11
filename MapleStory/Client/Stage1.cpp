@@ -8,15 +8,10 @@
 #include "ThirdFloor.h"
 #include "FifthFloor.h"
 #include "FourthFloor.h"
-#include "Portal.h"
 #include "Green.h"
 #include "MushCouple.h"
 #include "Shoot.h"
-#include "Leaf.h"
 #include "UI.h"
-
-
-
 
 void CStage1::Initialize()
 {
@@ -131,23 +126,6 @@ void CStage1::Initialize()
 		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 3), OBJ_MONSTER);
-
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	// NPC (1Ãþ)
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CLeaf>::CreateObj(HENESISCX * 0.5f, HENESISCY - 220.f), OBJ_NPC);
-
-
-
-
-
-
-	// Æ÷Å»
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CPortal>::CreatePortal(100.f, HENESISCY - 300.f, 1), OBJ_PORTAL);
-
-
 
 	//LoadData();
 }

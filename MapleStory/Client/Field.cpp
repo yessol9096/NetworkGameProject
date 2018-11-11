@@ -5,8 +5,8 @@
 #include "Rope.h"
 #include "FirstFloor.h"
 #include "SecondFloor.h"
-#include "Portal.h"
 #include "Shoot.h"
+#include "Leaf.h"
 #include "UI.h"
 #include "Inven.h"
 
@@ -32,40 +32,33 @@ void CField::Initialize()
 
 	// «√∑π¿ÃæÓ
 	CObj* pPlayer = CAbstractFactory<CPlayer>::CreateObj();
-	CObjMgr::GetInstance()->AddObject(pPlayer
-		, OBJ_PLAYER);
+	CObjMgr::GetInstance()->AddObject(pPlayer, OBJ_PLAYER);
 
 	// πÂ¡Ÿ
-	for(int i = 0; i < 7; ++i)
-	{
+	for (int i = 0; i < 7; ++i)
 		CObjMgr::GetInstance()->AddObject(
 			CAbstractFactory<CRope>::CreateObj(495.f, 300.f + i * TILECY), OBJ_ROPE);
-	}
 
-	
 	// 1√˛ π⁄Ω∫ (∞°∑Œ)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFirstFloor>::CreateFloorBox(WINCX * 0.5f, 500.f, 1920.f, 20.f, FLOORBOX_WIDTH ), OBJ_FIRSTFLOOR);
+		CAbstractFactory<CFirstFloor>::CreateFloorBox(WINCX * 0.5f, 500.f, 1920.f, 20.f, FLOORBOX_WIDTH), OBJ_FIRSTFLOOR);
 
 	// 1√˛ π⁄Ω∫ (ºº∑Œ)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFirstFloor>::CreateFloorBox(25.f, 380.f, 20.f, 300.f, FLOORBOX_HEIGHT ), OBJ_FIRSTFLOOR);
+		CAbstractFactory<CFirstFloor>::CreateFloorBox(25.f, 380.f, 20.f, 300.f, FLOORBOX_HEIGHT), OBJ_FIRSTFLOOR);
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFirstFloor>::CreateFloorBox(600.f, 380.f, 40.f, 300.f, FLOORBOX_HEIGHT ), OBJ_FIRSTFLOOR);
+		CAbstractFactory<CFirstFloor>::CreateFloorBox(600.f, 380.f, 40.f, 300.f, FLOORBOX_HEIGHT), OBJ_FIRSTFLOOR);
 
 	// 2√˛ π⁄Ω∫
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CSecondFloor>::CreateFloorBox(300.f, 280.f, 488.f, 20.f, FLOORBOX_WIDTH ), OBJ_SECONDFLOOR);
+		CAbstractFactory<CSecondFloor>::CreateFloorBox(300.f, 280.f, 488.f, 20.f, FLOORBOX_WIDTH), OBJ_SECONDFLOOR);
 
-	// ∆˜≈ª
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CPortal>::CreatePortal(1800.f, 390.f, 2), OBJ_PORTAL);
+	// NPC
+	CObjMgr::GetInstance()->AddObject(CAbstractFactory<CLeaf>::CreateObj(1250.f, 475.f), OBJ_NPC);
 
 	// ¿Œ∫•≈‰∏Æ
 	//CObjMgr::GetInstance()->AddObject(
 	//	CAbstractFactory<CInven>::CreateInventory(WINCX * 0.3f, WINCY * 0.3f, pPlayer), OBJ_INVENTORY);
-
-	
 
 	//CTileMgr::GetInstance()->LoadTile();
 

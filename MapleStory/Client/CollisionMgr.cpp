@@ -3,7 +3,6 @@
 #include "Obj.h"
 #include "Player.h"
 #include "Boss.h"
-#include "Portal.h"
 #include "FloorBox.h"
 #include "Monster.h"
 #include "Arrow.h"
@@ -563,32 +562,6 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 					break;
 				case COL_PLAYER_FIFTHFLOOR:
 					dynamic_cast<CPlayer*>(*dst_begin)->SetPlayerFloor(5);
-					break;
-				case COL_PLAYER_PORTAL:
-					if(dynamic_cast<CPlayer*>(*dst_begin)->GetReadyToPortal() && CKeyMgr::GetInstance()->OnceKeyUp(VK_UP))
-					{
-						if(1 == dynamic_cast<CPortal*>(*src_begin)->GetWhereTogo())
-						{
-							CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-							CSoundMgr::GetInstance()->StopSoundAll();
-							CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.wav");
-							CSoundMgr::GetInstance()->PlaySound(L"Portal.MP3", CSoundMgr::CHANNEL_EFFECT);
-							
-							g_eScene = SCENE_FIELD;
-						}
-						else if(2 == dynamic_cast<CPortal*>(*src_begin)->GetWhereTogo())
-						{
-							CSceneMgr::GetInstance()->SetScene(SCENE_STAGE1);
-							CSoundMgr::GetInstance()->StopSoundAll();
-							CSoundMgr::GetInstance()->PlayBGM(L"BGM_Stage1.mp3");
-							CSoundMgr::GetInstance()->PlaySound(L"Portal.MP3", CSoundMgr::CHANNEL_EFFECT);
-							
-							g_eScene = SCENE_STAGE1;
-						}
-						g_bIsSceneChange = true;
-						dynamic_cast<CPlayer*>(*dst_begin)->SetReadyToPortal(false);
-						return;
-					}
 					break;
 
 					///////////////////////////////////////////////// 몬스터 - 지형 /////////////////////////////////////////////////

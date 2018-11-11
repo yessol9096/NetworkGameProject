@@ -3,7 +3,6 @@
 class CObj;
 class CMonster;
 class CInven;
-class CPortal;
 class CCommuication;
 class CFloorBox;
 
@@ -55,14 +54,6 @@ public:
 		pObj->Initialize();
 		return pObj;
 	}
-	static CObj* CreatePortal(float fX, float fY, int iWhereTogo)
-	{
-		CObj* pObj = new T;
-		pObj->Initialize();
-		pObj->SetPos(fX, fY);
-		(dynamic_cast<CPortal*>(pObj))->SetWhereTogo(iWhereTogo);
-		return pObj;
-	}
 	static CObj* CreateFloorBox(float fX, float fY, float cx, float cy, FLOORBOX_ID eID)
 	{
 		CObj* pObj = new T;
@@ -79,7 +70,6 @@ public:
 		pObj->Initialize();
 		pObj->SetPos(fX, fY);
 		(dynamic_cast<CCommuication*>(pObj))->SetRenderNumber(iRenderNumber);
-		(dynamic_cast<CCommuication*>(pObj))->SetIsSucessed(bIsQuestSucessed);
 		return pObj;
 	}
 	static CObj* CreateInventory(
@@ -87,7 +77,7 @@ public:
 	{
 		CObj* pObj = new T;
 		pObj->Initialize();
-		if(pPlayer != nullptr)
+		if (pPlayer != nullptr)
 			(dynamic_cast<CInven*>(pObj))->SetPlayer(pPlayer);
 		return pObj;
 	}
@@ -121,5 +111,4 @@ public:
 // 		pObj->Initialize();
 // 		pObj->SetAtt(iAtt);
 // 	}
-
 };

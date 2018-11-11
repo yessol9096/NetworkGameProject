@@ -43,7 +43,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	m_MapBit.insert(make_pair(
 		L"Captin_ROPE", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Captin_ROPE.bmp")));
 
-
 	m_MapBit.insert(make_pair(
 		L"Font", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/Font.bmp")));
 // 	m_MapBit.insert(make_pair(
@@ -57,10 +56,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 // 	m_MapBit.insert(make_pair(
 // 		L"gold3", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/gold3.bmp")));
 
-
-
-	m_MapBit.insert(make_pair(
-		L"Portal", (new CMyBmp)->LoadBmp(L"../Image/Object/Portal/Portal.bmp")));
 	m_MapBit.insert(make_pair(
 		L"Mouse", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Mouse.bmp")));
 	m_MapBit.insert(make_pair(
@@ -91,7 +86,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	m_MapBit.insert(make_pair(
 		L"DragonEffect", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Skill/Dragon/DragonEffect.bmp")));
 
-
 	// 퀘스트마크
 	m_MapBit.insert(make_pair(
 		L"QuestMark", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/QuestMark.bmp")));
@@ -101,7 +95,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	// 이펙트
 	m_MapBit.insert(make_pair(
 		L"LevelUp", (new CMyBmp)->LoadBmp(L"../Image/Object/Effect/LevelUp.bmp")));
-
 
 	// UI
 	m_MapBit.insert(make_pair(
@@ -122,8 +115,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 		L"HPPortion_Info", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/HPPortion_Info.bmp")));
 	m_MapBit.insert(make_pair(
 		L"MPPortion_Info", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/MPPortion_Info.bmp")));
-
-
 
 	// 아이템
 	m_MapBit.insert(make_pair(
@@ -166,6 +157,10 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	case SCENE_FIELD:
 		m_MapBit.insert(make_pair
 			(L"BackGround", (new CMyBmp)->LoadBmp(L"../Image/Map/Field.bmp")));
+		m_MapBit.insert(make_pair
+		(L"Communication_Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Communication/Communication_Leaf.bmp")));
+		m_MapBit.insert(make_pair
+		(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
 		break;
 	case SCENE_STAGE1:
 		m_MapBit.insert(make_pair
@@ -178,15 +173,8 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 			(L"CoupleMush_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_LEFT.bmp")));
 		m_MapBit.insert(make_pair
 			(L"CoupleMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_RIGHT.bmp")));
-
-		m_MapBit.insert(make_pair
-			(L"Communication_Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Communication/Communication_Leaf.bmp")));
-		m_MapBit.insert(make_pair
-			(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
 		break;
-
 	}
-
 }
 
 void CBitmapMgr::Release()

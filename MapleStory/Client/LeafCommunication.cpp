@@ -12,11 +12,10 @@ CLeafCommunication::~CLeafCommunication(void)
 void CLeafCommunication::Initialize(void)
 {
 	m_tInfo.size.cx = 517.f;
-	m_tInfo.size.cy = 189.f;	
+	m_tInfo.size.cy = 187.f;	
 
 	// 버튼 렉트
 	m_bIsNextButtonActivated = false;
-
 
 	// 이미지
 	m_dwFrameOldTime = GetTickCount();
@@ -28,7 +27,7 @@ void CLeafCommunication::Initialize(void)
 	m_iRenderNumberOld = m_iRenderNumber - 1;
 
 	m_tFrame.iFrameStart = 0;
-	m_tFrame.iFrameEnd = 4;
+	m_tFrame.iFrameEnd = 3;
 	m_tFrame.iScene = 0;
 	m_tFrame.dwFrameSpd = 250;
 
@@ -38,9 +37,7 @@ void CLeafCommunication::Initialize(void)
 	SetNextButtonRect();
 
 	m_tInfo.pt.x -= g_fScrollX;
-	m_tInfo.pt.y -= g_fScrollY;
-
-	
+	m_tInfo.pt.y -= g_fScrollY;	
 
 	UpdateRect();
 
@@ -49,22 +46,11 @@ void CLeafCommunication::Initialize(void)
 
 int CLeafCommunication::Update(void)
 {
-// 	float fX = m_tInfo.pt.x - g_fScrollX;
-// 	float fY = m_tInfo.pt.y - g_fScrollY;
-// 
-// 	m_tInfo.pt.x = fX;
-// 	m_tInfo.pt.y = fY;
-	if(m_bIsDead)
+	if (m_bIsDead)
 		return 1;
 
 	FrameMove();
 	CObj::UpdateRect();
-
-	// 퀘스트 완료 유무에 따른 렌더 넘버 구분
-	if(m_bIsSucessed)
-	{
-		m_iRenderNumber = 3;
-	}
 
 	// 마우스가 들어오는지
 	POINT pt;
@@ -75,53 +61,32 @@ int CLeafCommunication::Update(void)
 	pt2.x = static_cast<LONG>(pt.x - g_fScrollX);
 	pt2.y = static_cast<LONG>(pt.y - g_fScrollY);
 
-
 	// **0718
-	if(PtInRect(&m_tNextButton, pt) && m_bIsNextButtonActivated == false )
+	if (PtInRect(&m_tNextButton, pt) && m_bIsNextButtonActivated == false)
 	{
-		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_LBUTTON) 
+		if (CKeyMgr::GetInstance()->OnceKeyDown(VK_LBUTTON)
 			&& m_bIsNextButtonActivated == false)
 		{
-			if(!m_bIsSucessed)
-			{
-				if(m_iRenderNumber >= 2)
-				{
-					m_iRenderNumber = -1;
-				}
-				else
-					m_iRenderNumber++;
-				m_iRenderNumberOld = m_iRenderNumber - 1;		
-			}
-			if(m_bIsSucessed)
-			{
-				if(m_iRenderNumber != 3)
-					m_iRenderNumber = 3;
-				else if(m_iRenderNumber == 3)
-				{
-										m_iRenderNumber = -1;
-				}
-			}
+			if (m_iRenderNumber >= 2)
+				m_iRenderNumber = -1;
+			else
+				m_iRenderNumber++;
+			m_iRenderNumberOld = m_iRenderNumber - 1;
 			m_bIsNextButtonActivated = true;
 		}
-		
-		if(!CKeyMgr::GetInstance()->OnceKeyDown(VK_LBUTTON)
-			&& m_bIsNextButtonActivated == true)
-		{
-			m_bIsNextButtonActivated = false;
-		}
-	}
 
+		if (!CKeyMgr::GetInstance()->OnceKeyDown(VK_LBUTTON)
+			&& m_bIsNextButtonActivated == true)
+			m_bIsNextButtonActivated = false;
+	}
 
 	return 0;
 }
 
 void CLeafCommunication::Render(HDC hDc)
 {
-
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
 	if(NULL == pBit)  return;
-
 
 	// 퀘스트창 스크롤 왜 먹여;;
 	TransparentBlt(hDc,
@@ -171,5 +136,4 @@ void CLeafCommunication::FrameMove()
 		m_bIsDead = 1;
 		break;
 	}
-
 }
