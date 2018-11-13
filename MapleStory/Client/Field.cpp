@@ -70,6 +70,12 @@ int CField::Update()
 	CObjMgr::GetInstance()->UpdateObj();
 	//CTileMgr::GetInstance()->Update();
 
+	// 예솔이 위해서 ^^ . 나중에 지울것..
+	if (KEYMGR->OnceKeyUp(VK_F1)) {
+		CSceneMgr::GetInstance()->SetScene(SCENE_STAGE1);
+		g_eScene = SCENE_STAGE1;
+		g_bIsSceneChange = true;
+	}
 	return 0;
 }
 

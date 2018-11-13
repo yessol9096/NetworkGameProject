@@ -107,6 +107,9 @@ void CObjMgr::ReleaseAll()
 {
 	for(int i = 0 ; i < OBJ_END; ++i)
 	{
+		if  (i == OBJ_PLAYER || i == OBJ_HPBAR ) 
+			continue;
+
 
 		for_each(m_ObjList[i].begin(), m_ObjList[i].end(), SafeDelete<CObj*>);
 		m_ObjList[i].clear();
