@@ -141,6 +141,7 @@ int CStage1::Update()
 	CObjMgr::GetInstance()->UpdateObj();
 	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 
+	// 몬스터 좌표 서버로 보내기 
 	for (int i = 0; i < OBJ_END; ++i)
 	{
 		OBJITER iter_begin = MonsterList.begin();

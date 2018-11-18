@@ -50,6 +50,7 @@ typedef struct MonsterInfo {
 	MYSIZE		size;
 	int			hp;
 	int			money;
+	int		    dir;
 }MONSTERINFO;
 
 typedef struct InitialInfo {

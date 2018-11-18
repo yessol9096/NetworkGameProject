@@ -190,3 +190,149 @@ void MakeMonster()
 {
 
 }
+
+
+//void GreenMushRoom_MoveInPattern(MonsterInfo m)
+//{
+//	m_dwCreateCurTime = GetTickCount();
+//
+//	if (DIR_LEFT == m.dir)
+//	{
+//		switch (m_eCurState)
+//		{
+//		case MONSTER_WALK:
+//		{
+//			m.pt.x -= m_fSpeed;
+//
+//			if (m.pt.x < 465.f)
+//				m.dir = DIR_RIGHT;
+//		}
+//		break;
+//		case MONSTER_STAND:
+//			break;
+//		}
+//
+//	}
+//	else
+//	{
+//		switch (m_eCurState)
+//		{
+//		case MONSTER_WALK:
+//		{
+//			m.pt.x += m_fSpeed;
+//			if (m.pt.x > 1390.f)
+//				m.dir = DIR_LEFT;
+//		}
+//		break;
+//		case MONSTER_STAND:
+//			break;
+//		}
+//
+//	}
+//
+//	switch (m_iPattern)
+//	{
+//	case 1:
+//	{
+//		if (MONSTER_DAMAGED == m_eCurState)
+//		{
+//			if (m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
+//			{
+//				m_eCurState = MONSTER_WALK;
+//				m_dwDamageOldTime = m_dwDamageCurTime;
+//			}
+//			return;
+//		}
+//
+//		if (MONSTER_DEAD == m_eCurState)
+//		{
+//			return;
+//		}
+//
+//		else
+//		{
+//			if (m_dwCreateOldTime + 3000 < m_dwCreateCurTime)
+//			{
+//				m_eCurState = MONSTER_STAND;
+//			}
+//			if (m_dwCreateOldTime + 6000 < m_dwCreateCurTime)
+//			{
+//				m_eCurState = MONSTER_WALK;
+//				m_dwCreateOldTime = m_dwCreateCurTime;
+//				m_bIsFloorBoxColl = false;
+//			}
+//
+//		}
+//
+//	}
+//	break;
+//	case 2:
+//	{
+//		if (MONSTER_DAMAGED == m_eCurState)
+//		{
+//			if (m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
+//			{
+//				m_eCurState = MONSTER_WALK;
+//				m_dwDamageOldTime = m_dwDamageCurTime;
+//			}
+//			return;
+//		}
+//		if (MONSTER_DEAD == m_eCurState)
+//		{
+//			return;
+//		}
+//
+//		else
+//		{
+//			if (m_dwCreateOldTime + 7000 < m_dwCreateCurTime)
+//			{
+//				m_eCurState = MONSTER_STAND;
+//			}
+//			if (m_dwCreateOldTime + 11000 < m_dwCreateCurTime)
+//			{
+//				m_eCurState = MONSTER_WALK;
+//				m_dwCreateOldTime = m_dwCreateCurTime;
+//				m_bIsFloorBoxColl = false;
+//			}
+//
+//		}
+//
+//	}
+//	break;
+//	case 3:
+//	{
+//		if (MONSTER_DAMAGED == m_eCurState)
+//		{
+//			if (m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
+//			{
+//				m_dwDamageOldTime = m_dwDamageCurTime;
+//				m_eCurState = MONSTER_WALK;
+//			}
+//			return;
+//		}
+//		if (MONSTER_DEAD == m_eCurState)
+//		{
+//			return;
+//		}
+//
+//
+//		else
+//		{
+//			if (m_dwCreateOldTime + 10000 < m_dwCreateCurTime)
+//			{
+//				m_eCurState = MONSTER_STAND;
+//			}
+//			if (m_dwCreateOldTime + 15000 < m_dwCreateCurTime)
+//			{
+//				m_eCurState = MONSTER_WALK;
+//				m_dwCreateOldTime = m_dwCreateCurTime;
+//				m_bIsFloorBoxColl = false;
+//			}
+//
+//		}
+//
+//	}
+//	break;
+//	}
+//
+//}

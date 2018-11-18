@@ -11,3 +11,6 @@ void SendPacket();
 void ProcessPacket();
 void WorkerThread();
 void AcceptThread();
+
+// 초록버섯 이동패턴
+void GreenMushRoom_MoveInPattern()
