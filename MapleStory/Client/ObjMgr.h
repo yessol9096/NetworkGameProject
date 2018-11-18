@@ -18,6 +18,10 @@ public:
 public:
 	 CObj* GetTarget( CObj* pObj, OBJECT_TYPE eTargetID);
 
+	 // 몬스터 좌표 얻기 위해서 만든 함수 
+	 OBJLIST GetMonsterOBJList();
+
+
 public:
 	static bool CompareY(CObj* pDest, CObj* pSour);
 

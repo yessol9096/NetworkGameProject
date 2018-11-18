@@ -139,6 +139,18 @@ void CStage1::Initialize()
 int CStage1::Update()
 {
 	CObjMgr::GetInstance()->UpdateObj();
+	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
+
+	for (int i = 0; i < OBJ_END; ++i)
+	{
+		OBJITER iter_begin = MonsterList.begin();
+		OBJITER iter_end = MonsterList.end();
+
+		for (; iter_begin != iter_end; ++iter_begin)
+		{
+			cout << (*iter_begin)->GetInfo().pt.x << endl;
+		}
+	}
 	return 0;
 }
 

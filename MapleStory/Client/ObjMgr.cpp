@@ -141,6 +141,11 @@ void CObjMgr::ReleaseAll()
 	return pTarget;
 }
 
+ OBJLIST CObjMgr::GetMonsterOBJList()
+ {
+	 return m_ObjList[OBJ_MONSTER];
+ }
+
 bool CObjMgr::CompareY(CObj* pDest, CObj* pSour)
 {
 	return pDest->GetInfo().size.cy < pSour->GetInfo().size.cy;
