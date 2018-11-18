@@ -13,6 +13,12 @@
 #include "Shoot.h"
 #include "UI.h"
 
+//¸ó½ºÅÍ Á¤º¸ ¹Þ±â 
+MONSTERINFO *pGreenMushroom_server = new MONSTERINFO;
+MONSTERINFO pGreen;
+bool bMonster_check = false;
+
+
 void CStage1::Initialize()
 {
 	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_STAGE1);
@@ -22,6 +28,8 @@ void CStage1::Initialize()
 	// UI
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CUI>::CreateObj(), OBJ_UI);
+
+	Server_Initialize();	// ¼­¹ö·Î ºÎÅÍ ¸ó½ºÅÍ ÃÊ±â ÁÂÇ¥°ª ¹Þ±â
 
 	// 1-2Ãþ ¹åÁÙ
 	for(int i = 0; i < 8; ++i)
@@ -84,48 +92,46 @@ void CStage1::Initialize()
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CFifthFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 1180.f, 760.f, 20.f, FLOORBOX_WIDTH ), OBJ_FIFTHFLOOR);
 
-
-
 	//// ¸ó½ºÅÍ
 	// ÃÊ·Ï¹ö¼¸  (2Ãþ)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 460.f, DIR_LEFT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_RIGHT, 2), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
+		CAbstractFactory<CGreen>::CreateMonster(pGreen.pt.x, pGreen.pt.y, DIR_LEFT, 1), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+		//CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_RIGHT, 1), OBJ_MONSTER);
+	/*CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.6f, HENESISCY - 460.f, DIR_RIGHT, 3), OBJ_MONSTER);
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_LEFT, 1), OBJ_MONSTER);
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 460.f, DIR_RIGHT, 1), OBJ_MONSTER);
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 460.f, DIR_RIGHT, 3), OBJ_MONSTER);
-	// Ä¿ÇÃ¹ö¼¸  (3Ãþ)
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 700.f, DIR_RIGHT, 2), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 700.f, DIR_RIGHT, 3), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
+		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 460.f, DIR_RIGHT, 3), OBJ_MONSTER);*/
+	//// Ä¿ÇÃ¹ö¼¸  (3Ãþ)
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_RIGHT, 1), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 700.f, DIR_RIGHT, 2), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 700.f, DIR_RIGHT, 3), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
 
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
 
-	// (4Ãþ)
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 2), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.8f, HENESISCY - 935.f, DIR_LEFT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 3), OBJ_MONSTER);
+	//// (4Ãþ)
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 2), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.8f, HENESISCY - 935.f, DIR_LEFT, 1), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 3), OBJ_MONSTER);
 
 	//LoadData();
 }
@@ -156,6 +162,14 @@ void CStage1::Render(HDC hDc)
 void CStage1::Release()
 {
 	CObjMgr::GetInstance()->ReleaseAll();
+}
+
+void CStage1::Server_Initialize()
+{
+	g_retval = recv(g_sock, (char*)pGreenMushroom_server, sizeof(MonsterInfo), 0);
+	pGreen.pt.x = pGreenMushroom_server->pt.x;
+	pGreen.pt.y = pGreenMushroom_server->pt.y;
+	cout << pGreen.pt.x << endl;
 }
 
 void CStage1::UpdateTile()

@@ -10,6 +10,9 @@ using namespace std;
 
 #pragma comment(lib, "Ws2_32.lib")
 
+// monster 정보 보냈나 안보냈나 확인
+bool bCreateMonster_check = false;
+MONSTERINFO *pGreenMushroom_server = new MONSTERINFO;
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
@@ -21,6 +24,29 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	// 클라이언트 정보 얻기
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+	bCreateMonster_check = true;
+
+
+	if (bCreateMonster_check == true)
+	{
+		// 초록버섯 데이터 보내기
+		pGreenMushroom_server->hp = 100;
+		pGreenMushroom_server->key = NULL;
+		pGreenMushroom_server->money = 10;
+		pGreenMushroom_server->pt.x = HENESISCX * 0.5f;
+		pGreenMushroom_server->pt.y = HENESISCY - 460.f;
+		pGreenMushroom_server->size.cx = NULL;
+		pGreenMushroom_server->size.cy = NULL;
+
+		cout << "몬스터 입력정보 전달" << endl;
+		retval = send(client_sock, (char*)pGreenMushroom_server, sizeof(MONSTERINFO), 0);
+		bCreateMonster_check = false;
+
+		if (retval == SOCKET_ERROR) {
+			err_display("send()");
+			return 1;
+		}
+	}
 
 	while (true) {
 		retval = recv(client_sock, buf, BUFSIZE, 0);
@@ -43,7 +69,6 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			break;
 		}
 	}
-
 	// closesocket()
 	closesocket(client_sock);
 	cout << "[클라이언트 종료]" << endl;
@@ -159,4 +184,9 @@ void WorkerThread()
 
 void AcceptThread()
 {
+}
+
+void MakeMonster()
+{
+
 }

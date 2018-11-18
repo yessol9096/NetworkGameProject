@@ -1,5 +1,6 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "Maingame.h"
+
 
 float g_fScrollX = 0.f;
 float g_fScrollY = 0.f;
@@ -8,37 +9,44 @@ SCENE_TYPE g_eScene = SCENE_FIELD;
 PLAYERINFO g_myinfo;
 int g_retval;
 
-// ¼­¹ö¿Í Åë½Å ¼ÒÄÏ
+// ì„œë²„ì™€ í†µì‹  ì†Œì¼“
 SOCKET g_sock;
+
+
 
 void CMaingame::Initialize(void)
 {	
 	m_hDC = GetDC(g_hWnd);
+	//ì½˜ì†”ì°½ ë””ë²„ê¹…ìš©
+	AllocConsole();
 
-	// °ü·Ã ÀÌ¹ÌÁö ·Îµå
+	freopen("CONOUT$", "wt", stdout);
+	//
+	// ê´€ë ¨ ì´ë¯¸ì§€ ë¡œë“œ
 	CBitmapMgr::GetInstance()->GetMapBit().insert(make_pair(
 		L"Back", (new CMyBmp)->LoadBmp(L"../Image/Back.bmp")));
 
 	CBitmapMgr::GetInstance()->GetMapBit().insert(make_pair(
 		L"BackBuffer", (new CMyBmp)->LoadBmp(L"../Image/BackBuffer.bmp")));
 
-	// ¾À ¹Ù²Ù±â (Logo·Î)
+	// ì”¬ ë°”ê¾¸ê¸° (Logoë¡œ)
 	CSceneMgr::GetInstance()->SetScene(SCENE_LOGO);
 
 	CollisionMgr::InitWELLRNG512((unsigned long)time(NULL));
 
 	//-------------------------------------------------------------------------------
-	// ¼­¹ö Ãß°¡.
+	// ì„œë²„ ì¶”ê°€.
 
-	// À©¼ÓÀ» ÃÊ±âÈ­ ÇÑ´Ù.
+	// ìœˆì†ì„ ì´ˆê¸°í™” í•œë‹¤.
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return;
 
-	// ¼ÒÄÏ »ý¼º.
+	// ì†Œì¼“ ìƒì„±.
 	g_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (g_sock == INVALID_SOCKET) // »ý¼º ½ÇÆÐ½Ã
+	if (g_sock == INVALID_SOCKET) // ìƒì„± ì‹¤íŒ¨ì‹œ
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
+
 }
 
 void CMaingame::Update(void)
@@ -49,7 +57,7 @@ void CMaingame::Update(void)
 
 void CMaingame::Render(void)
 {
-	// ´õºí ¹öÆÛ¸µ
+	// ë”ë¸” ë²„í¼ë§
 	HDC hBackBuff = (CBitmapMgr::GetInstance()->GetMapBit()[L"BackBuffer"])->GetMemDC();
 	HDC hMemDC = (CBitmapMgr::GetInstance()->GetMapBit()[L"Back"])->GetMemDC();
 

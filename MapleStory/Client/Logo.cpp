@@ -3,6 +3,7 @@
 #include "Mouse.h"
 #include <comdef.h>
 
+
 CLogo::CLogo(void)
 {
 }
