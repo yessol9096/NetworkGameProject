@@ -13,6 +13,11 @@ using namespace std;
 // monster 정보 보냈나 안보냈나 확인
 bool bCreateMonster_check = false;
 MONSTERINFO *pGreenMushroom_server = new MONSTERINFO;
+
+// 클라이언트
+vector<PLAYERINFO> g_vecplayer;
+bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
+
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
@@ -20,13 +25,16 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 	char buf[BUFSIZE + 1];
+	PLAYERINFO playerinfo; 
+	ZeroMemory(&playerinfo, sizeof(playerinfo));
 
 	// 클라이언트 정보 얻기
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+
+	// -------------------------------------------
+	// 몬스터
 	bCreateMonster_check = true;
-
-
 	if (bCreateMonster_check == true)
 	{
 		// 초록버섯 데이터 보내기
@@ -38,7 +46,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		pGreenMushroom_server->size.cx = NULL;
 		pGreenMushroom_server->size.cy = NULL;
 
-		cout << "몬스터 입력정보 전달" << endl;
+		cout << "몬스터 입력 정보 전달" << endl;
 		retval = send(client_sock, (char*)pGreenMushroom_server, sizeof(MONSTERINFO), 0);
 		bCreateMonster_check = false;
 
@@ -47,8 +55,26 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			return 1;
 		}
 	}
+	// -------------------------------------------
 
 	while (true) {
+		// g_vecplayer 빈 공간 찾아서 id 부여.
+		int id = -1;
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (false == g_arrayconnected[i]) { // 연결 되지 않은 상태일 때, 
+				id = i; // 아이디를 부여한다.
+				break;
+			}
+		}
+
+		if (-1 == id) {	// 유저 2인 제한.
+			cout << "user가 다 찼습니다." << endl;
+			closesocket(client_sock);
+			continue;
+		}
+
+
+		// 클라이언트로부터 초기 설정한 PlayerInfo를 받아온다. 직업 정보 등..
 		retval = recv(client_sock, buf, BUFSIZE, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
@@ -57,15 +83,30 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		else if (retval == 0)
 			break;
 
-		// 받은 데이터 출력
-		buf[retval] = '\0';
-		printf("[TCP/%s:%d] %s\n", inet_ntoa(clientaddr.sin_addr),
-			ntohs(clientaddr.sin_port), buf);
+		// 클라이언트로부터 받은 PlayerInfo 데이터를 playerinfo 변수에 복사. 
+		// buf[retval] = '\0';
+		cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]" << "로부터 데이터 수신" << endl;
+		memcpy(&playerinfo, &buf, sizeof(buf));
+
+		// Player Info에 값 채우기.
+		playerinfo.id = id;
+		playerinfo.connected = true;
+		playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
+		playerinfo.pt.y = 500.f;
+		playerinfo.hp = 30000;
+		playerinfo.size.cx = 100.f;
+		playerinfo.size.cy = 100.f;
+
+		memcpy(&buf, &playerinfo, sizeof(playerinfo));
 
 		// 데이터 보내기
 		retval = send(client_sock, buf, retval, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
+			break;
+		}
+		else {// 데이터 보내는 데 성공했으면
+			g_vecplayer.push_back(playerinfo);// 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
 			break;
 		}
 	}
@@ -84,6 +125,9 @@ DWORD WINAPI CalculateThread()
 
 int main()
 {
+	// 공간 2개 예약.
+	g_vecplayer.reserve(MAX_USER);
+
 	int retval;
 
 	// 윈속 초기화.
