@@ -80,35 +80,39 @@ int CMakingPlayer::Update()
 		break;
 	}
 	
-	// 생성 버튼 - 마우스 충돌 검사.
+	// 캐릭터 생성 버튼 - 마우스 충돌 검사.
 	RECT rcMake{ WINCX - 300, WINCY - 180, WINCX - 200, WINCY - 130 };
 
-	// Debugging
-	Rectangle(m_hDC, rcMake.left, rcMake.top, rcMake.right, rcMake.bottom);
+	// (Debugging)
+	// Rectangle(m_hDC, rcMake.left, rcMake.top, rcMake.right, rcMake.bottom);
 	
 	if (PtInRect(&rcMake, pt2)) {
 		if (KEYMGR->OnceKeyDown(VK_LBUTTON)) {
 
 			// 입력 받은 id를 InitInfo.id에 갱신한다
-			//m_initInfo.id = (char)g_idbuf; // wcstombs()
-			char* pStr; char str;
+			char* pStr; 
 			int strSize = WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, NULL, 0, NULL, NULL);
 			pStr = new char[strSize];
 			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
-			for(int i = 0; i < strSize; ++i)
-				strcpy(&(g_myinfo.id), &(pStr[i]));
-			// InitInfo 구조체를 서버에 send 한다.
-			//int len = sizeof(INITIALINFO);
-			//g_retval = send(g_sock, (char*)&len, sizeof(len), 0);
-			if (0) {
-			//	err_display("send()");
-			}
-			else { // send에 성공하면, 다음 필드로 넘어간다.
-				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-				CSoundMgr::GetInstance()->StopSoundAll();
-				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
-				// g_myinfo에 현재까지 설정된 정보를 넣어준다.
+			memcpy(&(g_myinfo.nickname), (pStr), strSize);
+
+			// PlayerInfo 구조체를 서버에 send 한다.
+			while (true) {
+				g_retval = send(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
+
+				if (g_retval == SOCKET_ERROR) {
+					MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
+				}
+
+				else
+				{ // send에 성공하면, 다음 필드로 넘어간다.
+					CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+					CSoundMgr::GetInstance()->StopSoundAll();
+					CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+					CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+					// g_myinfo에 현재까지 설정된 정보를 넣어준다.
+					break;
+				}
 			}
 		}
 	}
