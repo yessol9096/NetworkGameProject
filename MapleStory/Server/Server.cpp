@@ -43,8 +43,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		pGreenMushroom_server->money = 10;
 		pGreenMushroom_server->pt.x = HENESISCX * 0.5f;
 		pGreenMushroom_server->pt.y = HENESISCY - 460.f;
-		pGreenMushroom_server->size.cx = NULL;
-		pGreenMushroom_server->size.cy = NULL;
+
 
 		cout << "몬스터 입력 정보 전달" << endl;
 		retval = send(client_sock, (char*)pGreenMushroom_server, sizeof(MONSTERINFO), 0);

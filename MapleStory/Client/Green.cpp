@@ -102,11 +102,11 @@ int CGreen::Update( void )
 	
 
 	// 패턴에 따른 움직임
-	MoveInPattern();
+	//MoveInPattern();
 	//KnockBack();
 	UpdateCollRect();
 	//LineCollision();
-	FrameMove();
+	//FrameMove();
 
 	if(m_tState.iHp <= 0)
 	{

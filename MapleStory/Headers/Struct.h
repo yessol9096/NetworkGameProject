@@ -49,7 +49,6 @@ typedef struct PlayerInfo {
 typedef struct MonsterInfo {
 	int			key;
 	MYPOINT		pt;
-	MYSIZE		size;
 	int			hp;
 	int			money;
 	int		    dir;
