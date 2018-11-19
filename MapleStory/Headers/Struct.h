@@ -32,7 +32,8 @@ typedef struct Info {
 }INFO;
 
 typedef struct PlayerInfo {
-	char			id;
+	short		id;
+	char			nickname[512];
 	int			key;
 	bool			ready;
 	MYPOINT pt;
@@ -42,6 +43,7 @@ typedef struct PlayerInfo {
 	int			money;
 	FRAME		frame;
 	float			attackAccValue;
+	bool			connected; // 1119 Ãß°¡
 }PLAYERINFO;
 
 typedef struct MonsterInfo {
