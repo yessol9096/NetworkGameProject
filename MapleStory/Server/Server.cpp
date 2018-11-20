@@ -21,7 +21,7 @@ bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
-	int retval;
+	int retval{ 0 };
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 	char buf[BUFSIZE + 1];
@@ -47,7 +47,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		pGreenMushroom_server->size.cy = NULL;
 
 		cout << "몬스터 입력 정보 전달" << endl;
-		retval = send(client_sock, (char*)pGreenMushroom_server, sizeof(MONSTERINFO), 0);
+		// retval = send(client_sock, (char*)pGreenMushroom_server, sizeof(MONSTERINFO), 0);
 		bCreateMonster_check = false;
 
 		if (retval == SOCKET_ERROR) {
@@ -55,8 +55,11 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			return 1;
 		}
 	}
-	// -------------------------------------------
 
+	// -------------------------------------------
+	// 플레이어가 accept 해 올 때 처리하는 while 문.
+	/// 1. id 부여
+	/// 2. 클라이언트가 send 해온 PlayerInfo 정보를 recv하고, g_vecplayer에 갱신
 	while (true) {
 		// g_vecplayer 빈 공간 찾아서 id 부여.
 		int id = -1;
@@ -110,6 +113,12 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			break;
 		}
 	}
+
+	// -------------------------------------------
+	while (true) {
+
+	}
+	
 	// closesocket()
 	closesocket(client_sock);
 	cout << "[클라이언트 종료]" << endl;
