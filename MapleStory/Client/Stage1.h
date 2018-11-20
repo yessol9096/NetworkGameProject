@@ -13,7 +13,7 @@ public:
 	virtual int Update();
 	virtual void Render(HDC hDc);
 	virtual void Release();
-	virtual void Server_Initialize();
+	virtual void RecvMonsterInitalInfo();
 
 private:
 	void UpdateTile();

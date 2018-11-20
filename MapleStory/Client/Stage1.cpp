@@ -29,7 +29,7 @@ void CStage1::Initialize()
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CUI>::CreateObj(), OBJ_UI);
 
-	Server_Initialize();	// 서버로 부터 몬스터 초기 좌표값 받기
+	RecvMonsterInitalInfo();	// 서버로 부터 몬스터 초기 좌표값 받기
 
 	// 1-2층 밧줄
 	for(int i = 0; i < 8; ++i)
@@ -177,7 +177,7 @@ void CStage1::Release()
 	CObjMgr::GetInstance()->ReleaseAll();
 }
 
-void CStage1::Server_Initialize()
+void CStage1::RecvMonsterInitalInfo()
 {
 	g_retval = recv(g_sock, (char*)pGreenMushroom_server, sizeof(MonsterInfo), 0);
 	pGreen.pt.x = pGreenMushroom_server->pt.x;
