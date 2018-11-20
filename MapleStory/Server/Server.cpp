@@ -87,8 +87,16 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 		// 클라이언트로부터 받은 PlayerInfo 데이터를 playerinfo 변수에 복사. 
 		// buf[retval] = '\0';
-		cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]" << "로부터 데이터 수신" << endl;
+		cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]";
 		memcpy(&playerinfo, &buf, sizeof(buf));
+
+		// (debugging)
+		{
+			if (playerinfo.job == JOB_CAPTIN)
+				cout << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 캡틴 / 정보 수신" << endl;
+			else
+				cout << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 스트라이커 / 정보 수신" << endl;
+		}
 
 		// Player Info에 값 채우기.
 		playerinfo.id = id;
@@ -100,6 +108,8 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		playerinfo.size.cy = 100.f;
 
 		memcpy(&buf, &playerinfo, sizeof(playerinfo));
+
+
 
 		// 데이터 보내기
 		retval = send(client_sock, buf, retval, 0);
@@ -115,7 +125,6 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 	// -------------------------------------------
 	while (true) {
-
 	}
 	
 	// closesocket()
