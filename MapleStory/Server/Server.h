@@ -12,5 +12,7 @@ void ProcessPacket();
 void WorkerThread();
 void AcceptThread();
 
+int recvn(SOCKET, char *, int, int);
+
 // 초록버섯 이동패턴
 // void GreenMushRoom_MoveInPattern();
