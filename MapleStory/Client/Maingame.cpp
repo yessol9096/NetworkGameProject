@@ -11,7 +11,8 @@ int g_retval;
 
 // 서버와 통신 소켓
 SOCKET g_sock;
-
+// 플레이어들의 정보를 담는 벡터.
+vector<PLAYERINFO> g_vecplayer;
 
 
 void CMaingame::Initialize(void)
