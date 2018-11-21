@@ -25,7 +25,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 	char buf[BUFSIZE + 1];
-	PLAYERINFO playerinfo; 
+	PLAYERINFO playerinfo;
 	ZeroMemory(&playerinfo, sizeof(playerinfo));
 
 	// 클라이언트 정보 얻기
@@ -60,6 +60,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	/// 1. id 부여
 	/// 2. 클라이언트가 send 해온 PlayerInfo 정보를 recv하고, g_vecplayer에 갱신
 	while (true) {
+
 		// g_vecplayer 빈 공간 찾아서 id 부여.
 		int id = -1;
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -69,14 +70,14 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			}
 		}
 
-		if (-1 == id) {	// 유저 2인 제한.
+		// 유저 2인 제한.
+		if (-1 == id) {
 			cout << "user가 다 찼습니다." << endl;
 			closesocket(client_sock);
 			continue;
 		}
 
-
-		// 클라이언트로부터 초기 설정한 PlayerInfo를 받아온다. 직업 정보 등..
+		// 클라이언트로부터 초기 설정한 PlayerInfo를 recv 한다. 직업 정보 등..
 		retval = recv(client_sock, buf, BUFSIZE, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
@@ -107,24 +108,39 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		playerinfo.size.cx = 100.f;
 		playerinfo.size.cy = 100.f;
 
-		memcpy(&buf, &playerinfo, sizeof(playerinfo));
+		while (true) {
 
-
-
-		// 데이터 보내기
-		retval = send(client_sock, buf, retval, 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("send()");
-			break;
 		}
-		else {// 데이터 보내는 데 성공했으면
-			g_vecplayer.push_back(playerinfo);// 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
-			break;
-		}
+		// 여기부터!!
+
+		//// buf에 다시 player info를 copy 할 필요가 있나..?
+		//memcpy(&buf, &playerinfo, sizeof(playerinfo));
+
+		//// 데이터 보내기
+		//retval = send(client_sock, buf, BUFSIZE, 0);
+		//if (retval == SOCKET_ERROR) {
+		//	err_display("send()");
+		//	break;
+		//}
+		//else {// 데이터 보내는 데 성공했으면
+		//	g_vecplayer.push_back(playerinfo);// 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
+		//	break;
+		//}
 	}
 
 	// -------------------------------------------
+	// 접속한 클라이언트에게, 다른 플레이어의 위치를 동기화한다.
+	ZeroMemory(buf, sizeof(buf)); // 버퍼 재사용.
+	memcpy(buf, &g_vecplayer, sizeof(g_vecplayer)); // 벡터 자체를 보내는건?
+
 	while (true) {
+		if (g_vecplayer.size() <= 1) // 기존 플레이어가 없을 때
+			break;
+		else {
+			// 고정 길이 데이터.
+			int buflength = sizeof(g_vecplayer);
+			send(client_sock, (char*)buflength, sizeof(int), 0);	// 고정 길이를 보낸다.
+		}
 	}
 	
 	// closesocket()
