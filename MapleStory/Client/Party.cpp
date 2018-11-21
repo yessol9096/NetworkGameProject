@@ -72,23 +72,13 @@ void CParty::Render(HDC hDc)
 			RGB(0, 255, 0));
 
 		// 파티원 출력
-		// id
-		TextOut(hDc, 540, 128, L"Hye", 3);
-		TextOut(hDc, 540, 145, L"Ryeong", 6);
-		// 직업
-		TextOut(hDc, 640, 128, L"Striker", 7);
-		TextOut(hDc, 640, 145, L"Captain", 7);
-		// 상태
-		TextOut(hDc, 715, 128, L"O", 1);
-		TextOut(hDc, 715, 145, L"X", 1);
-
 		for (int i = 0; g_vecplayer.size(); ++i)
 		{
 			int y = 0;
 			if (i == 0)	y = 128;
 			else		y = 145;
 
-			// id
+			// name
 			wchar_t name[512];
 			mbstowcs(name, g_vecplayer[i].nickname, strlen(g_vecplayer[i].nickname) + 1);
 			TextOut(hDc, 540, y, name, strlen(g_vecplayer[i].nickname));

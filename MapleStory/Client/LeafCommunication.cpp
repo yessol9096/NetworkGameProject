@@ -24,7 +24,6 @@ void CLeafCommunication::Initialize(void)
 	m_pImgName = L"Communication_Leaf";
 
 	m_iRenderNumber= 0;
-	m_iRenderNumberOld = m_iRenderNumber - 1;
 
 	m_tFrame.iFrameStart = 0;
 	m_tFrame.iFrameEnd = 3;
@@ -61,17 +60,20 @@ int CLeafCommunication::Update(void)
 	pt2.x = static_cast<LONG>(pt.x - g_fScrollX);
 	pt2.y = static_cast<LONG>(pt.y - g_fScrollY);
 
-	// **0718
 	if (PtInRect(&m_tNextButton, pt) && m_bIsNextButtonActivated == false)
 	{
 		if (CKeyMgr::GetInstance()->OnceKeyDown(VK_LBUTTON)
 			&& m_bIsNextButtonActivated == false)
 		{
 			if (m_iRenderNumber >= 2)
+			{
 				m_iRenderNumber = -1;
+
+				// 파티 대기 상태로 바꾸기
+				g_myinfo.ready = true;
+			}
 			else
 				m_iRenderNumber++;
-			m_iRenderNumberOld = m_iRenderNumber - 1;
 			m_bIsNextButtonActivated = true;
 		}
 
@@ -88,10 +90,9 @@ void CLeafCommunication::Render(HDC hDc)
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
 	if(NULL == pBit)  return;
 
-	// 퀘스트창 스크롤 왜 먹여;;
 	TransparentBlt(hDc,
-		static_cast<int>(m_tRect.left /*+ g_fScrollX*/),
-		static_cast<int>(m_tRect.top /*+ g_fScrollY*/), 
+		static_cast<int>(m_tRect.left),
+		static_cast<int>(m_tRect.top), 
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
@@ -100,8 +101,6 @@ void CLeafCommunication::Render(HDC hDc)
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		RGB(255, 0, 255));
-
-	//Rectangle(hDc,m_tNextButton.left, m_tNextButton.top, m_tNextButton.right, m_tNextButton.bottom);
 }
 
 void CLeafCommunication::Release(void)
@@ -124,10 +123,6 @@ void CLeafCommunication::FrameMove()
 	case 2:
 		m_tFrame.iFrameStart = 2;
 		m_tFrame.iFrameEnd = 2;
-		break;
-	case 3:
-		m_tFrame.iFrameStart = 3;
-		m_tFrame.iFrameEnd = 3;
 		break;
 	case -1:
 		m_bIsDead = 1;
