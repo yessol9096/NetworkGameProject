@@ -15,9 +15,9 @@ SOCKET g_sock;
 vector<PLAYERINFO> g_vecplayer;
 
 //몬스터 정보 받기 
-vector<MONSTERINFO> g_vecgreen;
+vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
 bool bMonster_check = false;
-MONSTERINFO monsterinfo;
+MONSTERINFO monsterinfo{};
 
 //데이터타입 구분하기
 int datatype;
@@ -55,8 +55,6 @@ void CMaingame::Initialize(void)
 	if (g_sock == INVALID_SOCKET) // 생성 실패시
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
 
-	g_vecgreen.reserve(MAX_GREEN);
-
 }
 
 void CMaingame::Update(void)
@@ -74,8 +72,9 @@ void CMaingame::Update(void)
 			break;
 		case OBJ_GRRENMUSH:
 			g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-			g_vecgreen.push_back(monsterinfo);
-			cout << g_vecgreen[0].pt.x << endl;
+			if(g_vecgreen[monsterinfo.id].key == NULL)
+				g_vecgreen[monsterinfo.id] = monsterinfo;
+			//cout << g_vecgreen[5].pt.x << endl;
 			break;
 		}
 	}

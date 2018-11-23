@@ -90,18 +90,11 @@ void CStage1::Initialize()
 
 	//// 몬스터
 	// 초록버섯  (2층)
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[0].pt.x, g_vecgreen[0].pt.y, g_vecgreen[0].dir, g_vecgreen[0].pattern), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-		//CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	/*CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.6f, HENESISCY - 460.f, DIR_RIGHT, 3), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_LEFT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 460.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 460.f, DIR_RIGHT, 3), OBJ_MONSTER);*/
+	for (int i = 0; i < MAX_GREEN; ++i)
+	{
+		CObjMgr::GetInstance()->AddObject(
+			CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[i].pt.x, g_vecgreen[i].pt.y, g_vecgreen[i].dir, g_vecgreen[i].pattern), OBJ_MONSTER);
+	}
 	//// 커플버섯  (3층)
 	//CObjMgr::GetInstance()->AddObject(
 	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_RIGHT, 1), OBJ_MONSTER);
@@ -135,19 +128,19 @@ void CStage1::Initialize()
 int CStage1::Update()
 {
 	CObjMgr::GetInstance()->UpdateObj();
-	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
+	//OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 
-	// 몬스터 좌표 서버로 보내기 
-	for (int i = 0; i < OBJ_END; ++i)
-	{
-		OBJITER iter_begin = MonsterList.begin();
-		OBJITER iter_end = MonsterList.end();
+	//// 몬스터 좌표 서버로 보내기 
+	//for (int i = 0; i < OBJ_END; ++i)
+	//{
+	//	OBJITER iter_begin = MonsterList.begin();
+	//	OBJITER iter_end = MonsterList.end();
 
-		for (; iter_begin != iter_end; ++iter_begin)
-		{
-			cout << (*iter_begin)->GetInfo().pt.x << endl;
-		}
-	}
+	//	for (; iter_begin != iter_end; ++iter_begin)
+	//	{
+	//		cout << (*iter_begin)->GetInfo().pt.x << endl;
+	//	}
+	//}
 	return 0;
 }
 

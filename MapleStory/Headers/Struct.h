@@ -47,6 +47,7 @@ typedef struct PlayerInfo {
 }PLAYERINFO;
 
 typedef struct MonsterInfo {
+	int			id; //vector index °ª
 	int			key;
 	MYPOINT		pt;
 	int			hp;

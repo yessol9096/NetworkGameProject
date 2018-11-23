@@ -13,11 +13,14 @@ using namespace std;
 // monster 정보 보냈나 안보냈나 확인
 bool bCreateMonster_check = false;
 vector<MONSTERINFO> g_vecgreen;
+int greenposX[] = { HENESISCX * 0.5f, HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
+int greenposY = HENESISCY - 460.f;
+OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
+int greenPtr[] = {1,1,3,1,1,3};
 
 // 클라이언트
 vector<PLAYERINFO> g_vecplayer;
 bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
-
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
@@ -39,27 +42,31 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	bCreateMonster_check = true;
 	if (bCreateMonster_check == true)
 	{
-		// 초록버섯 데이터 보내기
-		monsterinfo.hp = 100;
-		monsterinfo.key = OBJ_GRRENMUSH;
-		monsterinfo.money = 10;
-		monsterinfo.pt.x = HENESISCX * 0.5f;
-		monsterinfo.pt.y = HENESISCY - 460.f;
-		monsterinfo.dir = DIR_LEFT;
-		monsterinfo.pattern = 1;
+		// 초록버섯 데이터 정의
+		for (int i = 0; i < MAX_GREEN - 1; ++i)
+		{
+			monsterinfo.id = i;
+			monsterinfo.hp = 100;
+			monsterinfo.key = OBJ_GRRENMUSH;
+			monsterinfo.money = 10;
+			monsterinfo.pt.x = greenposX[i];
+			monsterinfo.pt.y = greenposY;
+			monsterinfo.dir = greenDir[i];
+			monsterinfo.pattern = greenPtr[i];
 
-		g_vecgreen.push_back(monsterinfo);
-		datatype = OBJ_GRRENMUSH;
-		cout << "몬스터 입력 정보 전달" << endl;
+			g_vecgreen.push_back(monsterinfo);
+			datatype = OBJ_GRRENMUSH;
+			cout << "몬스터 입력 정보 전달" << endl;
 
-		retval = send(client_sock, (char*)&datatype, sizeof(int), 0);
-		retval = send(client_sock, (char*)&monsterinfo,sizeof(monsterinfo), 0);
-		bCreateMonster_check = false;
+			retval = send(client_sock, (char*)&datatype, sizeof(int), 0);
+			retval = send(client_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
 
-		if (retval == SOCKET_ERROR) {
-			err_display("send()");
-			return 1;
+			if (retval == SOCKET_ERROR) {
+				err_display("send()");
+				return 1;
+			}
 		}
+		bCreateMonster_check = false;
 	}
 
 	// -------------------------------------------
