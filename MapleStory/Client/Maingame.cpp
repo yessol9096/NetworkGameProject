@@ -17,6 +17,7 @@ vector<PLAYERINFO> g_vecplayer;
 //몬스터 정보 받기 
 vector<MONSTERINFO> g_vecgreen;
 bool bMonster_check = false;
+MONSTERINFO monsterinfo;
 
 //데이터타입 구분하기
 int datatype;
@@ -66,12 +67,14 @@ void CMaingame::Update(void)
 	if (g_retval != SOCKET_ERROR)
 	{
 		g_retval = recv(g_sock, (char*)&datatype, sizeof(int), 0);
+		//cout << datatype << endl;
 		switch (datatype)
 		{
 		case OBJ_PLAYER:
 			break;
 		case OBJ_GRRENMUSH:
-			g_retval = recv(g_sock, (char*)&g_vecgreen, sizeof(g_vecgreen), 0);
+			g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+			g_vecgreen.push_back(monsterinfo);
 			cout << g_vecgreen[0].pt.x << endl;
 			break;
 		}

@@ -25,6 +25,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 	char buf[BUFSIZE + 1];
+	int datatype;
 	PLAYERINFO playerinfo;
 	MONSTERINFO monsterinfo;
 	ZeroMemory(&playerinfo, sizeof(playerinfo));
@@ -44,12 +45,15 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		monsterinfo.money = 10;
 		monsterinfo.pt.x = HENESISCX * 0.5f;
 		monsterinfo.pt.y = HENESISCY - 460.f;
+		monsterinfo.dir = DIR_LEFT;
+		monsterinfo.pattern = 1;
 
 		g_vecgreen.push_back(monsterinfo);
-
+		datatype = OBJ_GRRENMUSH;
 		cout << "몬스터 입력 정보 전달" << endl;
-		retval = send(client_sock, (char*)g_vecgreen[0].key, sizeof(int), 0);
-		retval = send(client_sock, (char*)&g_vecgreen , sizeof(g_vecgreen), 0);
+
+		retval = send(client_sock, (char*)&datatype, sizeof(int), 0);
+		retval = send(client_sock, (char*)&monsterinfo,sizeof(monsterinfo), 0);
 		bCreateMonster_check = false;
 
 		if (retval == SOCKET_ERROR) {

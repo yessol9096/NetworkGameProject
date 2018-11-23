@@ -25,7 +25,7 @@ void CStage1::Initialize()
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CUI>::CreateObj(), OBJ_UI);
 
-	RecvMonsterInitalInfo();	// 서버로 부터 몬스터 초기 좌표값 받기
+	//RecvMonsterInitalInfo();	// 서버로 부터 몬스터 초기 좌표값 받기
 
 	// 1-2층 밧줄
 	for(int i = 0; i < 8; ++i)
@@ -90,8 +90,8 @@ void CStage1::Initialize()
 
 	//// 몬스터
 	// 초록버섯  (2층)
-	//CObjMgr::GetInstance()->AddObject(
-		//CAbstractFactory<CGreen>::CreateMonster(pGreen.pt.x, pGreen.pt.y, DIR_LEFT, 1), OBJ_MONSTER);
+	CObjMgr::GetInstance()->AddObject(
+		CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[0].pt.x, g_vecgreen[0].pt.y, g_vecgreen[0].dir, g_vecgreen[0].pattern), OBJ_MONSTER);
 	//CObjMgr::GetInstance()->AddObject(
 		//CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_RIGHT, 1), OBJ_MONSTER);
 	/*CObjMgr::GetInstance()->AddObject(

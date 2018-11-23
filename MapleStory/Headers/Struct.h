@@ -51,7 +51,8 @@ typedef struct MonsterInfo {
 	MYPOINT		pt;
 	int			hp;
 	int			money;
-	int		    dir;
+	OBJECT_DIR  dir;
+	int			pattern;
 }MONSTERINFO;
 
 typedef struct InitialInfo {
