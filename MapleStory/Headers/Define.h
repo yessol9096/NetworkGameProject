@@ -4,7 +4,8 @@
 // 프로토콜 정의.
 #define SERVERPORT 9000
 #define BUFSIZE			1024
-#define MAX_USER		2
+#define MAX_USER		1
+#define MAX_GREEN		2
 
 // --------------------------------------------------------------------------
 // 클라이언트 컨텐츠 적인 변수들.

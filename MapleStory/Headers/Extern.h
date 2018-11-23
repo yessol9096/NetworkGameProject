@@ -26,3 +26,4 @@ extern PLAYERINFO g_myinfo;
 extern vector<PLAYERINFO> g_vecplayer;
 
 // monster 생성 단계 설정
+extern vector<MONSTERINFO> g_vecgreen;

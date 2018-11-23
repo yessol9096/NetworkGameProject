@@ -96,11 +96,11 @@ int CMakingPlayer::Update()
 			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
 			memcpy(&(g_myinfo.nickname), (pStr), strSize);
 
-			while (true) {
-				// 내 PlayerInfo 정보를 서버에 send 한다.
-				g_retval = send(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
-				if (g_retval == SOCKET_ERROR)
-					MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
+			//while (true) {
+				//// 내 PlayerInfo 정보를 서버에 send 한다.
+				//g_retval = send(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
+				//if (g_retval == SOCKET_ERROR)
+				//	MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
 
 				// 여기부터!
 
@@ -129,7 +129,7 @@ int CMakingPlayer::Update()
 
 				//}
 
-				else
+				//else
 				{ 
 					// Debugging
 					{
@@ -145,8 +145,8 @@ int CMakingPlayer::Update()
 					CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
 					CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
 					// g_myinfo에 현재까지 설정된 정보를 넣어준다.
-					break;
-				}
+					//break;
+				//}
 			}
 		}
 	}

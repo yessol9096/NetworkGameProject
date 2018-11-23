@@ -13,10 +13,6 @@
 #include "Shoot.h"
 #include "UI.h"
 
-//몬스터 정보 받기 
-MONSTERINFO *pGreenMushroom_server = new MONSTERINFO;
-MONSTERINFO pGreen;
-bool bMonster_check = false;
 
 
 void CStage1::Initialize()
@@ -94,8 +90,8 @@ void CStage1::Initialize()
 
 	//// 몬스터
 	// 초록버섯  (2층)
-	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CGreen>::CreateMonster(pGreen.pt.x, pGreen.pt.y, DIR_LEFT, 1), OBJ_MONSTER);
+	//CObjMgr::GetInstance()->AddObject(
+		//CAbstractFactory<CGreen>::CreateMonster(pGreen.pt.x, pGreen.pt.y, DIR_LEFT, 1), OBJ_MONSTER);
 	//CObjMgr::GetInstance()->AddObject(
 		//CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 460.f, DIR_RIGHT, 1), OBJ_MONSTER);
 	/*CObjMgr::GetInstance()->AddObject(
@@ -179,10 +175,10 @@ void CStage1::Release()
 
 void CStage1::RecvMonsterInitalInfo()
 {
-	g_retval = recv(g_sock, (char*)pGreenMushroom_server, sizeof(MonsterInfo), 0);
+	/*g_retval = recv(g_sock, (char*)pGreenMushroom_server, sizeof(MonsterInfo), 0);
 	pGreen.pt.x = pGreenMushroom_server->pt.x;
 	pGreen.pt.y = pGreenMushroom_server->pt.y;
-	cout << pGreen.pt.x << endl;
+	cout << pGreen.pt.x << endl;*/
 }
 
 void CStage1::UpdateTile()
