@@ -11,7 +11,6 @@ extern int g_iTakedMob1;
 extern int g_iTakedMob2;
 extern int g_iTakedMob1Max;
 extern int g_iTakedMob2Max;
-extern bool g_bIsMissionClear;
 
 extern int g_iLevel;
 extern int g_iExp;

@@ -295,11 +295,6 @@ private:
 	// 스킬
 	bool			m_bIsSkillPressed;
 
-	// 미션클리어 이펙트
-	FRAME			m_tEffectFrame;
-	DWORD			m_dwEffectCurTime;
-	DWORD			m_dwEffectOldTime;
-
 	// 레벨업 이펙트
 	FRAME			m_tLevelUpFrame;
 	DWORD			m_dwLevelUpCurTime;

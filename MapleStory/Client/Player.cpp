@@ -85,15 +85,6 @@ void CPlayer::Initialize(void)
 
 	m_eRenderType = RENDER_OBJ;
 
-	// 이펙트 프레임
-	m_tEffectFrame.iFrameStart = 0;
-	m_tEffectFrame.iFrameEnd = 8;
-	m_tEffectFrame.iScene = 0;
-	m_tEffectFrame.dwFrameSpd = 2000;
-
-	m_dwEffectOldTime = GetTickCount();
-	m_dwEffectCurTime = 0;
-
 	// 레벨업 이펙트
 	m_tLevelUpFrame.iFrameStart = 0;
 	m_tLevelUpFrame.iFrameEnd = 20;
@@ -208,12 +199,11 @@ int CPlayer::Update(void)
 void CPlayer::Render(HDC hDc)
 {
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
-	if(NULL == pBit)  return;
+	if (NULL == pBit)  return;
 
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
-		static_cast<int>(m_tRect.top + g_fScrollY), 
+		static_cast<int>(m_tRect.top + g_fScrollY),
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
@@ -221,60 +211,33 @@ void CPlayer::Render(HDC hDc)
 		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
-	 	RGB(0, 255, 0));
+		RGB(0, 255, 0));
 
 	// 히트박스
-	if(GetAsyncKeyState('2'))
+	if (GetAsyncKeyState('2'))
 	{
-		Rectangle(hDc, 
+		Rectangle(hDc,
 			static_cast<int>(m_tCollRect.left + g_fScrollX),
-			static_cast<int>(m_tCollRect.top + g_fScrollY), 
+			static_cast<int>(m_tCollRect.top + g_fScrollY),
 			static_cast<int>(m_tCollRect.right + g_fScrollX),
 			static_cast<int>(m_tCollRect.bottom + g_fScrollY));
 	}
 
-	// 미션 클리어 이펙트
-	CMyBmp* pEffectBit = CBitmapMgr::GetInstance()->FindImage(L"MissionClear");
-
-	int iEffectCX = 87;
-	int iEffectCY = 113;
-	if(NULL == pEffectBit) return;
-
-	if(g_bIsMissionClear)
-	{
-		if(m_tEffectFrame.iFrameStart == 100)
-			m_tEffectFrame.iFrameStart = 0;
-
-
-		TransparentBlt(hDc,
-			static_cast<int>(m_tRect.left + g_fScrollX),
-			static_cast<int>(m_tRect.top + g_fScrollY - 100.f), 
-			static_cast<int>(iEffectCX),
-			static_cast<int>(iEffectCY),
-			pEffectBit->GetMemDC(),
-			static_cast<int>(m_tEffectFrame.iFrameStart * iEffectCX),
-			static_cast<int>(m_tEffectFrame.iScene * iEffectCY),
-			static_cast<int>(iEffectCX),
-			static_cast<int>(iEffectCY),
-			RGB(0, 0, 1));
-	}
-
 	// 레벨업 이펙트
-
 	CMyBmp* pLevelUpBit = CBitmapMgr::GetInstance()->FindImage(L"LevelUp");
 
 	int iLevelUpCX = 301;
 	int iLevelUpCY = 365;
-	if(NULL == pLevelUpBit) return;
+	if (NULL == pLevelUpBit) return;
 
-	if(m_bIsLeveling)
+	if (m_bIsLeveling)
 	{
- 		if(m_tLevelUpFrame.iFrameStart == 100)
- 			m_tLevelUpFrame.iFrameStart = 0;
+		if (m_tLevelUpFrame.iFrameStart == 100)
+			m_tLevelUpFrame.iFrameStart = 0;
 
 		TransparentBlt(hDc,
 			static_cast<int>(m_tRect.left + g_fScrollX),
-			static_cast<int>(m_tRect.top + g_fScrollY - 100.f), 
+			static_cast<int>(m_tRect.top + g_fScrollY - 100.f),
 			static_cast<int>(iLevelUpCX),
 			static_cast<int>(iLevelUpCY),
 			pLevelUpBit->GetMemDC(),
@@ -283,9 +246,7 @@ void CPlayer::Render(HDC hDc)
 			static_cast<int>(iLevelUpCX),
 			static_cast<int>(iLevelUpCY),
 			RGB(0, 0, 0));
- }
-	
-
+	}
 }
 
 
@@ -521,9 +482,9 @@ void CPlayer::KeyCheck()
 void CPlayer::FrameMove()
 {
 	// 현재 상태가 바뀌면! 상태에 따른 애니메이션이 바뀌어야
-	if(m_eCurState != m_ePreState)
+	if (m_eCurState != m_ePreState)
 	{
-		switch(m_eCurState)
+		switch (m_eCurState)
 		{
 		case PLAYER_STAND:
 			m_tFrame.iFrameEnd = 4;
@@ -567,33 +528,33 @@ void CPlayer::FrameMove()
 			break;
 		}
 
-		m_ePreState = m_eCurState;  
-		 
+		m_ePreState = m_eCurState;
 
-		if(m_eCurState != PLAYER_ROPE)
+
+		if (m_eCurState != PLAYER_ROPE)
 			m_bIsRopeColl = false;
 	}
 
 	m_dwFrameCurTime = GetTickCount();
-	
- 	if(m_dwFrameOldTime + m_tFrame.dwFrameSpd < m_dwFrameCurTime)
+
+	if (m_dwFrameOldTime + m_tFrame.dwFrameSpd < m_dwFrameCurTime)
 	{
 		++(m_tFrame.iFrameStart);
 		m_dwFrameOldTime = m_dwFrameCurTime;
 	}
 
-	if(m_eCurState == PLAYER_DAMAGED)
+	if (m_eCurState == PLAYER_DAMAGED)
 	{
-		if(m_tFrame.iFrameStart == m_tFrame.iFrameEnd)
+		if (m_tFrame.iFrameStart == m_tFrame.iFrameEnd)
 			m_eCurState = PLAYER_STAND;
 	}
 
-	if(m_eCurState != PLAYER_ROPE)
+	if (m_eCurState != PLAYER_ROPE)
 	{
-		if(m_tFrame.iFrameStart >= m_tFrame.iFrameEnd)
+		if (m_tFrame.iFrameStart >= m_tFrame.iFrameEnd)
 		{
 			// 스킬 상태시엔 스프라이트 한번 돌리고 IDLE 상태로 둘것.
-			if(PLAYER_SWING == m_eCurState || PLAYER_SHOOT == m_eCurState)
+			if (PLAYER_SWING == m_eCurState || PLAYER_SHOOT == m_eCurState)
 			{
 
 				m_eCurState = PLAYER_STAND;
@@ -605,10 +566,10 @@ void CPlayer::FrameMove()
 	}
 	else
 	{
-		if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
+		if (m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
 		{
 			// 스킬 상태시엔 스프라이트 한번 돌리고 IDLE 상태로 둘것.
-			if(PLAYER_SWING == m_eCurState || PLAYER_SHOOT == m_eCurState)
+			if (PLAYER_SWING == m_eCurState || PLAYER_SHOOT == m_eCurState)
 			{
 
 				m_eCurState = PLAYER_STAND;
@@ -619,66 +580,42 @@ void CPlayer::FrameMove()
 		}
 	}
 
-	
-
-	// 미션 클리어 이펙트 프레임 돌리기
-	m_dwEffectCurTime = GetTickCount();
-
-	if(m_dwEffectOldTime + m_tEffectFrame.dwFrameSpd > m_dwEffectCurTime)
-	{
-		++m_tEffectFrame.iFrameStart;
-		m_dwEffectOldTime = m_dwEffectCurTime;
-	}
-	if(m_tEffectFrame.iFrameStart >= m_tEffectFrame.iFrameEnd
-		&& g_bIsMissionClear)
-	{
-		m_tEffectFrame.iFrameStart = 101;
-	}
-	if(m_tEffectFrame.iFrameStart >= m_tEffectFrame.iFrameEnd
-		&& !g_bIsMissionClear)
-	{
-		m_tEffectFrame.iFrameStart = 100;
-	}
-
 	// 레벨업 이펙트 프레임 돌리기
-
 	// 레벨링 중이 아니더라도 프레임은 계속 돌고 있다
 	m_dwLevelUpCurTime = GetTickCount();
 
-	if(m_dwLevelUpOldTime + m_tLevelUpFrame.dwFrameSpd > m_dwLevelUpCurTime)
+	if (m_dwLevelUpOldTime + m_tLevelUpFrame.dwFrameSpd > m_dwLevelUpCurTime)
 	{
 		++m_tLevelUpFrame.iFrameStart;
 		m_dwLevelUpOldTime = m_dwLevelUpCurTime;
 	}
 
 	// 프레임을 돌리던 중 레벨링변수가 true이면 start를 100으로 세팅 (위에 render에서 처리해준다)
-	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && m_bIsLeveling)
+	if (m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && m_bIsLeveling)
 	{
 		m_tLevelUpFrame.iFrameStart = 101;
-// 		g_iExp = 0;
-// 		m_tState.iMaxExp += 1000;
-// 		m_tState.iMaxHp += 3000;
-// 		m_tState.iHp = m_tState.iMaxHp;
-// 		g_iLevel++;
-		//m_bIsLeveling = false;
+		// 		g_iExp = 0;
+		// 		m_tState.iMaxExp += 1000;
+		// 		m_tState.iMaxHp += 3000;
+		// 		m_tState.iHp = m_tState.iMaxHp;
+		// 		g_iLevel++;
+				//m_bIsLeveling = false;
 	}
 	// 레벨링 변수가 false이면 start를 100으로 세팅해버린다
-	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && !m_bIsLeveling)
+	if (m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && !m_bIsLeveling)
 	{
 		m_tLevelUpFrame.iFrameStart = 100;
 	}
-// 	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd
-// 		&& m_bIsLeveling)
-// 	{
-// 		m_tLevelUpFrame.iFrameStart = 101;
-// 	}
-// 	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd
-// 		&& !m_bIsLeveling)
-// 	{
-// 		m_tLevelUpFrame.iFrameStart = 100;
-// 	}
-
-
+	// 	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd
+	// 		&& m_bIsLeveling)
+	// 	{
+	// 		m_tLevelUpFrame.iFrameStart = 101;
+	// 	}
+	// 	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd
+	// 		&& !m_bIsLeveling)
+	// 	{
+	// 		m_tLevelUpFrame.iFrameStart = 100;
+	// 	}
 }
 
 void CPlayer::UpdateCollRect()

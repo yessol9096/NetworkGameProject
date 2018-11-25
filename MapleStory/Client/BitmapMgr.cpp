@@ -26,16 +26,18 @@ CMyBmp* CBitmapMgr::FindImage(const TCHAR* pFindKey)
 	return iter_find->second;
 }
 
-void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
+void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)	// 모든 씬에 들어갈 이미지
 {
-	// 모든 씬에 들어갈 이미지
+	m_MapBit.insert(make_pair(
+		L"Mouse", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Mouse.bmp")));
+
+	// 플레이어
 	m_MapBit.insert(make_pair(
 		L"Player_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Player_LEFT.bmp")));
 	m_MapBit.insert(make_pair(
 		L"Player_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Player_RIGHT.bmp")));
 	m_MapBit.insert(make_pair(
 		L"Player_ROPE", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Player_ROPE.bmp")));
-
 	m_MapBit.insert(make_pair(
 		L"Captin_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Captin_LEFT.bmp")));
 	m_MapBit.insert(make_pair(
@@ -43,21 +45,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	m_MapBit.insert(make_pair(
 		L"Captin_ROPE", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Captin_ROPE.bmp")));
 
-	m_MapBit.insert(make_pair(
-		L"Font", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/Font.bmp")));
-// 	m_MapBit.insert(make_pair(
-// 		L"Tile", (new CMyBmp)->LoadBmp(L"../Image/Object/Tile/Tile.bmp")));
-// 	m_MapBit.insert(make_pair(
-// 		L"gold0", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/gold0.bmp")));
-// 	m_MapBit.insert(make_pair(
-// 		L"gold1", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/gold1.bmp")));
-// 	m_MapBit.insert(make_pair(
-// 		L"gold2", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/gold2.bmp")));
-// 	m_MapBit.insert(make_pair(
-// 		L"gold3", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/gold3.bmp")));
-
-	m_MapBit.insert(make_pair(
-		L"Mouse", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Mouse.bmp")));
 	m_MapBit.insert(make_pair(
 		L"Shoot_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Attack/Shoot/Shoot_LEFT.bmp")));
 	m_MapBit.insert(make_pair(
@@ -82,19 +69,18 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 		L"Fire", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Skill/Fire/FireEffect.bmp")));
 	m_MapBit.insert(make_pair(
 		L"Wing", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Skill/Wing/WingEffect.bmp")));
-
 	m_MapBit.insert(make_pair(
 		L"DragonEffect", (new CMyBmp)->LoadBmp(L"../Image/Object/Player/Skill/Dragon/DragonEffect.bmp")));
-
-	// 퀘스트마크
-	m_MapBit.insert(make_pair(
-		L"QuestMark", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/QuestMark.bmp")));
-	m_MapBit.insert(make_pair(
-		L"MissionClear", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/MissionClear.bmp")));
 
 	// 이펙트
 	m_MapBit.insert(make_pair(
 		L"LevelUp", (new CMyBmp)->LoadBmp(L"../Image/Object/Effect/LevelUp.bmp")));
+
+	// 폰트
+	m_MapBit.insert(make_pair(
+		L"Font", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/Font.bmp")));
+	m_MapBit.insert(make_pair(
+		L"LvNum", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/LvNum.bmp")));
 
 	// UI
 	m_MapBit.insert(make_pair(
@@ -102,23 +88,11 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	m_MapBit.insert(make_pair(
 		L"PlayerHPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/PlayerHPBar.bmp")));
 	m_MapBit.insert(make_pair(
-		L"PlayerEXPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/PlayerEXPBar.bmp")));
-	m_MapBit.insert(make_pair(
 		L"PlayerMPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/PlayerMPBar.bmp")));
 	m_MapBit.insert(make_pair(
-		L"LvNum", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/LvNum.bmp")));
-	m_MapBit.insert(make_pair(
-		L"Inventory_Equip", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Inventory_Equip.bmp")));
-	m_MapBit.insert(make_pair(
-		L"Inventory_Portion", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Inventory_Portion.bmp")));
-	m_MapBit.insert(make_pair(
-		L"HPPortion_Info", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/HPPortion_Info.bmp")));
-	m_MapBit.insert(make_pair(
-		L"MPPortion_Info", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/MPPortion_Info.bmp")));
+		L"PlayerEXPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/PlayerEXPBar.bmp")));
 
 	// 아이템
-	m_MapBit.insert(make_pair(
-		L"Gold", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/Gold.bmp")));
 	m_MapBit.insert(make_pair(
 		L"Accessory", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/Accessory.bmp")));
 	m_MapBit.insert(make_pair(
@@ -134,19 +108,19 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 	m_MapBit.insert(make_pair(
 		L"MPPortion", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/MPPortion.bmp")));
 
-	switch(eType)
+	switch (eType)
 	{
 	case SCENE_LOGO:
 		m_MapBit.insert(make_pair
-			(L"Logo1", (new CMyBmp)->LoadBmp(L"../Image/Logo/Logo1.bmp")));
+		(L"Logo1", (new CMyBmp)->LoadBmp(L"../Image/Logo/Logo1.bmp")));
 		m_MapBit.insert(make_pair
-			(L"Logo2", (new CMyBmp)->LoadBmp(L"../Image/Logo/Logo2.bmp")));
+		(L"Logo2", (new CMyBmp)->LoadBmp(L"../Image/Logo/Logo2.bmp")));
 		m_MapBit.insert(make_pair
-			(L"Logo3", (new CMyBmp)->LoadBmp(L"../Image/Logo/Logo3.bmp")));
+		(L"Logo3", (new CMyBmp)->LoadBmp(L"../Image/Logo/Logo3.bmp")));
 		m_MapBit.insert(make_pair
-			(L"Login", (new CMyBmp)->LoadBmp(L"../Image/Logo/Login.bmp")));
+		(L"Login", (new CMyBmp)->LoadBmp(L"../Image/Logo/Login.bmp")));
 		m_MapBit.insert(make_pair
-			(L"Exit", (new CMyBmp)->LoadBmp(L"../Image/Logo/Exit.bmp")));
+		(L"Exit", (new CMyBmp)->LoadBmp(L"../Image/Logo/Exit.bmp")));
 		break;
 	case SCENE_MAKINGPLAYER:
 		m_MapBit.insert(make_pair
@@ -156,25 +130,29 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)
 		break;
 	case SCENE_FIELD:
 		m_MapBit.insert(make_pair
-			(L"BackGround", (new CMyBmp)->LoadBmp(L"../Image/Map/Field.bmp")));
+		(L"BackGround", (new CMyBmp)->LoadBmp(L"../Image/Map/Field.bmp")));
+		m_MapBit.insert(make_pair
+		(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
+		m_MapBit.insert(make_pair
+		(L"QuestMark", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/QuestMark.bmp")));
 		m_MapBit.insert(make_pair
 		(L"Communication_Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Communication_Leaf.bmp")));
 		m_MapBit.insert(make_pair
-		(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
-		m_MapBit.insert(make_pair(
-			L"Party", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Party.bmp")));
+		(L"Party", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Party.bmp")));
 		break;
 	case SCENE_STAGE1:
 		m_MapBit.insert(make_pair
- 			(L"BackGround_Henesis", (new CMyBmp)->LoadBmp(L"../Image/Map/Henesis.bmp")));
+		(L"BackGround_Henesis", (new CMyBmp)->LoadBmp(L"../Image/Map/Henesis.bmp")));
 		m_MapBit.insert(make_pair
-			(L"GreenMush_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/GreenMush/GreenMush_LEFT.bmp")));
+		(L"GreenMush_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/GreenMush/GreenMush_LEFT.bmp")));
 		m_MapBit.insert(make_pair
-			(L"GreenMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/GreenMush/GreenMush_RIGHT.bmp")));
+		(L"GreenMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/GreenMush/GreenMush_RIGHT.bmp")));
 		m_MapBit.insert(make_pair
-			(L"CoupleMush_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_LEFT.bmp")));
+		(L"CoupleMush_LEFT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_LEFT.bmp")));
 		m_MapBit.insert(make_pair
-			(L"CoupleMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_RIGHT.bmp")));
+		(L"CoupleMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_RIGHT.bmp")));
+		m_MapBit.insert(make_pair
+		(L"Gold", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/Gold.bmp")));
 		break;
 	}
 }

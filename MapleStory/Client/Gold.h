@@ -15,10 +15,7 @@ public:
 	virtual void	Release(void);
 	virtual void	FrameMove();
 	virtual void	Move();
-	virtual void	UpdateCollRect();
-
-
-	
+	virtual void	UpdateCollRect();	
 
 	void SetGold(int iGold) { m_iGold = iGold; }
 	void SetBossGold(bool bIsBossGold) { m_bIsBossGold = bIsBossGold; }

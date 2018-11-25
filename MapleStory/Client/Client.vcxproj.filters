@@ -172,16 +172,13 @@
     <Filter Include="01. Object\11. UI\02. MPBar">
       <UniqueIdentifier>{67588006-4124-4f3b-94d0-04731bc9527a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\11. UI\03. BossHPBar">
-      <UniqueIdentifier>{ad15fe49-d8a2-4cc4-b6c4-74568624eed6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Object\12. Rope">
       <UniqueIdentifier>{74c47821-4d0f-4808-b03f-f7137e6e5d1c}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Object\13. Box">
       <UniqueIdentifier>{68edeb90-37be-4427-ad1b-7a3e8e12ec16}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\11. UI\04. Party">
+    <Filter Include="01. Object\11. UI\03. Party">
       <UniqueIdentifier>{bed6a1c8-6365-4e06-ba1d-8969128ce8e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -357,11 +354,8 @@
     <ClInclude Include="FloorBox.h">
       <Filter>01. Object\13. Box</Filter>
     </ClInclude>
-    <ClInclude Include="BossHPBar.h">
-      <Filter>01. Object\11. UI\03. BossHPBar</Filter>
-    </ClInclude>
     <ClInclude Include="Party.h">
-      <Filter>01. Object\11. UI\04. Party</Filter>
+      <Filter>01. Object\11. UI\03. Party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -485,9 +479,6 @@
     <ClCompile Include="UI.cpp">
       <Filter>01. Object\11. UI</Filter>
     </ClCompile>
-    <ClCompile Include="BossHPBar.cpp">
-      <Filter>01. Object\11. UI\03. BossHPBar</Filter>
-    </ClCompile>
     <ClCompile Include="Field.cpp">
       <Filter>03. Scene\02. Field</Filter>
     </ClCompile>
@@ -531,7 +522,7 @@
       <Filter>01. Object\13. Box</Filter>
     </ClCompile>
     <ClCompile Include="Party.cpp">
-      <Filter>01. Object\11. UI\04. Party</Filter>
+      <Filter>01. Object\11. UI\03. Party</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

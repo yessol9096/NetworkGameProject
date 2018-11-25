@@ -153,7 +153,6 @@
     <ClInclude Include="Accessory.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="BitmapMgr.h" />
-    <ClInclude Include="BossHPBar.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="Commuication.h" />
@@ -213,7 +212,6 @@
     <ClCompile Include="Accessory.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="BitmapMgr.cpp" />
-    <ClCompile Include="BossHPBar.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="Commuication.cpp" />
