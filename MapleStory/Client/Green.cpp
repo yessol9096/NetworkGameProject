@@ -66,40 +66,38 @@ void CGreen::Initialize( void )
 	UpdateCollRect();
 }
 
-int CGreen::Update( void )
+int CGreen::Update(void)
 {
-	if(1 == m_iPattern)
+	if (1 == m_iPattern)
 	{
 		m_tState.iGold = 50;
 	}
-	else if(2 == m_iPattern)
+	else if (2 == m_iPattern)
 	{
 		m_tState.iGold = 20;
 	}
- 	if(true == m_bIsDead)
+	if (true == m_bIsDead)
 	{
-		g_iTakedMob1++;	
+		g_iTakedMob1++;
 		g_iExp += m_tState.iExp;
-// 		CObjMgr::GetInstance()->AddObject(
-//  			CAbstractFactory<CGold>::CreateGold(m_tInfo.pt.x, m_tInfo.pt.y, GOLD_0), OBJ_ITEM);	
+		// 		CObjMgr::GetInstance()->AddObject(
+		//  			CAbstractFactory<CGold>::CreateGold(m_tInfo.pt.x, m_tInfo.pt.y, GOLD_0), OBJ_ITEM);	
 		CSoundMgr::GetInstance()->PlaySound(L"MonsterDead.MP3", CSoundMgr::CHANNEL_EFFECT);
-		
-		if(m_iPattern != 3)
-			CObjMgr::GetInstance()->AddObject(CreateGold<CGold>(), OBJ_ITEM);
-/*		CObjMgr::GetInstance()->AddObject(CreateItem<CAccessory>(), OBJ_ITEM);*/
 
+		if (m_iPattern != 3)
+			CObjMgr::GetInstance()->AddObject(CreateGold<CGold>(), OBJ_ITEM);
 		return 1;
- 	}
+	}
 
 	// 방향 설정
-	if(m_eDir == DIR_LEFT)
+	if (m_eDir == DIR_LEFT)
 		m_pImgName = L"GreenMush_LEFT";
-	else if(m_eDir == DIR_RIGHT)
+	else if (m_eDir == DIR_RIGHT)
 		m_pImgName = L"GreenMush_RIGHT";
 
 	// 데미지 cur time 설정
 	m_dwDamageCurTime = GetTickCount();
-	
+
 
 	// 패턴에 따른 움직임
 	//MoveInPattern();
@@ -108,31 +106,30 @@ int CGreen::Update( void )
 	//LineCollision();
 	//FrameMove();
 
-	if(m_tState.iHp <= 0)
+	if (m_tState.iHp <= 0)
 	{
 		//m_bIsDead = true;
 		m_eCurState = MONSTER_DEAD;
 	}
 
-// 	if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
-// 	{
-// 		// 죽었을 때는 스프라이트 한번 돌리고 죽을것!
-// 		if(m_bIsDead)
-// 		{
-// 			return 1;
-// 		}
-// 	}
+	// 	if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
+	// 	{
+	// 		// 죽었을 때는 스프라이트 한번 돌리고 죽을것!
+	// 		if(m_bIsDead)
+	// 		{
+	// 			return 1;
+	// 		}
+	// 	}
 
-// 	if(MONSTER_DEAD == m_eCurState)
-// 	{
-// 		m_dwDeadCurTime = GetTickCount();
-// 		if(m_dwDeadOldTime + m_dwDeadTime < m_dwDamageCurTime)
-// 		{
-// 			//m_dwDeadOldTime = m_dwDeadCurTime;
-// 			return 1;
-// 		}
-// 	}
-
+	// 	if(MONSTER_DEAD == m_eCurState)
+	// 	{
+	// 		m_dwDeadCurTime = GetTickCount();
+	// 		if(m_dwDeadOldTime + m_dwDeadTime < m_dwDamageCurTime)
+	// 		{
+	// 			//m_dwDeadOldTime = m_dwDeadCurTime;
+	// 			return 1;
+	// 		}
+	// 	}
 
 	CObj::UpdateRect();
 

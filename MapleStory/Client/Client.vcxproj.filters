@@ -34,9 +34,6 @@
     <Filter Include="01. Object\04. Skills">
       <UniqueIdentifier>{48cd268a-2a72-44df-b2d5-4820eedd0f3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\05. Items">
-      <UniqueIdentifier>{a8b62e82-876c-4e8d-94d2-b4d5465b4bea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Object\06. Fonts">
       <UniqueIdentifier>{363b2845-311e-4f86-a3da-ab808150a668}</UniqueIdentifier>
     </Filter>
@@ -75,21 +72,6 @@
     </Filter>
     <Filter Include="01. Object\04. Skills\02. Dragon\00. DragonEffect">
       <UniqueIdentifier>{44c963ac-7969-4cda-864f-33dfbfddeb65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\05. Items\00. Gold">
-      <UniqueIdentifier>{2c65fcd4-6e2c-451b-b8c7-ff22b25eabb0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\05. Items\01. Accessory">
-      <UniqueIdentifier>{8b13b393-9bd0-4e5a-8f48-4cc97b4afd4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\05. Items\02. Portion">
-      <UniqueIdentifier>{55d53966-59dd-4e13-b273-2e1d0e434bbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\05. Items\02. Portion\00. HP">
-      <UniqueIdentifier>{96728a29-057e-4a91-96ae-6923df3ccaf4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Object\05. Items\02. Portion\01. MP">
-      <UniqueIdentifier>{23dcf2a3-de0c-459d-b885-c3a972016a5b}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Object\07. NPC\00. Leaf">
       <UniqueIdentifier>{2023c225-59af-4b46-bb12-6d65a12770b3}</UniqueIdentifier>
@@ -181,6 +163,9 @@
     <Filter Include="01. Object\11. UI\03. Party">
       <UniqueIdentifier>{bed6a1c8-6365-4e06-ba1d-8969128ce8e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Object\05. Gold">
+      <UniqueIdentifier>{7cc322a7-e1ac-4918-b68e-65f1992f0c8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -203,9 +188,6 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>03. Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Skill.h">
-      <Filter>01. Object</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>01. Object\01. Player</Filter>
@@ -249,26 +231,11 @@
     <ClInclude Include="DragonEffect.h">
       <Filter>01. Object\04. Skills\02. Dragon\00. DragonEffect</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>01. Object\05. Items</Filter>
-    </ClInclude>
-    <ClInclude Include="Gold.h">
-      <Filter>01. Object\05. Items\00. Gold</Filter>
-    </ClInclude>
-    <ClInclude Include="HPPortion.h">
-      <Filter>01. Object\05. Items\02. Portion\00. HP</Filter>
-    </ClInclude>
-    <ClInclude Include="MPPortion.h">
-      <Filter>01. Object\05. Items\02. Portion\01. MP</Filter>
-    </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>01. Object\06. Fonts</Filter>
     </ClInclude>
     <ClInclude Include="Commuication.h">
       <Filter>01. Object\07. NPC\01. Communication</Filter>
-    </ClInclude>
-    <ClInclude Include="Accessory.h">
-      <Filter>01. Object\05. Items\01. Accessory</Filter>
     </ClInclude>
     <ClInclude Include="Leaf.h">
       <Filter>01. Object\07. NPC\00. Leaf</Filter>
@@ -357,6 +324,12 @@
     <ClInclude Include="Party.h">
       <Filter>01. Object\11. UI\03. Party</Filter>
     </ClInclude>
+    <ClInclude Include="Gold.h">
+      <Filter>01. Object\05. Gold</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>01. Object\04. Skills</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -373,9 +346,6 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>03. Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Skill.cpp">
-      <Filter>01. Object</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>01. Object\01. Player</Filter>
@@ -419,26 +389,11 @@
     <ClCompile Include="DragonEffect.cpp">
       <Filter>01. Object\04. Skills\02. Dragon\00. DragonEffect</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>01. Object\05. Items</Filter>
-    </ClCompile>
-    <ClCompile Include="Gold.cpp">
-      <Filter>01. Object\05. Items\00. Gold</Filter>
-    </ClCompile>
-    <ClCompile Include="HPPortion.cpp">
-      <Filter>01. Object\05. Items\02. Portion\00. HP</Filter>
-    </ClCompile>
-    <ClCompile Include="MPPortion.cpp">
-      <Filter>01. Object\05. Items\02. Portion\01. MP</Filter>
-    </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>01. Object\06. Fonts</Filter>
     </ClCompile>
     <ClCompile Include="Commuication.cpp">
       <Filter>01. Object\07. NPC\01. Communication</Filter>
-    </ClCompile>
-    <ClCompile Include="Accessory.cpp">
-      <Filter>01. Object\05. Items\01. Accessory</Filter>
     </ClCompile>
     <ClCompile Include="Leaf.cpp">
       <Filter>01. Object\07. NPC\00. Leaf</Filter>
@@ -523,6 +478,12 @@
     </ClCompile>
     <ClCompile Include="Party.cpp">
       <Filter>01. Object\11. UI\03. Party</Filter>
+    </ClCompile>
+    <ClCompile Include="Gold.cpp">
+      <Filter>01. Object\05. Gold</Filter>
+    </ClCompile>
+    <ClCompile Include="Skill.cpp">
+      <Filter>01. Object\04. Skills</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

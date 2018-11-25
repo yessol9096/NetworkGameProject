@@ -6,7 +6,6 @@ class CItem :
 {
 public:
 	CItem(void);
-	CItem(char* szName, int iHp, int iMp, int iAtt, int iMaxHp, int iExp, int iLev, int iGold);
 	virtual ~CItem(void);
 
 

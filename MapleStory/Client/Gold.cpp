@@ -74,19 +74,18 @@ int CGold::Update(void)
 {
 	m_tState.iGold = m_iGold;
 
+	if (m_bIsDead) return 1;
 
-	if(m_bIsDead) return 1;
-
-	if(m_iGold >= 0 && m_iGold <= 49)
+	if (m_iGold >= 0 && m_iGold <= 49)
 		m_eID = GOLD_0;
-	else if(m_iGold >= 50 && m_iGold <= 99)
+	else if (m_iGold >= 50 && m_iGold <= 99)
 		m_eID = GOLD_1;
-	else if(m_iGold >= 100 && m_iGold <= 999)
+	else if (m_iGold >= 100 && m_iGold <= 999)
 		m_eID = GOLD_2;
-	else if(m_iGold >= 1000 && m_iGold <= 9999)
+	else if (m_iGold >= 1000 && m_iGold <= 9999)
 		m_eID = GOLD_3;
 
-	switch(m_eID)
+	switch (m_eID)
 	{
 	case GOLD_0:
 		m_tFrame.iScene = 0;
@@ -104,22 +103,16 @@ int CGold::Update(void)
 
 	CObj::UpdateRect();
 
-	// 점프
-	Move();
-
-	// 충돌박스 세팅
-	UpdateCollRect();
-	// 프레임 돌리기
-	FrameMove();
+	Move();	// 점프	
+	UpdateCollRect();	// 충돌박스 세팅	
+	FrameMove();	// 프레임 돌리기
 	return 0;
 }
 
 void CGold::Render(HDC hDc)
 {
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
 	if(NULL == pBit)  return;
-
 
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
@@ -146,7 +139,7 @@ void CGold::Render(HDC hDc)
 
 void CGold::FrameMove()
 {
-	switch(m_eID)
+	switch (m_eID)
 	{
 	case GOLD_0:
 		m_tFrame.iScene = 0;
@@ -163,17 +156,14 @@ void CGold::FrameMove()
 	}
 	m_dwFrameCurTime = GetTickCount();
 
-	if(m_dwFrameOldTime + m_tFrame.dwFrameSpd < m_dwFrameCurTime)
+	if (m_dwFrameOldTime + m_tFrame.dwFrameSpd < m_dwFrameCurTime)
 	{
 		++(m_tFrame.iFrameStart);
 		m_dwFrameOldTime = m_dwFrameCurTime;
 	}
 
-	if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
-	{
+	if (m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
 		m_tFrame.iFrameStart = 0;
-	}
-
 }
 
 void CGold::Release(void)
@@ -188,66 +178,58 @@ void CGold::UpdateCollRect()
 
 void CGold::Move()
 {
-	if(m_bIsJump)
+	if (m_bIsJump)
 	{
-		if(!m_bIsBossGold)
+		if (!m_bIsBossGold)
 		{
 			m_fJumpAcc += 0.25f;
 
 			float fY = m_fJumpSpeed * m_fJumpAcc * sinf(m_fAngle * PI / 180.f)
 				- GRAVITY * m_fJumpAcc * m_fJumpAcc * 0.5f;
-
 			float fX = (m_fSpeed * cosf(m_fAngle * PI / 180.f));
 
-
-			if(fY < 0)
-			{
+			if (fY < 0)
 				m_bIsJumpUp = false;
-			}
 			else
 				m_bIsJumpUp = true;
 
 			m_tInfo.pt.y -= fY;
 			m_tInfo.pt.x += fX;
 
-			if(m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
+			if (m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
 			{
 				m_fJumpAcc = 0.f;
 				m_bIsJump = 0.f;
 			}
 		}
 
-		if(m_bIsBossGold)
+		if (m_bIsBossGold)
 		{
 			m_fJumpAcc += 0.2f;
 
 			float fY = m_fJumpSpeed * m_fJumpAcc * sinf(m_fAngle * PI / 180.f)
 				- GRAVITY * m_fJumpAcc * m_fJumpAcc * 0.5f;
-
 			float fX = (m_fSpeed * cosf(m_fAngle * PI / 180.f));
 
 
-			if(fY < 0)
-			{
+			if (fY < 0)
 				m_bIsJumpUp = false;
-			}
 			else
 				m_bIsJumpUp = true;
 
 			m_tInfo.pt.y -= fY;
 
-			if(!m_bIsXReverse)
+			if (!m_bIsXReverse)
 				m_tInfo.pt.x += fX;
 			else
 				m_tInfo.pt.x -= fX;
 
-			if(m_tInfo.pt.y > 450.f && !m_bIsJumpUp)
+			if (m_tInfo.pt.y > 450.f && !m_bIsJumpUp)
 			{
 				m_fJumpAcc = 0.f;
 				m_bIsJump = 0.f;
 				m_tInfo.pt.y = 450.f;
 			}
 		}
-		
 	}
 }

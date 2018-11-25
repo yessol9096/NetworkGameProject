@@ -150,7 +150,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AbstractFactory.h" />
-    <ClInclude Include="Accessory.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="BitmapMgr.h" />
     <ClInclude Include="Client.h" />
@@ -168,8 +167,6 @@
     <ClInclude Include="FourthFloor.h" />
     <ClInclude Include="Gold.h" />
     <ClInclude Include="Green.h" />
-    <ClInclude Include="HPPortion.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="LeafCommunication.h" />
@@ -181,7 +178,6 @@
     <ClInclude Include="MathMgr.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Mouse.h" />
-    <ClInclude Include="MPPortion.h" />
     <ClInclude Include="MushCouple.h" />
     <ClInclude Include="MyBmp.h" />
     <ClInclude Include="NPC.h" />
@@ -209,7 +205,6 @@
     <ClInclude Include="Wing.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Accessory.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="BitmapMgr.cpp" />
     <ClCompile Include="Client.cpp" />
@@ -227,8 +222,6 @@
     <ClCompile Include="FourthFloor.cpp" />
     <ClCompile Include="Gold.cpp" />
     <ClCompile Include="Green.cpp" />
-    <ClCompile Include="HPPortion.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="LeafCommunication.cpp" />
@@ -240,7 +233,6 @@
     <ClCompile Include="MathMgr.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Mouse.cpp" />
-    <ClCompile Include="MPPortion.cpp" />
     <ClCompile Include="MushCouple.cpp" />
     <ClCompile Include="MyBmp.cpp" />
     <ClCompile Include="NPC.cpp" />

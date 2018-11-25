@@ -74,13 +74,13 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)	// 모든 씬에 들어갈 이미지
 
 	// 이펙트
 	m_MapBit.insert(make_pair(
-		L"LevelUp", (new CMyBmp)->LoadBmp(L"../Image/Object/Effect/LevelUp.bmp")));
+		L"LevelUp", (new CMyBmp)->LoadBmp(L"../Image/Object/LevelUp.bmp")));
 
 	// 폰트
 	m_MapBit.insert(make_pair(
-		L"Font", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/Font.bmp")));
+		L"Font", (new CMyBmp)->LoadBmp(L"../Image/Object/Font.bmp")));
 	m_MapBit.insert(make_pair(
-		L"LvNum", (new CMyBmp)->LoadBmp(L"../Image/Object/Font/LvNum.bmp")));
+		L"LvNum", (new CMyBmp)->LoadBmp(L"../Image/Object/LvNum.bmp")));
 
 	// UI
 	m_MapBit.insert(make_pair(
@@ -91,22 +91,6 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)	// 모든 씬에 들어갈 이미지
 		L"PlayerMPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/PlayerMPBar.bmp")));
 	m_MapBit.insert(make_pair(
 		L"PlayerEXPBar", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/PlayerEXPBar.bmp")));
-
-	// 아이템
-	m_MapBit.insert(make_pair(
-		L"Accessory", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/Accessory.bmp")));
-	m_MapBit.insert(make_pair(
-		L"Clothes", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/Clothes.bmp")));
-	m_MapBit.insert(make_pair(
-		L"Glove", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/Glove.bmp")));
-	m_MapBit.insert(make_pair(
-		L"Shoes", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/Shoes.bmp")));
-	m_MapBit.insert(make_pair(
-		L"Weapon", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/Weapon.bmp")));
-	m_MapBit.insert(make_pair(
-		L"HPPortion", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/HPPortion.bmp")));
-	m_MapBit.insert(make_pair(
-		L"MPPortion", (new CMyBmp)->LoadBmp(L"../Image/Object/Item/MPPortion.bmp")));
 
 	switch (eType)
 	{
@@ -132,7 +116,7 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)	// 모든 씬에 들어갈 이미지
 		m_MapBit.insert(make_pair
 		(L"BackGround", (new CMyBmp)->LoadBmp(L"../Image/Map/Field.bmp")));
 		m_MapBit.insert(make_pair
-		(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/NPC/NPC_Leaf.bmp")));
+		(L"Leaf", (new CMyBmp)->LoadBmp(L"../Image/Object/Leaf.bmp")));
 		m_MapBit.insert(make_pair
 		(L"QuestMark", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/QuestMark.bmp")));
 		m_MapBit.insert(make_pair
@@ -152,7 +136,7 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)	// 모든 씬에 들어갈 이미지
 		m_MapBit.insert(make_pair
 		(L"CoupleMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_RIGHT.bmp")));
 		m_MapBit.insert(make_pair
-		(L"Gold", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold/Gold.bmp")));
+		(L"Gold", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold.bmp")));
 		break;
 	}
 }
