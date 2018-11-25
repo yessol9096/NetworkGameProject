@@ -2,7 +2,6 @@
 #include "Font.h"
 
 CFont::CFont(void)
-:m_bIsBossFont(false)
 {
 }
 
@@ -236,560 +235,278 @@ void CFont::FrameMove()
 
 void CFont::SettingPos()
 {
-	if (false == m_bIsBossFont)
+	int iIntervalX = static_cast<int>(12.f);
+	int iIntervalX_HUND = static_cast<int>(23.f);
+	int iIntervalY = static_cast<int>(25.f);
+
+	float fTargetX = static_cast<float>(m_pObj->GetInfo().pt.x);
+	float fTargetY = static_cast<float>(m_pObj->GetInfo().size.cy);
+	float fTargetTop = static_cast<float>(m_pObj->GetCollRect().top);
+
+	// 1Ãþ ÆùÆ®ÀÏ¶§
+	if (FONT_FIRSTFLOOR == m_eFloor)
 	{
-		int iIntervalX = static_cast<int>(12.f);
-		int iIntervalX_HUND = static_cast<int>(23.f);
-		int iIntervalY = static_cast<int>(25.f);
-
-		float fTargetX = static_cast<float>(m_pObj->GetInfo().pt.x);
-		float fTargetY = static_cast<float>(m_pObj->GetInfo().size.cy);
-		float fTargetTop = static_cast<float>(m_pObj->GetCollRect().top);
-
-		// 1Ãþ ÆùÆ®ÀÏ¶§
-		if (FONT_FIRSTFLOOR == m_eFloor)
+		if (FONTTYPE_UNIT == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop;
-			}
+			m_tPosArr[0].pt.x = (fTargetX);
+			m_tPosArr[0].pt.y = (fTargetTop);
 		}
-
-		// 2Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_SECONDFLOOR == m_eFloor)
+		else if (FONTTYPE_TENS == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY;
-			}
+			m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[0].pt.y = (fTargetTop);
+			m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[1].pt.y = (fTargetTop);
 		}
-
-		// 3Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_THIRDFLOOR == m_eFloor)
+		else if (FONTTYPE_HUND == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 2);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 2);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 2;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 2;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 2;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 2;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 2;
-			}
+			m_tPosArr[1].pt.x = (fTargetX);
+			m_tPosArr[1].pt.y = fTargetTop;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = (fTargetTop);
+			m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
+			m_tPosArr[2].pt.y = (fTargetTop);
 		}
-
-		// 4Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_FOURTHFLOOR == m_eFloor)
+		else if (FONTTYPE_THOU == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 3);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 3);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 3;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 3;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 3;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 3;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 3;
-			}
+			m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[1].pt.y = fTargetTop;
+			m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[2].pt.y = fTargetTop;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop;
+			m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop;
 		}
-
-		// 5Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_FIFTHFLOOR == m_eFloor)
+		else if (FONTTYPE_TENTH == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 4);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 4);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = static_cast<float>((fTargetX)+iIntervalX * 0.5);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[2].pt.x = static_cast<float>((fTargetX)-iIntervalX * 0.5);
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 4;
-			}
+			m_tPosArr[2].pt.x = fTargetX;
+			m_tPosArr[2].pt.y = fTargetTop;
 
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 4;
+			m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
+			m_tPosArr[1].pt.y = fTargetTop;
+			m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop;
 
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop;
 
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 4;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 4;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 4;
-			}
+			m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
+			m_tPosArr[4].pt.y = fTargetTop;
 		}
 	}
 
-	if (m_bIsBossFont)
+	// 2Ãþ ÆùÆ®ÀÏ¶§
+	else if (FONT_SECONDFLOOR == m_eFloor)
 	{
-		int iIntervalX = static_cast<int>(12.f);
-		int iIntervalX_HUND = static_cast<int>(23.f);
-		int iIntervalY = static_cast<int>(25.f);
-
-		float fLeftRightGap = static_cast<float>(m_pObj->GetCollRect().right - m_pObj->GetCollRect().left);
-		float fTargetX = static_cast<float>(m_pObj->GetCollRect().left + fLeftRightGap * 0.5f);
-		float fTargetY = static_cast<float>(m_pObj->GetInfo().size.cy);
-		float fTargetTop = static_cast<float>(m_pObj->GetCollRect().top);
-
-		// 1Ãþ ÆùÆ®ÀÏ¶§
-		if (FONT_FIRSTFLOOR == m_eFloor)
+		if (FONTTYPE_UNIT == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop;
+			m_tPosArr[0].pt.x = (fTargetX);
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
+		}
+		else if (FONTTYPE_TENS == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
+			m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[1].pt.y = (fTargetTop - iIntervalY);
+		}
+		else if (FONTTYPE_HUND == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX);
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
+			m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
+			m_tPosArr[2].pt.y = (fTargetTop - iIntervalY);
+		}
+		else if (FONTTYPE_THOU == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY;
+		}
+		else if (FONTTYPE_TENTH == m_eType)
+		{
+			m_tPosArr[2].pt.x = fTargetX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY;
 
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop;
+			m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY;
 
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY;
 
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop;
-			}
+			m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
+			m_tPosArr[4].pt.y = fTargetTop - iIntervalY;
+		}
+	}
+
+	// 3Ãþ ÆùÆ®ÀÏ¶§
+	else if (FONT_THIRDFLOOR == m_eFloor)
+	{
+		if (FONTTYPE_UNIT == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX);
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
+		}
+		else if (FONTTYPE_TENS == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
+			m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 2);
+		}
+		else if (FONTTYPE_HUND == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX);
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
+			m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
+			m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 2);
+		}
+		else if (FONTTYPE_THOU == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
+			m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 2;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 2;
+			m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 2;
+		}
+		else if (FONTTYPE_TENTH == m_eType)
+		{
+			m_tPosArr[2].pt.x = fTargetX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 2;
+
+			m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
+			m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 2;
+
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 2;
+
+			m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
+			m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 2;
+		}
+	}
+
+	// 4Ãþ ÆùÆ®ÀÏ¶§
+	else if (FONT_FOURTHFLOOR == m_eFloor)
+	{
+		if (FONTTYPE_UNIT == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX);
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
+		}
+		else if (FONTTYPE_TENS == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
+			m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 3);
+		}
+		else if (FONTTYPE_HUND == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX);
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
+			m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
+			m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 3);
+		}
+		else if (FONTTYPE_THOU == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
+			m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 3;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 3;
+			m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 3;
+		}
+		else if (FONTTYPE_TENTH == m_eType)
+		{
+			m_tPosArr[2].pt.x = fTargetX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 3;
+
+			m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
+			m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 3;
+
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 3;
+
+			m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
+			m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 3;
+		}
+	}
+
+	// 5Ãþ ÆùÆ®ÀÏ¶§
+	else if (FONT_FIFTHFLOOR == m_eFloor)
+	{
+		if (FONTTYPE_UNIT == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX);
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
+		}
+		else if (FONTTYPE_TENS == m_eType)
+		{
+			m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
+			m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
+			m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 4);
+		}
+		else if (FONTTYPE_HUND == m_eType)
+		{
+			m_tPosArr[1].pt.x = (fTargetX);
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
+			m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
+			m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 4);
+		}
+		else if (FONTTYPE_THOU == m_eType)
+		{
+			m_tPosArr[1].pt.x = static_cast<float>((fTargetX)+iIntervalX * 0.5);
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
+			m_tPosArr[2].pt.x = static_cast<float>((fTargetX)-iIntervalX * 0.5);
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 4;
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 4;
+			m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 4;
 		}
 
-		// 2Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_SECONDFLOOR == m_eFloor)
+		else if (FONTTYPE_TENTH == m_eType)
 		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[2].pt.x = fTargetX;
+			m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 4;
 
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
+			m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
 
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY;
+			m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
+			m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 4;
 
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY;
-			}
-		}
+			m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
+			m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 4;
 
-		// 3Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_THIRDFLOOR == m_eFloor)
-		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 2);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 2);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 2);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 2;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 2;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 2;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 2;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 2;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 2;
-			}
-		}
-
-		// 4Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_FOURTHFLOOR == m_eFloor)
-		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 3);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 3);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 3);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[2].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 3;
-			}
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 3;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 3;
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 3;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 3;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 3;
-			}
-		}
-
-		// 5Ãþ ÆùÆ®ÀÏ¶§
-		else if (FONT_FIFTHFLOOR == m_eFloor)
-		{
-			if (FONTTYPE_UNIT == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX);
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
-			}
-			else if (FONTTYPE_TENS == m_eType)
-			{
-				m_tPosArr[0].pt.x = (fTargetX)+iIntervalX;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
-				m_tPosArr[1].pt.x = (fTargetX)-iIntervalX;
-				m_tPosArr[1].pt.y = (fTargetTop - iIntervalY * 4);
-			}
-			else if (FONTTYPE_HUND == m_eType)
-			{
-				m_tPosArr[1].pt.x = (fTargetX);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = (fTargetTop - iIntervalY * 4);
-				m_tPosArr[2].pt.x = m_tPosArr[1].pt.x - iIntervalX_HUND;
-				m_tPosArr[2].pt.y = (fTargetTop - iIntervalY * 4);
-			}
-			else if (FONTTYPE_THOU == m_eType)
-			{
-				m_tPosArr[1].pt.x = static_cast<float>((fTargetX)+iIntervalX * 0.5);
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[2].pt.x = static_cast<float>((fTargetX)-iIntervalX * 0.5);
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 4;
-				m_tPosArr[3].pt.x = m_tPosArr[2].pt.x - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 4;
-			}
-
-			else if (FONTTYPE_TENTH == m_eType)
-			{
-				m_tPosArr[2].pt.x = fTargetX;
-				m_tPosArr[2].pt.y = fTargetTop - iIntervalY * 4;
-
-				m_tPosArr[1].pt.x = fTargetX + iIntervalX_HUND;
-				m_tPosArr[1].pt.y = fTargetTop - iIntervalY * 4;
-
-				m_tPosArr[3].pt.x = fTargetX - iIntervalX_HUND;
-				m_tPosArr[3].pt.y = fTargetTop - iIntervalY * 4;
-
-				m_tPosArr[0].pt.x = m_tPosArr[1].pt.x + iIntervalX_HUND;
-				m_tPosArr[0].pt.y = fTargetTop - iIntervalY * 4;
-
-				m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
-				m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 4;
-			}
+			m_tPosArr[4].pt.x = m_tPosArr[3].pt.x - iIntervalX_HUND;
+			m_tPosArr[4].pt.y = fTargetTop - iIntervalY * 4;
 		}
 	}
 }

@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "Green.h"
 #include "Gold.h"
-#include "Accessory.h"
 
 CGreen::CGreen(void)
 {

@@ -4,8 +4,6 @@
 #include "MakingPlayer.h"
 #include "Field.h"
 #include "Stage1.h"
-#include "Stage2.h"
-#include "BossStage.h"
 
 IMPLEMENT_SINGLETON(CSceneMgr)
 
@@ -24,32 +22,27 @@ void CSceneMgr::SetScene(SCENE_TYPE eType)
 	m_eSceneType = eType;
 
 	// 기존에 Scene이 할당 되어 있다면 해제할 것
-	if(NULL != m_pScene)
+	if (NULL != m_pScene)
 	{
 		SafeDelete<CScene*>(m_pScene);
-// 		g_fScrollX = 0.f;
-// 		g_fScrollY = 0.f;
+		//g_fScrollX = 0.f;
+		//g_fScrollY = 0.f;
 	}
 
-	switch(eType)
+	switch (eType)
 	{
 	case SCENE_LOGO:
 		m_pScene = new CLogo;
 		break;
- 	case SCENE_MAKINGPLAYER:
- 		m_pScene = new CMakingPlayer;
- 		break;
-// 	case SCENE_EDIT:
-// 		m_pScene = new CMyEdit;
-// 		break;
+	case SCENE_MAKINGPLAYER:
+		m_pScene = new CMakingPlayer;
+		break;
 	case SCENE_FIELD:
 		m_pScene = new CField;
 		break;
 	case SCENE_STAGE1:
 		m_pScene = new CStage1;
 		break;
-	//case SCENE_BOSS:
- //		m_pScene = new CBossStage;
 	}
 	m_pScene->Initialize();
 }
@@ -59,8 +52,6 @@ void CSceneMgr::Update()
 	if(m_bChangeCheck)
 	{
 		m_bChangeCheck = false;
-
-		//
 		SetScene(m_eSceneType);
 	}
 

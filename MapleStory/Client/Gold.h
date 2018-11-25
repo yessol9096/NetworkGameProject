@@ -24,7 +24,6 @@ public:
 private:
 	int			m_iGold;
 	GOLD_ID		m_eID;
-	bool		m_bIsBossGold;
 	bool		m_bIsXReverse;
 
 protected:

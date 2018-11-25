@@ -19,14 +19,12 @@ private:
 	DWORD		m_dwLifeCurTime; // 생성된 후 없어지는 시간
 	DWORD		m_dwLifeOldTime; // 생성된 후 없어지는 시간
 
-
 public:
-	void SetObj(CObj* pObj){ m_pObj = pObj; }
+	void SetObj(CObj* pObj) { m_pObj = pObj; }
 	void SetNumber(int iNumber) { m_iNumber = iNumber; }
 	void SetType(FONT_TYPE eType) { m_eType = eType; }
 	void SetID(FONT_ID eID) { m_eID = eID; }
 	void SetFloor(FONT_FLOOR eFloor) { m_eFloor = eFloor; }
-	void SetIsBossFont(bool bIsBossFont) { m_bIsBossFont = bIsBossFont;}
 
 public:
 	void SettingPos();
@@ -36,7 +34,6 @@ public:
 private:
 	typedef struct tagPos
 	{
-
 		MYPOINT pt;
 	}POS;
 
@@ -44,7 +41,7 @@ private:
 	int			m_iNumber;
 
 private:
-	CObj*		m_pObj;
+	CObj * m_pObj;
 	FONT_TYPE	m_eType;
 	FONT_ID		m_eID;
 	FONT_FLOOR	m_eFloor;
@@ -69,9 +66,5 @@ private:
 	FRAME		m_tHundFrame;
 	FRAME		m_tThouFrame;
 	FRAME		m_tTenthFrame;
-
-private:
-	bool		m_bIsBossFont;
-
 };
 

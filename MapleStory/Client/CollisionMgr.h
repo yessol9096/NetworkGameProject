@@ -11,7 +11,6 @@ public:
 	static void CollisionSphere(OBJLIST& DstList, OBJLIST& SrcList);
 	static void CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_ID eID = COL_END);
 	static void CollisionRectEX(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_ID eID = COL_END);
-	static void CollisionPlayerBoss(OBJLIST& DstList, OBJLIST& SrcList);
 
 public:
 	static bool CheckSphere(CObj* pDst, CObj* pSrc);
@@ -20,21 +19,15 @@ public:
 public:
 	template <typename T>
 	static CObj*	CreateFont(CObj* pTarget, int iAtt,
-		FONT_ID eID, FONT_TYPE eType, FONT_FLOOR eFloor, bool bIsBossFont)
+		FONT_ID eID, FONT_TYPE eType, FONT_FLOOR eFloor)
 	{
-// 		CObj* pFont = CAbstractFactory<T>::CreateObj(
-// 			CObj* pTarget, int iAtt, FONT_ID eID,
-// 			FONT_TYPE eType, FONT_FLOOR eFloor);
-		//pEffect->SetAtt(this->GetState().iAtt);
-		//pEffect->SetDir(m_eDir);
 		CObj* pFont = new T;
-	(dynamic_cast<CFont*>(pFont))->SetObj(pTarget);
-	(dynamic_cast<CFont*>(pFont))->SetNumber(iAtt);
-	(dynamic_cast<CFont*>(pFont))->SetID(eID);
-	(dynamic_cast<CFont*>(pFont))->SetType(eType);
-	(dynamic_cast<CFont*>(pFont))->SetFloor(eFloor);
-	(dynamic_cast<CFont*>(pFont))->SetIsBossFont(bIsBossFont);
-	(dynamic_cast<CObj*>(pFont))->Initialize();
+		(dynamic_cast<CFont*>(pFont))->SetObj(pTarget);
+		(dynamic_cast<CFont*>(pFont))->SetNumber(iAtt);
+		(dynamic_cast<CFont*>(pFont))->SetID(eID);
+		(dynamic_cast<CFont*>(pFont))->SetType(eType);
+		(dynamic_cast<CFont*>(pFont))->SetFloor(eFloor);
+		(dynamic_cast<CObj*>(pFont))->Initialize();
 		return pFont;
 	}
 
@@ -47,7 +40,4 @@ public:
 
 private:
 	static bool m_bIsFontCreated;
-
-	
-
 };

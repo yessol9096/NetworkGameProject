@@ -2,7 +2,7 @@
 #include "Gold.h"
 
 CGold::CGold(void)
-:m_bIsBossGold(false), m_bIsXReverse(false)
+: m_bIsXReverse(false)
 {
 }
 
@@ -180,56 +180,24 @@ void CGold::Move()
 {
 	if (m_bIsJump)
 	{
-		if (!m_bIsBossGold)
+		m_fJumpAcc += 0.25f;
+
+		float fY = m_fJumpSpeed * m_fJumpAcc * sinf(m_fAngle * PI / 180.f)
+			- GRAVITY * m_fJumpAcc * m_fJumpAcc * 0.5f;
+		float fX = (m_fSpeed * cosf(m_fAngle * PI / 180.f));
+
+		if (fY < 0)
+			m_bIsJumpUp = false;
+		else
+			m_bIsJumpUp = true;
+
+		m_tInfo.pt.y -= fY;
+		m_tInfo.pt.x += fX;
+
+		if (m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
 		{
-			m_fJumpAcc += 0.25f;
-
-			float fY = m_fJumpSpeed * m_fJumpAcc * sinf(m_fAngle * PI / 180.f)
-				- GRAVITY * m_fJumpAcc * m_fJumpAcc * 0.5f;
-			float fX = (m_fSpeed * cosf(m_fAngle * PI / 180.f));
-
-			if (fY < 0)
-				m_bIsJumpUp = false;
-			else
-				m_bIsJumpUp = true;
-
-			m_tInfo.pt.y -= fY;
-			m_tInfo.pt.x += fX;
-
-			if (m_tInfo.pt.y > m_fOriginalY + 10.f && !m_bIsJumpUp)
-			{
-				m_fJumpAcc = 0.f;
-				m_bIsJump = 0.f;
-			}
-		}
-
-		if (m_bIsBossGold)
-		{
-			m_fJumpAcc += 0.2f;
-
-			float fY = m_fJumpSpeed * m_fJumpAcc * sinf(m_fAngle * PI / 180.f)
-				- GRAVITY * m_fJumpAcc * m_fJumpAcc * 0.5f;
-			float fX = (m_fSpeed * cosf(m_fAngle * PI / 180.f));
-
-
-			if (fY < 0)
-				m_bIsJumpUp = false;
-			else
-				m_bIsJumpUp = true;
-
-			m_tInfo.pt.y -= fY;
-
-			if (!m_bIsXReverse)
-				m_tInfo.pt.x += fX;
-			else
-				m_tInfo.pt.x -= fX;
-
-			if (m_tInfo.pt.y > 450.f && !m_bIsJumpUp)
-			{
-				m_fJumpAcc = 0.f;
-				m_bIsJump = 0.f;
-				m_tInfo.pt.y = 450.f;
-			}
+			m_fJumpAcc = 0.f;
+			m_bIsJump = 0.f;
 		}
 	}
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-
 extern HWND g_hWnd;
 extern float g_fScrollX;
 extern float g_fScrollY;

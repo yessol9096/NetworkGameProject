@@ -5,8 +5,6 @@
 #include "Rope.h"
 #include "FirstFloor.h"
 #include "SecondFloor.h"
-// #include "Moster.h"
-// #include "Mouse.h"
 
 IMPLEMENT_SINGLETON(CObjMgr)
 
@@ -18,19 +16,18 @@ void CObjMgr::AddObject(CObj* pObj, OBJECT_TYPE eID)
 void CObjMgr::UpdateObj()
 {
 	// 이터레이터 패턴을 이용하여 한 번에 관리한다.
-	for(int i = 0; i < OBJ_END; ++i)
+	for (int i = 0; i < OBJ_END; ++i)
 	{
 		OBJITER iter_begin = m_ObjList[i].begin();
-		OBJITER iter_end   = m_ObjList[i].end();
+		OBJITER iter_end = m_ObjList[i].end();
 
-		for(; iter_begin != iter_end;)
+		for (; iter_begin != iter_end;)
 		{
-			if(1 == (*iter_begin)->Update())
+			if (1 == (*iter_begin)->Update())
 			{
 				SafeDelete<CObj*>(*iter_begin);
 				iter_begin = m_ObjList[i].erase(iter_begin);
 			}
-
 			else	++iter_begin;
 		}
 	}
@@ -59,9 +56,7 @@ void CObjMgr::UpdateObj()
 	/////////////// 플레이어 - 몬스터.
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_MONSTER], COL_PLAYER_MONSTER);
 
-	/////////////// 플레이어 - 보스.
-	CollisionMgr::CollisionRect(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_BOSS], COL_PLAYER_BOSS);
-
+	/////////////// 플레이어 - 아이템
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_ITEM], COL_PLAYER_ITEM);
 	
 	/////////////// 몬스터 - 스킬.
@@ -70,30 +65,17 @@ void CObjMgr::UpdateObj()
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_MONSTER], m_ObjList[OBJ_EFFECT], COL_MONSTER_EFFECT);
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_MONSTER], m_ObjList[OBJ_SKILL_FIRE], COL_MONSTER_EFFECT);
 	CollisionMgr::CollisionRect(m_ObjList[OBJ_MONSTER], m_ObjList[OBJ_SKILL_WING], COL_MONSTER_EFFECT);
-	/*CollisionMgr::CollisionRect(m_ObjList[OBJ_MONSTER], m_ObjList[OBJ_], COL_MONSTER_EFFECT);*/
-
-	// 보스 - 스킬.
-	CollisionMgr::CollisionRect(m_ObjList[OBJ_BOSS], m_ObjList[OBJ_ARROW], COL_BOSS_ARROW);
-	CollisionMgr::CollisionRect(m_ObjList[OBJ_BOSS], m_ObjList[OBJ_SKILL_SWING], COL_BOSS_SWING );
-	CollisionMgr::CollisionRect(m_ObjList[OBJ_BOSS], m_ObjList[OBJ_EFFECT], COL_BOSS_EFFECT);
-	CollisionMgr::CollisionRect(m_ObjList[OBJ_BOSS], m_ObjList[OBJ_SKILL_FIRE], COL_BOSS_EFFECT);
-	CollisionMgr::CollisionRect(m_ObjList[OBJ_BOSS], m_ObjList[OBJ_SKILL_WING], COL_BOSS_EFFECT);
-
-	// 플레이어 - 보스 스킬
-	CollisionMgr::CollisionPlayerBoss(m_ObjList[OBJ_PLAYER], m_ObjList[OBJ_BOSS]);	
 }
 
 void CObjMgr::RenderObj(HDC hDC)
 {
-	for(int i = 0; i < OBJ_END; ++i)
+	for (int i = 0; i < OBJ_END; ++i)
 	{
 		OBJITER iter_begin = m_ObjList[i].begin();
-		OBJITER iter_end   = m_ObjList[i].end();
+		OBJITER iter_end = m_ObjList[i].end();
 
-		for(; iter_begin != iter_end; ++iter_begin)
-		{
+		for (; iter_begin != iter_end; ++iter_begin)
 			(*iter_begin)->Render(hDC);
-		}
 	}
 }
 
@@ -105,16 +87,14 @@ void CObjMgr::ReleaseObj(OBJECT_TYPE eID)
 
 void CObjMgr::ReleaseAll()
 {
-	for(int i = 0 ; i < OBJ_END; ++i)
+	for (int i = 0; i < OBJ_END; ++i)
 	{
-		if  (i == OBJ_PLAYER || i == OBJ_HPBAR ) 
+		if (i == OBJ_PLAYER || i == OBJ_HPBAR)
 			continue;
-
 
 		for_each(m_ObjList[i].begin(), m_ObjList[i].end(), SafeDelete<CObj*>);
 		m_ObjList[i].clear();
 	}
-
 }
 
  CObj* CObjMgr::GetTarget( CObj* pObj, OBJECT_TYPE eTargetID)
