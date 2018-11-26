@@ -6,7 +6,7 @@ typedef struct tagFrame
 	int			iFrameStart; // 스프라이트 이미지의 x축 시작점.
 	int			iFrameEnd; // 스프라이트 이미지의 x축 마지막점
 	int			iScene;		// 스프라이트 이미지의 y축.
-	DWORD	dwFrameSpd; // 애니메이션 재생 속도
+	DWORD		dwFrameSpd; // 애니메이션 재생 속도
 }FRAME;
 
 typedef struct MySize {
@@ -25,25 +25,25 @@ typedef struct MyPoint {
 
 typedef struct Info {
 	OBJECT_TYPE type;
-	MYPOINT			pt;
-	MYSIZE				size;
-	FRAME				frame;
-	int					hp;
+	MYPOINT		pt;
+	MYSIZE		size;
+	FRAME		frame;
+	int			hp;
 }INFO;
 
 typedef struct PlayerInfo {
 	short		id;
-	char			nickname[512];
+	char		nickname[512];
 	int			key;
-	bool			ready;
-	MYPOINT pt;
+	bool		ready;
+	MYPOINT		pt;
 	MYSIZE		size;
-	PLAYER_JOB job;
+	PLAYER_JOB	job;
 	int			hp;
 	int			money;
 	FRAME		frame;
-	float			attackAccValue;
-	bool			connected; // 1119 추가
+	float		attackAccValue;
+	bool		connected; // 1119 추가
 }PLAYERINFO;
 
 typedef struct MonsterInfo {
@@ -56,11 +56,6 @@ typedef struct MonsterInfo {
 	int			pattern;
 }MONSTERINFO;
 
-typedef struct InitialInfo {
-	PLAYERINFO	playerinfo;
-	char					id;
-	PLAYER_JOB	job;
-}INITIALINFO;
 
 //--------------------------------------------------------------------------------
 
@@ -97,8 +92,6 @@ typedef struct tagState
 	int iLevel;
 	int iGold;
 }STATE;
-
-
 
 typedef struct tagLinePoint
 {

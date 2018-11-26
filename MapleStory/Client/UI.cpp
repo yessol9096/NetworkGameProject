@@ -20,7 +20,6 @@ void CUI::Initialize(void)
 
 	m_eRenderType = RENDER_OBJ;
 
-
 	// 레벨 (십의자리)
 	m_tTensLvInfo.pt.x = 42.f;
 	m_tTensLvInfo.pt.y = 575.f;
@@ -34,7 +33,6 @@ void CUI::Initialize(void)
 
 	m_tTensFrame.iFrameStart = 8;
 	m_tTensFrame.iFrameEnd = 8;
-
 
 	// 레벨 (일의 자리)
 	m_tUnitLvInfo.pt.x = 54.f;
@@ -53,13 +51,10 @@ void CUI::Initialize(void)
 	m_iTensLevel = static_cast<int>(g_iLevel * 0.1);
 	int iTensNumber = static_cast<int>((g_iLevel * 0.1));
 	m_iUnitLevel = g_iLevel - (iTensNumber) * 10;
-
 }
 
 int CUI::Update(void)
 {
-//	FrameMove();
-
 	// 레벨
 	m_iTensLevel = static_cast<int>(g_iLevel * 0.1);
 	int iTensNumber = static_cast<int>((g_iLevel * 0.1));
@@ -68,10 +63,7 @@ int CUI::Update(void)
 	m_tUnitFrame.iFrameStart = m_iUnitLevel;
 	m_tTensFrame.iFrameStart = m_iTensLevel;
 
-
 	UpdateRect();
-
-
 	return 0;
 }
 
@@ -79,12 +71,11 @@ void CUI::Render(HDC hDc)
 {
 	// 메인 UI
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
-	if(NULL == pBit)  return;
+	if (NULL == pBit)  return;
 
 	TransparentBlt(hDc,
-		static_cast<int>(m_tRect.left ),
-		static_cast<int>(m_tRect.top ), 
+		static_cast<int>(m_tRect.left),
+		static_cast<int>(m_tRect.top),
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
@@ -94,14 +85,33 @@ void CUI::Render(HDC hDc)
 		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 0, 255));
 
+	// 닉네임
+	if (g_myid != -1)
+	{
+		wchar_t name[512];
+		mbstowcs(name, g_vecplayer[g_myid].nickname, strlen(g_vecplayer[g_myid].nickname) + 1);
 
+		SetBkColor(hDc, RGB(0, 0, 0));
+		SetTextColor(hDc, RGB(255, 255, 255));
+		TextOut(hDc, 540, 575, name, strlen(g_vecplayer[g_myid].nickname));
+		SetBkColor(hDc, RGB(255, 255, 255));
+		SetTextColor(hDc, RGB(0, 0, 0));
+	}
+	else
+	{
+		SetBkColor(hDc, RGB(0, 0, 0));
+		SetTextColor(hDc, RGB(255, 255, 255));
+		TextOut(hDc, 80, 567, L"None", 4);
+		SetBkColor(hDc, RGB(255, 255, 255));
+		SetTextColor(hDc, RGB(0, 0, 0));
+	}
 
 	// 레벨
 	CMyBmp* pTensBit = CBitmapMgr::GetInstance()->FindImage(L"LvNum");
-	if(NULL == pTensBit)  return;
+	if (NULL == pTensBit)  return;
 	TransparentBlt(hDc,
-		static_cast<int>(m_tTensLvRect.left ),
-		static_cast<int>(m_tTensLvRect.top ), 
+		static_cast<int>(m_tTensLvRect.left),
+		static_cast<int>(m_tTensLvRect.top),
 		static_cast<int>(m_tTensLvInfo.size.cx),
 		static_cast<int>(m_tTensLvInfo.size.cy),
 		pTensBit->GetMemDC(),
@@ -111,12 +121,11 @@ void CUI::Render(HDC hDc)
 		static_cast<int>(m_tTensLvInfo.size.cy),
 		RGB(0, 0, 0));
 
-
 	CMyBmp* pUnitBit = CBitmapMgr::GetInstance()->FindImage(L"LvNum");
-	if(NULL == pUnitBit)  return;
+	if (NULL == pUnitBit)  return;
 	TransparentBlt(hDc,
-		static_cast<int>(m_tUnitLvRect.left ),
-		static_cast<int>(m_tUnitLvRect.top ), 
+		static_cast<int>(m_tUnitLvRect.left),
+		static_cast<int>(m_tUnitLvRect.top),
 		static_cast<int>(m_tUnitLvInfo.size.cx),
 		static_cast<int>(m_tUnitLvInfo.size.cy),
 		pUnitBit->GetMemDC(),
@@ -125,7 +134,6 @@ void CUI::Render(HDC hDc)
 		static_cast<int>(m_tUnitLvInfo.size.cx),
 		static_cast<int>(m_tUnitLvInfo.size.cy),
 		RGB(0, 0, 0));
-
 }
 
 void CUI::FrameMove()

@@ -137,6 +137,8 @@ void CBitmapMgr::LoadImageByScene(SCENE_TYPE eType)	// 모든 씬에 들어갈 이미지
 		(L"CoupleMush_RIGHT", (new CMyBmp)->LoadBmp(L"../Image/Object/Monster/CoupleMush/CoupleMush_RIGHT.bmp")));
 		m_MapBit.insert(make_pair
 		(L"Gold", (new CMyBmp)->LoadBmp(L"../Image/Object/Gold.bmp")));
+		m_MapBit.insert(make_pair
+		(L"Result", (new CMyBmp)->LoadBmp(L"../Image/Object/UI/Result.bmp")));
 		break;
 	}
 }

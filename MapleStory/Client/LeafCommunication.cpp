@@ -53,12 +53,8 @@ int CLeafCommunication::Update(void)
 
 	// 마우스가 들어오는지
 	POINT pt;
-	POINT pt2;
 	GetCursorPos(&pt);
 	ScreenToClient(g_hWnd, &pt);
-
-	pt2.x = static_cast<LONG>(pt.x - g_fScrollX);
-	pt2.y = static_cast<LONG>(pt.y - g_fScrollY);
 
 	if (PtInRect(&m_tNextButton, pt) && m_bIsNextButtonActivated == false)
 	{

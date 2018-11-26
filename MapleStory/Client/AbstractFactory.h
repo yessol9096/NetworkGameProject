@@ -72,12 +72,4 @@ public:
 		(dynamic_cast<CCommuication*>(pObj))->SetRenderNumber(iRenderNumber);
 		return pObj;
 	}
-	static CObj* CreateParty(CObj* pPlayer)
-	{
-		CObj* pObj = new T;
-		pObj->Initialize();
-		if (pPlayer != nullptr)
-			(dynamic_cast<CParty*>(pObj))->SetPlayer(pPlayer);
-		return pObj;
-	}
 };

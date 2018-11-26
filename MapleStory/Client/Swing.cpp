@@ -64,13 +64,11 @@ int CSwing::Update(void)
 void CSwing::Render(HDC hDc)
 {
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
-	if(NULL == pBit)  return;
-
+	if (NULL == pBit)  return;
 
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
-		static_cast<int>(m_tRect.top + g_fScrollY), 
+		static_cast<int>(m_tRect.top + g_fScrollY),
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
@@ -81,11 +79,11 @@ void CSwing::Render(HDC hDc)
 		RGB(0, 255, 0));
 
 	// 히트박스
-	if(GetAsyncKeyState('2'))
+	if (GetAsyncKeyState('2'))
 	{
-		Rectangle(hDc, 
+		Rectangle(hDc,
 			static_cast<int>(m_tCollRect.left + g_fScrollX),
-			static_cast<int>(m_tCollRect.top + g_fScrollY), 
+			static_cast<int>(m_tCollRect.top + g_fScrollY),
 			static_cast<int>(m_tCollRect.right + g_fScrollX),
 			static_cast<int>(m_tCollRect.bottom + g_fScrollY));
 	}
@@ -103,7 +101,6 @@ void CSwing::Release(void)
 
 void CSwing::UpdateCollRect()
 {
-
 	if(DIR_RIGHT == m_eDir)
 	{
 		m_tCollRect.left = static_cast<LONG>(m_tInfo.pt.x);
@@ -118,6 +115,4 @@ void CSwing::UpdateCollRect()
 		m_tCollRect.bottom = m_tRect.bottom;
 		m_tCollRect.left = m_tRect.left;
 	}
-	
-
 }

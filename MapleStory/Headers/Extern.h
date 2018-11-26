@@ -21,6 +21,7 @@ extern wchar_t g_idbuf[50]; // 캐릭터 생성 씬에서 입력하는 ip 주소 담을 버퍼.
 extern int g_retval;
 
 extern PLAYERINFO g_myinfo;
+extern int g_myid;
 extern vector<PLAYERINFO> g_vecplayer;
 
 // monster 생성 단계 설정

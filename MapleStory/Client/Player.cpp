@@ -8,8 +8,7 @@
 #include "Fire.h"
 #include "Wing.h"
 
-
-extern int g_iLevel = 88;
+extern int g_iLevel = 65;
 extern int g_iExp = 0;
 
 CPlayer::CPlayer(void)
@@ -82,7 +81,6 @@ void CPlayer::Initialize(void)
 	m_tFrame.iScene = 0;
 	m_tFrame.dwFrameSpd = 50;
 
-
 	m_eRenderType = RENDER_OBJ;
 
 	// 레벨업 이펙트
@@ -93,8 +91,6 @@ void CPlayer::Initialize(void)
 
 	m_dwLevelUpCurTime = 0;
 	m_dwLevelUpOldTime = GetTickCount();
-
-
 
 	UpdateCollRect();
 
@@ -107,11 +103,10 @@ void CPlayer::Initialize(void)
 int CPlayer::Update(void)
 {
 	// 죽으면 오브젝트 삭제
-	if(true == m_bIsDead)	return 1;
+	if (true == m_bIsDead)	return 1;
 
-	
 	// 레벨업
-	if(g_iExp >= m_tState.iMaxExp)
+	if (g_iExp >= m_tState.iMaxExp)
 	{
 		m_bIsLeveling = true; // 레벨업 판정
 		// 레벨업 이펙트 만들때 추후 수정..
@@ -122,27 +117,27 @@ int CPlayer::Update(void)
 	//
 
 	// 화면 밖으로 못나가게끔
-	if(m_tInfo.pt.x <= 30)
+	if (m_tInfo.pt.x <= 30)
 		m_tInfo.pt.x = 30;
 
-	switch(g_eScene)
+	switch (g_eScene)
 	{
 	case SCENE_FIELD:
-		{
-			if(m_tInfo.pt.x >= FIELDCX - 30)
-				m_tInfo.pt.x = FIELDCX - 30;
-		}
-		break;
+	{
+		if (m_tInfo.pt.x >= FIELDCX - 30)
+			m_tInfo.pt.x = FIELDCX - 30;
+	}
+	break;
 	case SCENE_STAGE1:
-		{
-			if(m_tInfo.pt.x >= HENESISCX - 30)
-				m_tInfo.pt.x = HENESISCX - 30;
-		}
-		break;
+	{
+		if (m_tInfo.pt.x >= HENESISCX - 30)
+			m_tInfo.pt.x = HENESISCX - 30;
+	}
+	break;
 	}
 
 	// 씬 바뀔 때
-	if(true == g_bIsSceneChange)
+	if (true == g_bIsSceneChange)
 	{
 		// 플레이어 좌표 설정
 		m_tInfo.pt.x = 100.f;
@@ -150,25 +145,24 @@ int CPlayer::Update(void)
 		// 오프셋 값 원위치
 		m_fOffSet = WINCX / 2.f;
 
-		if(g_eScene == SCENE_STAGE1)
+		if (g_eScene == SCENE_STAGE1)
 		{
 			g_fScrollX = 0.f;
 			g_fScrollY = (WINCY - HENESISCY);
-			m_fOffSetY = WINCY / 2.f + 100.f; 
+			m_fOffSetY = WINCY / 2.f + 100.f;
 		}
-
 
 		g_bIsSceneChange = false;
 	}
 
-	if(false == m_bIsInvincible)
+	if (false == m_bIsInvincible)
 	{
 		m_dwDamageTime = GetTickCount();
 	}
 
-	if(true == m_bIsInvincible)
-	{	
-		if(m_dwDamageTime + 3000 < GetTickCount())
+	if (true == m_bIsInvincible)
+	{
+		if (m_dwDamageTime + 3000 < GetTickCount())
 		{
 			m_dwDamageTime = GetTickCount();
 			m_eCurState = m_ePreState;
@@ -255,9 +249,6 @@ void CPlayer::Jump()
 	if(true == m_bIsJump)
 	{
 		m_fJumpAcc += 0.25f;
-
-		// 포물선 공식 (y)
-		// y -= m_fJumpSpeed * m_fJumpAcc - 9.8 * m_fJumpAcc * m_fJumpAcc * 0.5f;
 		float fY =  m_fJumpSpeed * m_fJumpAcc * sinf(m_fAngle * PI / 180.f) 
 			- 9.8f * m_fJumpAcc * m_fJumpAcc * 0.5f;
 
@@ -267,9 +258,6 @@ void CPlayer::Jump()
 			m_bIsJumpUp = true;
 
 		m_tInfo.pt.y -= fY;
-
-		// if(0 >= m_fJumpSpeed * m_fJumpAcc - 9.8f * m_fJumpAcc * m_fJumpAcc * 0.5f)
-		//		m_bIsUp = true;
 	}
 
 }

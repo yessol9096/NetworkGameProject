@@ -12,83 +12,77 @@
 #include "MushCouple.h"
 #include "Shoot.h"
 #include "UI.h"
-
-
+#include "Result.h"
 
 void CStage1::Initialize()
 {
 	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_STAGE1);
 
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CMouse>::CreateObj(), OBJ_MOUSE);
-	// UI
-	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CUI>::CreateObj(), OBJ_UI);
 
-	//RecvMonsterInitalInfo();	// 서버로 부터 몬스터 초기 좌표값 받기
+	CObjMgr::GetInstance()->AddObject(
+		CAbstractFactory<CMouse>::CreateObj(), OBJ_MOUSE);
 
 	// 1-2층 밧줄
-	for(int i = 0; i < 8; ++i)
-	{
+	for (int i = 0; i < 8; ++i)
 		CObjMgr::GetInstance()->AddObject(
 			CAbstractFactory<CRope>::CreateObj(635.f, HENESISCY - 440.f + i * TILECY), OBJ_ROPE);
-	}
 	// 2-3층 밧줄
-	for(int i = 0; i < 8; ++i)
-	{
+	for (int i = 0; i < 8; ++i)
 		CObjMgr::GetInstance()->AddObject(
 			CAbstractFactory<CRope>::CreateObj(995.f, HENESISCY - 700.f + i * TILECY), OBJ_ROPE);
-	}
 	// 3-4층 밧줄
-	for(int i = 0; i < 8; ++i)
-	{
+	for (int i = 0; i < 8; ++i)
 		CObjMgr::GetInstance()->AddObject(
 			CAbstractFactory<CRope>::CreateObj(790.f, HENESISCY - 910.f + i * TILECY), OBJ_ROPE);
-	}
 	// 4-5층 밧줄
-	for(int i = 0; i < 8; ++i)
-	{
+	for (int i = 0; i < 8; ++i)
 		CObjMgr::GetInstance()->AddObject(
 			CAbstractFactory<CRope>::CreateObj(1055.f, HENESISCY - 1170.f + i * TILECY), OBJ_ROPE);
-	}
-
 	// 1층 박스 (가로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFirstFloor>::CreateFloorBox(HENESISCX * 0.5f, HENESISCY - 220.f, HENESISCX, 20.f, FLOORBOX_WIDTH ), OBJ_FIRSTFLOOR);
+		CAbstractFactory<CFirstFloor>::CreateFloorBox(HENESISCX * 0.5f, HENESISCY - 220.f, HENESISCX, 20.f, FLOORBOX_WIDTH), OBJ_FIRSTFLOOR);
 	// 1층 박스 (세로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFirstFloor>::CreateFloorBox(150.f, 1035.f, 230.f, 420.f, FLOORBOX_HEIGHT ), OBJ_FIRSTFLOOR);
+		CAbstractFactory<CFirstFloor>::CreateFloorBox(150.f, 1035.f, 230.f, 420.f, FLOORBOX_HEIGHT), OBJ_FIRSTFLOOR);
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFirstFloor>::CreateFloorBox(1705.f, 1035.f, 230.f, 420.f, FLOORBOX_HEIGHT  ), OBJ_FIRSTFLOOR);
+		CAbstractFactory<CFirstFloor>::CreateFloorBox(1705.f, 1035.f, 230.f, 420.f, FLOORBOX_HEIGHT), OBJ_FIRSTFLOOR);
 	// 2층 박스 (가로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CSecondFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 456.f, 1300.f , 20.f, FLOORBOX_WIDTH ), OBJ_SECONDFLOOR);
+		CAbstractFactory<CSecondFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 456.f, 1300.f, 20.f, FLOORBOX_WIDTH), OBJ_SECONDFLOOR);
 	// 2층 박스 (세로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CSecondFloor>::CreateFloorBox(1550.f, 750.f, 100.f , 500.f, FLOORBOX_HEIGHT  ), OBJ_SECONDFLOOR);
+		CAbstractFactory<CSecondFloor>::CreateFloorBox(1550.f, 750.f, 100.f, 500.f, FLOORBOX_HEIGHT), OBJ_SECONDFLOOR);
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CSecondFloor>::CreateFloorBox(320.f, 750.f, 100.f , 500.f , FLOORBOX_HEIGHT ), OBJ_SECONDFLOOR);
+		CAbstractFactory<CSecondFloor>::CreateFloorBox(320.f, 750.f, 100.f, 500.f, FLOORBOX_HEIGHT), OBJ_SECONDFLOOR);
 	// 3층 박스 (가로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CThirdFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 700.f, 1110.f, 20.f, FLOORBOX_WIDTH ), OBJ_THIRDFLOOR);
+		CAbstractFactory<CThirdFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 700.f, 1110.f, 20.f, FLOORBOX_WIDTH), OBJ_THIRDFLOOR);
 	// 3층 박스 (세로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CThirdFloor>::CreateFloorBox(410.f, 590.f, 78.f, 360.f, FLOORBOX_HEIGHT  ), OBJ_THIRDFLOOR);
+		CAbstractFactory<CThirdFloor>::CreateFloorBox(410.f, 590.f, 78.f, 360.f, FLOORBOX_HEIGHT), OBJ_THIRDFLOOR);
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CThirdFloor>::CreateFloorBox(1445.f, 590.f, 78.f, 360.f, FLOORBOX_HEIGHT  ), OBJ_THIRDFLOOR);
+		CAbstractFactory<CThirdFloor>::CreateFloorBox(1445.f, 590.f, 78.f, 360.f, FLOORBOX_HEIGHT), OBJ_THIRDFLOOR);
 	// 4층 박스 (가로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFourthFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 935.f, 930.f, 20.f, FLOORBOX_WIDTH ), OBJ_FOURTHFLOOR);
+		CAbstractFactory<CFourthFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 935.f, 930.f, 20.f, FLOORBOX_WIDTH), OBJ_FOURTHFLOOR);
 	// 4층 박스 (세로)
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFourthFloor>::CreateFloorBox(505.f, 365.f, 80.f, 315.f, FLOORBOX_HEIGHT  ), OBJ_FOURTHFLOOR);
+		CAbstractFactory<CFourthFloor>::CreateFloorBox(505.f, 365.f, 80.f, 315.f, FLOORBOX_HEIGHT), OBJ_FOURTHFLOOR);
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFourthFloor>::CreateFloorBox(1365.f, 365.f, 80.f, 315.f, FLOORBOX_HEIGHT  ), OBJ_FOURTHFLOOR);
+		CAbstractFactory<CFourthFloor>::CreateFloorBox(1365.f, 365.f, 80.f, 315.f, FLOORBOX_HEIGHT), OBJ_FOURTHFLOOR);
 	// 5층 박스
 	CObjMgr::GetInstance()->AddObject(
-		CAbstractFactory<CFifthFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 1180.f, 760.f, 20.f, FLOORBOX_WIDTH ), OBJ_FIFTHFLOOR);
+		CAbstractFactory<CFifthFloor>::CreateFloorBox(HENESISCX * 0.5f + 30.f, HENESISCY - 1180.f, 760.f, 20.f, FLOORBOX_WIDTH), OBJ_FIFTHFLOOR);
 
-	//// 몬스터
+	// 결과창
+	CObjMgr::GetInstance()->AddObject(
+		CAbstractFactory<CResult>::CreateObj(), OBJ_UI);
+
+	///////////////////////////////// 몬스터
+	//RecvMonsterInitalInfo();	// 서버로 부터 몬스터 초기 좌표값 받기
+
 	// 초록버섯  (2층)
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{
@@ -153,12 +147,10 @@ void CStage1::Render(HDC hDc)
 	BitBlt(hDc, static_cast<int>(g_fScrollX), 30 + static_cast<int>(g_fScrollY), HENESISCX, HENESISCY,
 		hMemDC, 0, 0, SRCCOPY);
 
-
 	// 타일 버리자
 	if(GetAsyncKeyState('1'))
 		CLineMgr::GetInstance()->Render(hDc);
 	CObjMgr::GetInstance()->RenderObj(hDc);
-
 }
 
 void CStage1::Release()

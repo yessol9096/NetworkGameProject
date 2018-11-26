@@ -52,8 +52,8 @@ public:
 
 protected:
 	INFO			m_tInfo;
-	RECT		m_tRect;
-	RECT		m_tCollRect;
+	RECT			m_tRect;
+	RECT			m_tCollRect;
 	// ป๓ลย
 	STATE			m_tState;
 

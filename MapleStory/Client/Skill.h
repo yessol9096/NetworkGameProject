@@ -9,11 +9,9 @@ public:
 	virtual ~CSkill(void);
 
 public:
-	virtual void SetPlayer(CObj* pPlayer); 
-
 	virtual void	UpdateCollRect() = 0;
-	
+	void SetPlayer(CObj* pPlayer) { m_pPlayer = pPlayer; }
 
 protected:
-	CObj*		m_pPlayer;
+	CObj * m_pPlayer;
 };

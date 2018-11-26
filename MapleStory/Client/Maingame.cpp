@@ -1,17 +1,16 @@
 ﻿#include "StdAfx.h"
 #include "Maingame.h"
 
-
-float g_fScrollX = 0.f;
-float g_fScrollY = 0.f;
-bool  g_bIsSceneChange = false;
-SCENE_TYPE g_eScene = SCENE_FIELD;
-PLAYERINFO g_myinfo;
+// 서버와 통신
+SOCKET g_sock;
 int g_retval;
 
-// 서버와 통신 소켓
-SOCKET g_sock;
+//데이터타입 구분하기
+int datatype;
+
 // 플레이어들의 정보를 담는 벡터.
+int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
+PLAYERINFO g_myinfo;
 vector<PLAYERINFO> g_vecplayer;
 
 //몬스터 정보 받기 
@@ -19,11 +18,14 @@ vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
 bool bMonster_check = false;
 MONSTERINFO monsterinfo{};
 
-//데이터타입 구분하기
-int datatype;
+//
+float g_fScrollX = 0.f;
+float g_fScrollY = 0.f;
+bool  g_bIsSceneChange = false;
+SCENE_TYPE g_eScene = SCENE_FIELD;
 
 void CMaingame::Initialize(void)
-{	
+{
 	m_hDC = GetDC(g_hWnd);
 	//콘솔창 디버깅용
 	AllocConsole();
@@ -54,7 +56,6 @@ void CMaingame::Initialize(void)
 	g_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (g_sock == INVALID_SOCKET) // 생성 실패시
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
-
 }
 
 void CMaingame::Update(void)

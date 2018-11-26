@@ -1,12 +1,12 @@
 #pragma once
 #include "obj.h"
 
-class CParty :
+class CResult :
 	public CObj
 {
 public:
-	CParty();
-	virtual ~CParty();
+	CResult();
+	virtual ~CResult();
 
 public:
 	virtual void	Initialize(void);
@@ -15,7 +15,10 @@ public:
 	virtual void	Release(void) {};
 	virtual void	FrameMove() {};
 
+	void SetShowed(bool bShow);
 private:
-	bool			m_bIsShowed; // on/off 기능
+	bool	m_bIsShowed; // on/off 기능
+
+	RECT	m_tExitButton;
 };
 

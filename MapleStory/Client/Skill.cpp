@@ -9,9 +9,3 @@ CSkill::CSkill(void)
 CSkill::~CSkill(void)
 {
 }
-
-void CSkill::SetPlayer(CObj* pPlayer)
-{
-	m_pPlayer = pPlayer;
-
-}
