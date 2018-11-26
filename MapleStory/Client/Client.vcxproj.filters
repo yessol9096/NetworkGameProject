@@ -166,6 +166,9 @@
     <Filter Include="01. Object\05. Gold">
       <UniqueIdentifier>{7cc322a7-e1ac-4918-b68e-65f1992f0c8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Object\11. UI\04. Result">
+      <UniqueIdentifier>{06c20db3-aae5-4030-aa7c-c163c82f1b0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -330,6 +333,9 @@
     <ClInclude Include="Skill.h">
       <Filter>01. Object\04. Skills</Filter>
     </ClInclude>
+    <ClInclude Include="Result.h">
+      <Filter>01. Object\11. UI\04. Result</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -484,6 +490,9 @@
     </ClCompile>
     <ClCompile Include="Skill.cpp">
       <Filter>01. Object\04. Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="Result.cpp">
+      <Filter>01. Object\11. UI\04. Result</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
