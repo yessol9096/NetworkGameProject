@@ -56,6 +56,11 @@ typedef struct MonsterInfo {
 	int			pattern;
 }MONSTERINFO;
 
+typedef struct PacketInfo {
+	PACKET_TYPE type;
+	int					size;
+
+}PACKETINFO;
 
 //--------------------------------------------------------------------------------
 

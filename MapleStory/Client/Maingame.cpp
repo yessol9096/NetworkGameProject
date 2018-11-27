@@ -7,6 +7,7 @@ int g_retval;
 
 //데이터타입 구분하기
 int datatype;
+PACKETINFO packetinfo;
 
 // 플레이어들의 정보를 담는 벡터.
 int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
@@ -17,6 +18,9 @@ vector<PLAYERINFO> g_vecplayer;
 vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
 bool bMonster_check = false;
 MONSTERINFO monsterinfo{};
+
+// 데이터 버퍼
+char buf[BUFSIZE];
 
 //
 float g_fScrollX = 0.f;
@@ -63,19 +67,29 @@ void CMaingame::Update(void)
 	CSceneMgr::GetInstance()->Update();
 	CSoundMgr::GetInstance()->UpdateSound();
 
+	// 이 부분 예솔이한테 물어보기.
 	if (g_retval != SOCKET_ERROR)
 	{
-		g_retval = recv(g_sock, (char*)&datatype, sizeof(int), 0);
-		//cout << datatype << endl;
-		switch (datatype)
+		// 패킷 구조체를 받아온다.
+		// g_retval = recv(g_sock, (char*)&datatype, sizeof(int), 0);
+		g_retval = recv(g_sock, buf, BUFSIZE, 0);
+
+
+
+		switch (/*datatype*/packetinfo.type)
 		{
-		case OBJ_PLAYER:
+		case /*OBJ_PLAYER*/CS_PACKET_PLAYERINFO_INITIALLY:
+		{
+
+		}
 			break;
 		case OBJ_GRRENMUSH:
+		{
 			g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-			if(g_vecgreen[monsterinfo.id].key == NULL)
+			if (g_vecgreen[monsterinfo.id].key == NULL)
 				g_vecgreen[monsterinfo.id] = monsterinfo;
 			//cout << g_vecgreen[5].pt.x << endl;
+		}
 			break;
 		}
 	}

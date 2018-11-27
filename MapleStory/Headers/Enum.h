@@ -72,11 +72,18 @@ enum FLOORBOX_ID { FLOORBOX_HEIGHT, FLOORBOX_WIDTH, FLOORBOX_END };
 
 enum FONT_ID { FONTID_DAMAGED, FONTID_ATTACK, FONTID_CRITICAL };
 
+
+// Player
+enum PLAYER_JOB { JOB_STRIKER, JOB_CAPTIN, JOB_END };
+
 //--------------------------------------------------------------
+// 서버 --------------------------------------------------------
 // 충돌 체크 관련해서 폰트 띄울 때.
 enum FONT_TYPE { FONTTYPE_UNIT, FONTTYPE_TENS, FONTTYPE_HUND, FONTTYPE_THOU, FONTTYPE_TENTH };
 enum FONT_FLOOR { FONT_FIRSTFLOOR, FONT_SECONDFLOOR, FONT_THIRDFLOOR, FONT_FOURTHFLOOR, FONT_FIFTHFLOOR };
 
-//--------------------------------------------------------------
-// Player
-enum PLAYER_JOB { JOB_STRIKER, JOB_CAPTIN, JOB_END  };
+enum PACKET_TYPE {
+	CS_PACKET_PLAYERINFO_INITIALLY,	// CS - Client to Server. SC - Server to Client.
+
+	SC_PACKET_PLAYERVECTOR
+};

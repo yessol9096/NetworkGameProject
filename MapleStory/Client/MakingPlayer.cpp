@@ -90,65 +90,64 @@ int CMakingPlayer::Update()
 		if (KEYMGR->OnceKeyDown(VK_LBUTTON)) {
 
 			// 입력 받은 id를 InitInfo.id에 갱신한다
-			char* pStr; 
+			char* pStr;
 			int strSize = WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, NULL, 0, NULL, NULL);
 			pStr = new char[strSize];
 			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
 			memcpy(&(g_myinfo.nickname), (pStr), strSize);
 
-			//while (true) {
-				//// 내 PlayerInfo 정보를 서버에 send 한다.
-				//g_retval = send(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
-				//if (g_retval == SOCKET_ERROR)
-				//	MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
+			// 내 PlayerInfo 정보를 서버에 send 한다.
+			g_retval = send(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
 
-				// 여기부터!
+			// 여기부터!
 
-				//// 서버로부터 다시 Playerinfo 정보를 받아온다. id, mp, hp 등.. 정해져 있을 것임.
-				//g_retval = recv(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0); 
-				//if (g_retval == SOCKET_ERROR)
-				//	MessageBoxW(g_hWnd, L"recv()", L"recv()", MB_OK);
+		   // 서버로부터 다시 Playerinfo 정보를 받아온다. id, mp, hp 등.. 정해져 있을 것임.
+			g_retval = recv(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"recv()", L"recv()", MB_OK);
 
-				//// 서버로부터, 서버에 저장 되어 있는 플레이어 벡터 공간을 recv 한다.
-				///// 고정 길이 데이터.
-				//int buflength{ 0 };
-				//g_retval = recv(g_sock, (char*)(&buflength), sizeof(int), 0);
-				//if (g_retval == SOCKET_ERROR)
-				//	MessageBoxW(g_hWnd, L"recv()", L"recv", MB_OK);
-				///// 가변 길이 데이터.
-				//int totalrecvbytes{ 0 }, currentrecvbytes{ 0 };
-				//while (true) {
-				//	char recvbuf[BUFSIZE];
-				//	currentrecvbytes = g_retval = recvn(g_sock, recvbuf, BUFSIZE, 0);
-				//	if (g_retval == SOCKET_ERROR) {
-				//		MessageBoxW(g_hWnd, L"recv()", L"recv", MB_OK);
-				//		break;
-				//	}
+			// 서버로부터, 서버에 저장 되어 있는 플레이어 벡터 공간을 recv 한다.
+			/// 고정 길이 데이터.
+			int buflength{ 0 };
+			g_retval = recv(g_sock, (char*)(&buflength), sizeof(int), 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"recv()", L"recv", MB_OK);
+			/// 가변 길이 데이터.
+			int totalrecvbytes{ 0 }, currentrecvbytes{ 0 };
+			while (true) {
+				char recvbuf[BUFSIZE];
+				currentrecvbytes = g_retval = recvn(g_sock, recvbuf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBoxW(g_hWnd, L"recv()", L"recv", MB_OK);
+					break;
+				}
 
-				//	totalrecvbytes += currentrecvbytes;
+				totalrecvbytes += currentrecvbytes;
 
-				//}
-
-				//else
-				{ 
-					// Debugging
-					{
-						if (g_myinfo.job == JOB_CAPTIN)
-							cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 캡틴 " << " / 정보 전송" << endl;
-						else
-							cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 스트라이커 " << " / 정보 전송" << endl;
-					}
-
-					// send에 성공하면, 다음 필드로 넘어간다.
-					CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-					CSoundMgr::GetInstance()->StopSoundAll();
-					CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-					CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
-					// g_myinfo에 현재까지 설정된 정보를 넣어준다.
-					//break;
-				//}
 			}
-		}
+
+			//else
+			{
+				// Debugging
+				{
+					if (g_myinfo.job == JOB_CAPTIN)
+						cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 캡틴 " << " / 정보 전송" << endl;
+					else
+						cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 스트라이커 " << " / 정보 전송" << endl;
+				}
+
+				// send에 성공하면, 다음 필드로 넘어간다.
+				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+				CSoundMgr::GetInstance()->StopSoundAll();
+				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+				// g_myinfo에 현재까지 설정된 정보를 넣어준다.
+				//break;
+			//}
+			}
+
 	}
 
 	return 0;

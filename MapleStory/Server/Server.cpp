@@ -27,135 +27,183 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	int retval{ 0 };
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	char buf[BUFSIZE + 1];
 	int datatype;
-	PLAYERINFO playerinfo;
 	MONSTERINFO monsterinfo;
+	PLAYERINFO playerinfo;
 	ZeroMemory(&playerinfo, sizeof(playerinfo));
+
 
 	// 클라이언트 정보 얻기
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
 	// -------------------------------------------
-	// 몬스터
-	bCreateMonster_check = true;
-	if (bCreateMonster_check == true)
-	{
-		// 초록버섯 데이터 정의
-		for (int i = 0; i < MAX_GREEN - 1; ++i)
-		{
-			monsterinfo.id = i;
-			monsterinfo.hp = 100;
-			monsterinfo.key = OBJ_GRRENMUSH;
-			monsterinfo.money = 10;
-			monsterinfo.pt.x = greenposX[i];
-			monsterinfo.pt.y = greenposY;
-			monsterinfo.dir = greenDir[i];
-			monsterinfo.pattern = greenPtr[i];
+	// 구조 바꾸기. 고정 길이 + 가변 길이.
+	PACKETINFO packetinfo;
+	while (true) {
+		char buf[BUFSIZE];
 
-			g_vecgreen.push_back(monsterinfo);
-			datatype = OBJ_GRRENMUSH;
-			cout << "몬스터 입력 정보 전달" << endl;
+		// 고정 길이.
+		ZeroMemory(&packetinfo, sizeof(packetinfo));	 /// 재사용 할 거니까. 계속 비워줌.		
+		while (true) {
+			int totalreadbytes{ 0 }, readbytes{ 0 };
 
-			retval = send(client_sock, (char*)&datatype, sizeof(int), 0);
-			retval = send(client_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-
+			/// recvn으로 계속 받아와야 함. tcp 특성 때문에..!
+			readbytes = retval = recvn(client_sock, buf, BUFSIZE, 0);
+			/// 받기 실패 시,
 			if (retval == SOCKET_ERROR) {
-				err_display("send()");
-				return 1;
+				err_display("packetinfo recv()");
+				break;
+			}
+			/// 받기 성공 시,
+			else {
+				/// 고정 길이 데이터에 recv 해온 메모리만큼 복사 한다.
+				memcpy(&packetinfo + totalreadbytes, buf, readbytes);
+				/// 받아온 만큼 누적하여 더한다.
+				totalreadbytes += readbytes;
+			}
+			/// 다 받으면, 
+			if (totalreadbytes >= sizeof(PACKETINFO)) {
+				break; /// recvn 루프를 나간다.
 			}
 		}
-		bCreateMonster_check = false;
+
+		// 가변 길이.
+		switch (packetinfo.type) {
+		case CS_PACKET_PLAYERINFO_INITIALLY: // 초기 플레이어 info.
+		{
+			char buf[BUFSIZE];
+
+			// 클라이언트로부터 초기 설정한 PlayerInfo를 recvn 한다.
+			while (true) {
+				int totalreadbytes{ 0 }, readbytes{ 0 };
+				readbytes = retval = recvn(client_sock, buf, BUFSIZE, 0);
+				/// 받기 실패 시,
+				if (retval == SOCKET_ERROR) {
+					err_display("intial playerinfo recv()");
+					break;
+				}
+				/// 받기 성공 시,
+				else {
+					/// 고정 길이 데이터에 recv 해온 메모리만큼 복사 한다.
+					memcpy(&playerinfo + totalreadbytes, buf, readbytes);
+					/// 받아온 만큼 누적하여 더한다.
+					totalreadbytes += readbytes;
+				}
+				/// 다 받으면, 
+				if (totalreadbytes >= sizeof(packetinfo.size)) {
+					break; /// recvn 루프를 나간다.
+			}
+#ifdef DEBUGGING
+				cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]";
+				if (playerinfo.job == JOB_CAPTIN)
+					cout << "[RECV]" <<  "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 캡틴" << endl;
+				else
+					cout << "[RECV]" << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 스트라이커" << endl;
+#endif
+		}
+
+			// playerinfo에 id 부여.
+			{
+				int id = -1;
+				for (int i = 0; i < MAX_USER; ++i) {
+					if (false == g_arrayconnected[i]) { /// 순차적으로 접근해서 연결 되지 않은 인덱스 i를 찾고, 
+						id = i; /// 아이디를 부여한다.
+						break;
+					}
+				}
+
+				/// 유저 2인 제한.
+				if (-1 == id) {
+					cout << "user가 다 찼습니다." << endl;
+					closesocket(client_sock);
+					break;
+				}
+
+				// 실제 playerinfo에 id를 부여한다.
+				playerinfo.id = id;
+			}
+
+			// playerinfo에 값 채우기.
+			{
+				playerinfo.connected = true;
+				playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
+				playerinfo.pt.y = 500.f;
+				playerinfo.hp = 30000;
+				playerinfo.size.cx = 100.f;
+				playerinfo.size.cy = 100.f;
+			}
+
+			// 새롭게 갱신된 playerinfo를 buf에 copy 해서 보낸다.
+			ZeroMemory(buf, sizeof(buf));
+			memcpy(&buf, &playerinfo, sizeof(playerinfo));
+			retval = send(client_sock, buf, BUFSIZE, 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("send()");
+				break;
+			}
+			else { // 데이터 보내는 데 성공했으면
+				g_vecplayer.push_back(playerinfo); // 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
+			}
+
+			// -------------------------------------------
+			// 새로 접속한 클라이언트에게, 다른 플레이어의 위치를 동기화한다.
+
+			if (g_vecplayer.size() <= 1) /// 기존 플레이어가 없을 때
+				break;
+			else {
+				/// 고정 길이 데이터 전송,,
+				ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
+				packetinfo.type = SC_PACKET_PLAYERVECTOR;
+				packetinfo.size = sizeof(g_vecplayer);
+				ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+				memcpy(buf, &packetinfo, sizeof(buf));
+
+				send(client_sock, buf, BUFSIZE, 0);	
+			}
+
+		}
+		break;
+		}
+
 	}
 
 	// -------------------------------------------
-	// 플레이어가 accept 해 올 때 처리하는 while 문.
-	/// 1. id 부여
-	/// 2. 클라이언트가 send 해온 PlayerInfo 정보를 recv하고, g_vecplayer에 갱신
-	//while (true) {
+	// 몬스터
+	//bCreateMonster_check = true;
+	//if (bCreateMonster_check == true)
+	//{
+	//	// 초록버섯 데이터 정의
+	//	for (int i = 0; i < MAX_GREEN - 1; ++i)
+	//	{
+	//		monsterinfo.id = i;
+	//		monsterinfo.hp = 100;
+	//		monsterinfo.key = OBJ_GRRENMUSH;
+	//		monsterinfo.money = 10;
+	//		monsterinfo.pt.x = greenposX[i];
+	//		monsterinfo.pt.y = greenposY;
+	//		monsterinfo.dir = greenDir[i];
+	//		monsterinfo.pattern = greenPtr[i];
 
-	//	// g_vecplayer 빈 공간 찾아서 id 부여.
-	//	int id = -1;
-	//	for (int i = 0; i < MAX_USER; ++i) {
-	//		if (false == g_arrayconnected[i]) { // 연결 되지 않은 상태일 때, 
-	//			id = i; // 아이디를 부여한다.
-	//			break;
+	//		g_vecgreen.push_back(monsterinfo);
+	//		datatype = OBJ_GRRENMUSH;
+	//		cout << "몬스터 입력 정보 전달" << endl;
+
+	//		retval = send(client_sock, (char*)&datatype, sizeof(int), 0);
+	//		retval = send(client_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+
+	//		if (retval == SOCKET_ERROR) {
+	//			err_display("send()");
+	//			return 1;
 	//		}
 	//	}
-
-	//	// 유저 2인 제한.
-	//	if (-1 == id) {
-	//		cout << "user가 다 찼습니다." << endl;
-	//		closesocket(client_sock);
-	//		continue;
-	//	}
-
-	//	// 클라이언트로부터 초기 설정한 PlayerInfo를 recv 한다. 직업 정보 등..
-	//	retval = recv(client_sock, buf, BUFSIZE, 0);
-	//	if (retval == SOCKET_ERROR) {
-	//		err_display("recv()");
-	//		break;
-	//	}
-	//	else if (retval == 0)
-	//		break;
-
-	//	// 클라이언트로부터 받은 PlayerInfo 데이터를 playerinfo 변수에 복사. 
-	//	// buf[retval] = '\0';
-	//	cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]";
-	//	memcpy(&playerinfo, &buf, sizeof(buf));
-
-	//	// (debugging)
-	//	{
-	//		if (playerinfo.job == JOB_CAPTIN)
-	//			cout << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 캡틴 / 정보 수신" << endl;
-	//		else
-	//			cout << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 스트라이커 / 정보 수신" << endl;
-	//	}
-
-	//	// Player Info에 값 채우기.
-	//	playerinfo.id = id;
-	//	playerinfo.connected = true;
-	//	playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
-	//	playerinfo.pt.y = 500.f;
-	//	playerinfo.hp = 30000;
-	//	playerinfo.size.cx = 100.f;
-	//	playerinfo.size.cy = 100.f;
-
-	//	while (true) {
-
-	//	}
-	//	// 여기부터!!
-
-	//	//// buf에 다시 player info를 copy 할 필요가 있나..?
-	//	//memcpy(&buf, &playerinfo, sizeof(playerinfo));
-
-	//	//// 데이터 보내기
-	//	//retval = send(client_sock, buf, BUFSIZE, 0);
-	//	//if (retval == SOCKET_ERROR) {
-	//	//	err_display("send()");
-	//	//	break;
-	//	//}
-	//	//else {// 데이터 보내는 데 성공했으면
-	//	//	g_vecplayer.push_back(playerinfo);// 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
-	//	//	break;
-	//	//}
+	//	bCreateMonster_check = false;
 	//}
 
-	//// -------------------------------------------
-	//// 접속한 클라이언트에게, 다른 플레이어의 위치를 동기화한다.
-	//ZeroMemory(buf, sizeof(buf)); // 버퍼 재사용.
-	//memcpy(buf, &g_vecplayer, sizeof(g_vecplayer)); // 벡터 자체를 보내는건?
 
-	//while (true) {
-	//	if (g_vecplayer.size() <= 1) // 기존 플레이어가 없을 때
-	//		break;
-	//	else {
-	//		// 고정 길이 데이터.
-	//		int buflength = sizeof(g_vecplayer);
-	//		send(client_sock, (char*)buflength, sizeof(int), 0);	// 고정 길이를 보낸다.
-	//	}
-	//}
+
+
+
 	
 	// closesocket()
 	closesocket(client_sock);
