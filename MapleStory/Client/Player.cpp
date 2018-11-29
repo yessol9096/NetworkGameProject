@@ -336,7 +336,7 @@ void CPlayer::KeyCheck()
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
 		m_bIsRopeColl = false;
-		if (g_myinfo.job == JOB_STRIKER)
+		if (g_vecplayer[g_myid].job == JOB_STRIKER)
 			m_pImgName = L"Player_LEFT";
 		else
 			m_pImgName = L"Captin_LEFT";
@@ -348,7 +348,7 @@ void CPlayer::KeyCheck()
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
 		m_bIsRopeColl = false;
-		if (g_myinfo.job == JOB_STRIKER)
+		if (g_vecplayer[g_myid].job == JOB_STRIKER)
 			m_pImgName = L"Player_RIGHT";
 		else
 			m_pImgName = L"Captin_RIGHT";
@@ -366,7 +366,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_UP) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
-		if (g_myinfo.job == JOB_STRIKER)
+		if (g_vecplayer[g_myid].job == JOB_STRIKER)
 			m_pImgName = L"Player_ROPE";
 		else
 			m_pImgName = L"Captin_ROPE";
@@ -375,7 +375,7 @@ void CPlayer::KeyCheck()
 		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_SPACE))
 		{
 			m_eCurState = PLAYER_JUMP;
-			if (g_myinfo.job == JOB_STRIKER)
+			if (g_vecplayer[g_myid].job == JOB_STRIKER)
 				m_pImgName = L"Player_LEFT";
 			else
 				m_pImgName = L"Captin_LEFT";
@@ -385,7 +385,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
-		if (g_myinfo.job == JOB_STRIKER)
+		if (g_vecplayer[g_myid].job == JOB_STRIKER)
 			m_pImgName = L"Player_ROPE";
 		else
 			m_pImgName = L"Captin_ROPE";

@@ -59,7 +59,7 @@ typedef struct MonsterInfo {
 typedef struct PacketInfo {
 	PACKET_TYPE type;
 	int					size;
-
+	int					id{ -1 };
 }PACKETINFO;
 
 //--------------------------------------------------------------------------------

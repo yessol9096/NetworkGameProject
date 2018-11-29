@@ -66,7 +66,7 @@ int CLeafCommunication::Update(void)
 				m_iRenderNumber = -1;
 
 				// 파티 대기 상태로 바꾸기
-				g_myinfo.ready = true;
+				g_vecplayer[g_myid].ready = true;
 			}
 			else
 				m_iRenderNumber++;

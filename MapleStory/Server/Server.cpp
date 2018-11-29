@@ -13,7 +13,7 @@ using namespace std;
 // monster 정보 보냈나 안보냈나 확인
 bool bCreateMonster_check = false;
 vector<MONSTERINFO> g_vecgreen;
-int greenposX[] = { HENESISCX * 0.5f, HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
+int greenposX[] = {  HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
 int greenposY = HENESISCY - 460.f;
 OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
 int greenPtr[] = {1,1,3,1,1,3};
@@ -30,8 +30,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	int datatype;
 	MONSTERINFO monsterinfo;
 	PLAYERINFO playerinfo;
-	ZeroMemory(&playerinfo, sizeof(playerinfo));
-
+	PACKETINFO packetinfo;
 
 	// 클라이언트 정보 얻기
 	addrlen = sizeof(clientaddr);
@@ -39,127 +38,128 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 	// -------------------------------------------
 	// 구조 바꾸기. 고정 길이 + 가변 길이.
-	PACKETINFO packetinfo;
 	while (true) {
 		char buf[BUFSIZE];
 
-		// 고정 길이.
+		// 고정 길이 수신.
 		ZeroMemory(&packetinfo, sizeof(packetinfo));	 /// 재사용 할 거니까. 계속 비워줌.		
-		while (true) {
-			int totalreadbytes{ 0 }, readbytes{ 0 };
-
-			/// recvn으로 계속 받아와야 함. tcp 특성 때문에..!
-			readbytes = retval = recvn(client_sock, buf, BUFSIZE, 0);
-			/// 받기 실패 시,
-			if (retval == SOCKET_ERROR) {
-				err_display("packetinfo recv()");
-				break;
-			}
-			/// 받기 성공 시,
-			else {
-				/// 고정 길이 데이터에 recv 해온 메모리만큼 복사 한다.
-				memcpy(&packetinfo + totalreadbytes, buf, readbytes);
-				/// 받아온 만큼 누적하여 더한다.
-				totalreadbytes += readbytes;
-			}
-			/// 다 받으면, 
-			if (totalreadbytes >= sizeof(PACKETINFO)) {
-				break; /// recvn 루프를 나간다.
-			}
+		cout << "고정 길이 수신 대기 중" << endl;
+		/// recvn으로 계속 받아와야 함. tcp 특성 때문에..!
+		retval = recvn(client_sock, buf, BUFSIZE, 0);
+		cout << "고정 길이 수신됨" << endl;
+		/// 받기 실패 시,
+		if (retval == SOCKET_ERROR) {
+			err_display("packetinfo recv()");
+			break;
+		}
+		/// 받기 성공 시,
+		else {
+			/// 고정 길이 데이터에 recv 해온 메모리만큼 복사 한다.
+			memcpy(&packetinfo, buf, sizeof(packetinfo));
 		}
 
-		// 가변 길이.
+
+		// 가변 길이 수신.
 		switch (packetinfo.type) {
 		case CS_PACKET_PLAYERINFO_INITIALLY: // 초기 플레이어 info.
 		{
-			char buf[BUFSIZE];
+			char buf2[BUFSIZE];
 
-			// 클라이언트로부터 초기 설정한 PlayerInfo를 recvn 한다.
-			while (true) {
-				int totalreadbytes{ 0 }, readbytes{ 0 };
-				readbytes = retval = recvn(client_sock, buf, BUFSIZE, 0);
-				/// 받기 실패 시,
+			// -----------------------------------------
+			// 클라이언트가 초기 설정 한 playerinfo를 recvn 한다.
+			{
+				ZeroMemory(&buf2, sizeof(buf2));	 /// 재사용 할 거니까. 계속 비워줌.		
+				retval = recvn(client_sock, buf2, BUFSIZE, 0);
+				cout << "가변 길이 수신 - CS_PACKET_PLAYERINFO_INITIALLY" << endl;
 				if (retval == SOCKET_ERROR) {
 					err_display("intial playerinfo recv()");
 					break;
 				}
-				/// 받기 성공 시,
 				else {
 					/// 고정 길이 데이터에 recv 해온 메모리만큼 복사 한다.
-					memcpy(&playerinfo + totalreadbytes, buf, readbytes);
-					/// 받아온 만큼 누적하여 더한다.
-					totalreadbytes += readbytes;
+					memcpy(&playerinfo, buf2, sizeof(playerinfo));
 				}
-				/// 다 받으면, 
-				if (totalreadbytes >= sizeof(packetinfo.size)) {
-					break; /// recvn 루프를 나간다.
-			}
+
 #ifdef DEBUGGING
 				cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]";
 				if (playerinfo.job == JOB_CAPTIN)
-					cout << "[RECV]" <<  "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 캡틴" << endl;
+					cout << "[RECV]" << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 캡틴" << endl;
 				else
 					cout << "[RECV]" << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 스트라이커" << endl;
 #endif
-		}
-
-			// playerinfo에 id 부여.
-			{
+				// 초기 설정 한 playerinfo를 기반으로 vector에 push 한다.
 				int id = -1;
 				for (int i = 0; i < MAX_USER; ++i) {
 					if (false == g_arrayconnected[i]) { /// 순차적으로 접근해서 연결 되지 않은 인덱스 i를 찾고, 
 						id = i; /// 아이디를 부여한다.
 						break;
 					}
+
+
+					/// 유저 2인 제한.
+					if (-1 == id) {
+						std::cout << "user가 다 찼습니다." << std::endl;
+						closesocket(client_sock);
+						break;
+					}
+					// 실제 playerinfo에 id를 부여한다.
+					playerinfo.id = id;
+					playerinfo.connected = true;
+					playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
+					playerinfo.pt.y = 500.f;
+					playerinfo.hp = 30000;
+					playerinfo.size.cx = 100.f;
+					playerinfo.size.cy = 100.f;
 				}
-
-				/// 유저 2인 제한.
-				if (-1 == id) {
-					cout << "user가 다 찼습니다." << endl;
-					closesocket(client_sock);
-					break;
-				}
-
-				// 실제 playerinfo에 id를 부여한다.
-				playerinfo.id = id;
+				// 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
+				g_vecplayer.push_back(playerinfo);
 			}
-
-			// playerinfo에 값 채우기.
-			{
-				playerinfo.connected = true;
-				playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
-				playerinfo.pt.y = 500.f;
-				playerinfo.hp = 30000;
-				playerinfo.size.cx = 100.f;
-				playerinfo.size.cy = 100.f;
-			}
-
-			// 새롭게 갱신된 playerinfo를 buf에 copy 해서 보낸다.
-			ZeroMemory(buf, sizeof(buf));
-			memcpy(&buf, &playerinfo, sizeof(playerinfo));
-			retval = send(client_sock, buf, BUFSIZE, 0);
-			if (retval == SOCKET_ERROR) {
-				err_display("send()");
-				break;
-			}
-			else { // 데이터 보내는 데 성공했으면
-				g_vecplayer.push_back(playerinfo); // 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
-			}
-
 			// -------------------------------------------
-			// 새로 접속한 클라이언트에게, 다른 플레이어의 위치를 동기화한다.
-
-			if (g_vecplayer.size() <= 1) /// 기존 플레이어가 없을 때
-				break;
+			// id 를 전송한다.
+			/// 고정 길이 데이터 전송,,
+			ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
+			packetinfo.type = SC_PACKET_ID_INITIALLY;
+			packetinfo.size = sizeof(playerinfo.id);
+			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			retval == send(client_sock, buf, BUFSIZE, 0);
+			cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO_ID" << endl;
+			if (retval == SOCKET_ERROR) {
+				err_display("send() - SC_PACKET_PLAYERINFO_ID");
+			}
+			/// 가변 길이 데이터 전송,,
+			ZeroMemory(buf, sizeof(buf));
+			memcpy(buf, &(playerinfo.id), sizeof(playerinfo.id));
+			retval == send(client_sock, buf, BUFSIZE, 0);
+			cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO_ID" << endl;
+			if (retval == SOCKET_ERROR)
+				err_display("send() - SC_PACKET_PLAYERINFO_ID");
+			// -------------------------------------------
+			// 새로 접속한 클라이언트에게, 나를 포함한 모든 플레이어의 위치를 동기화한다.
+			// me, other playerinfo 전송.
 			else {
-				/// 고정 길이 데이터 전송,,
-				ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
-				packetinfo.type = SC_PACKET_PLAYERVECTOR;
-				packetinfo.size = sizeof(g_vecplayer);
-				ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-				memcpy(buf, &packetinfo, sizeof(buf));
-
-				send(client_sock, buf, BUFSIZE, 0);	
+				for (int i = 0; i < g_vecplayer.size(); ++i) {
+					/// 고정 길이 데이터 전송,,
+					ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
+					packetinfo.type = SC_PACKET_PLAYERINFO;
+					packetinfo.size = sizeof(g_vecplayer[i]);
+					packetinfo.id = i;
+					ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+					memcpy(buf, &packetinfo, sizeof(packetinfo));
+					retval == send(client_sock, buf, BUFSIZE, 0);
+					cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO" << endl;
+					if (retval == SOCKET_ERROR) {
+						err_display("send() - SC_PACKET_PLAYERINFO");
+					}
+					/// 가변 길이 데이터 전송,,
+					ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+					memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
+					retval == send(client_sock, buf, BUFSIZE, 0);
+					cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO" << endl;
+					if (retval == SOCKET_ERROR) {
+						err_display("send() - SC_PACKET_PLAYERINFO");
+					}
+				}
 			}
 
 		}
@@ -234,7 +234,7 @@ int main()
 		err_quit("socket()");
 
 	// 주소 구조체 생성
-	SOCKADDR_IN serveraddr;
+	SOCKADDR_IN serveraddr;                      
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -325,153 +325,29 @@ void AcceptThread()
 {
 }
 
+int recvn(SOCKET s, char *buf, int len, int flags)
+{
+	int received;
+	char *ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+
+		else if (received == 0)
+			break;
+
+		left -= received;
+		ptr += received;
+	}
+	return len - left;
+}
+
 void MakeMonster()
 {
 
 }
 
-
-//void GreenMushRoom_MoveInPattern(MonsterInfo m)
-//{
-//	m_dwCreateCurTime = GetTickCount();
-//
-//	if (DIR_LEFT == m.dir)
-//	{
-//		switch (m_eCurState)
-//		{
-//		case MONSTER_WALK:
-//		{
-//			m.pt.x -= m_fSpeed;
-//
-//			if (m.pt.x < 465.f)
-//				m.dir = DIR_RIGHT;
-//		}
-//		break;
-//		case MONSTER_STAND:
-//			break;
-//		}
-//
-//	}
-//	else
-//	{
-//		switch (m_eCurState)
-//		{
-//		case MONSTER_WALK:
-//		{
-//			m.pt.x += m_fSpeed;
-//			if (m.pt.x > 1390.f)
-//				m.dir = DIR_LEFT;
-//		}
-//		break;
-//		case MONSTER_STAND:
-//			break;
-//		}
-//
-//	}
-//
-//	switch (m_iPattern)
-//	{
-//	case 1:
-//	{
-//		if (MONSTER_DAMAGED == m_eCurState)
-//		{
-//			if (m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
-//			{
-//				m_eCurState = MONSTER_WALK;
-//				m_dwDamageOldTime = m_dwDamageCurTime;
-//			}
-//			return;
-//		}
-//
-//		if (MONSTER_DEAD == m_eCurState)
-//		{
-//			return;
-//		}
-//
-//		else
-//		{
-//			if (m_dwCreateOldTime + 3000 < m_dwCreateCurTime)
-//			{
-//				m_eCurState = MONSTER_STAND;
-//			}
-//			if (m_dwCreateOldTime + 6000 < m_dwCreateCurTime)
-//			{
-//				m_eCurState = MONSTER_WALK;
-//				m_dwCreateOldTime = m_dwCreateCurTime;
-//				m_bIsFloorBoxColl = false;
-//			}
-//
-//		}
-//
-//	}
-//	break;
-//	case 2:
-//	{
-//		if (MONSTER_DAMAGED == m_eCurState)
-//		{
-//			if (m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
-//			{
-//				m_eCurState = MONSTER_WALK;
-//				m_dwDamageOldTime = m_dwDamageCurTime;
-//			}
-//			return;
-//		}
-//		if (MONSTER_DEAD == m_eCurState)
-//		{
-//			return;
-//		}
-//
-//		else
-//		{
-//			if (m_dwCreateOldTime + 7000 < m_dwCreateCurTime)
-//			{
-//				m_eCurState = MONSTER_STAND;
-//			}
-//			if (m_dwCreateOldTime + 11000 < m_dwCreateCurTime)
-//			{
-//				m_eCurState = MONSTER_WALK;
-//				m_dwCreateOldTime = m_dwCreateCurTime;
-//				m_bIsFloorBoxColl = false;
-//			}
-//
-//		}
-//
-//	}
-//	break;
-//	case 3:
-//	{
-//		if (MONSTER_DAMAGED == m_eCurState)
-//		{
-//			if (m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
-//			{
-//				m_dwDamageOldTime = m_dwDamageCurTime;
-//				m_eCurState = MONSTER_WALK;
-//			}
-//			return;
-//		}
-//		if (MONSTER_DEAD == m_eCurState)
-//		{
-//			return;
-//		}
-//
-//
-//		else
-//		{
-//			if (m_dwCreateOldTime + 10000 < m_dwCreateCurTime)
-//			{
-//				m_eCurState = MONSTER_STAND;
-//			}
-//			if (m_dwCreateOldTime + 15000 < m_dwCreateCurTime)
-//			{
-//				m_eCurState = MONSTER_WALK;
-//				m_dwCreateOldTime = m_dwCreateCurTime;
-//				m_bIsFloorBoxColl = false;
-//			}
-//
-//		}
-//
-//	}
-//	break;
-//	}
-//
-//}

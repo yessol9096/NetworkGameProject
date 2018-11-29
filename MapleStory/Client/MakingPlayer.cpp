@@ -29,6 +29,7 @@ void CMakingPlayer::Initialize()
 
 int CMakingPlayer::Update()
 {
+
 	CObjMgr::GetInstance()->UpdateObj();
 
 	// 직업 바꾸는 화살표 - 마우스 충돌 검사.
@@ -88,7 +89,7 @@ int CMakingPlayer::Update()
 	
 	if (PtInRect(&rcMake, pt2)) {
 		if (KEYMGR->OnceKeyDown(VK_LBUTTON)) {
-
+			char buf[BUFSIZE];
 			// 입력 받은 id를 InitInfo.id에 갱신한다
 			char* pStr;
 			int strSize = WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, NULL, 0, NULL, NULL);
@@ -96,39 +97,23 @@ int CMakingPlayer::Update()
 			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
 			memcpy(&(g_myinfo.nickname), (pStr), strSize);
 
-			// 내 PlayerInfo 정보를 서버에 send 한다.
-			g_retval = send(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
+			// 고정 길이 데이터를 보낸다.
+			PACKETINFO packetinfo;
+			packetinfo.type = CS_PACKET_PLAYERINFO_INITIALLY;
+			packetinfo.size = sizeof(g_myinfo);
+			// ZeroMemory(buf, sizeof(buf));
+			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			g_retval = send(g_sock, (char*)&packetinfo/*buf*/, /*sizeof(packetinfo)*/BUFSIZE, 0);
 			if (g_retval == SOCKET_ERROR)
 				MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
 
-			// 여기부터!
-
-		   // 서버로부터 다시 Playerinfo 정보를 받아온다. id, mp, hp 등.. 정해져 있을 것임.
-			g_retval = recv(g_sock, (char*)&g_myinfo, sizeof(PLAYERINFO), 0);
+			// 내 PlayerInfo 정보를 서버에 send 한다.
+			ZeroMemory(buf, sizeof(buf));
+			memcpy(buf, &g_myinfo, sizeof(g_myinfo));
+			g_retval = send(g_sock, (char*)&g_myinfo/*buf*/, /*sizeof(g_myinfo)*/BUFSIZE, 0);
 			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"recv()", L"recv()", MB_OK);
+				MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
 
-			// 서버로부터, 서버에 저장 되어 있는 플레이어 벡터 공간을 recv 한다.
-			/// 고정 길이 데이터.
-			int buflength{ 0 };
-			g_retval = recv(g_sock, (char*)(&buflength), sizeof(int), 0);
-			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"recv()", L"recv", MB_OK);
-			/// 가변 길이 데이터.
-			int totalrecvbytes{ 0 }, currentrecvbytes{ 0 };
-			while (true) {
-				char recvbuf[BUFSIZE];
-				currentrecvbytes = g_retval = recvn(g_sock, recvbuf, BUFSIZE, 0);
-				if (g_retval == SOCKET_ERROR) {
-					MessageBoxW(g_hWnd, L"recv()", L"recv", MB_OK);
-					break;
-				}
-
-				totalrecvbytes += currentrecvbytes;
-
-			}
-
-			//else
 			{
 				// Debugging
 				{
@@ -137,18 +122,28 @@ int CMakingPlayer::Update()
 					else
 						cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 스트라이커 " << " / 정보 전송" << endl;
 				}
+				
+				// id를 부여받아야 다음 씬으로 넘어가도록 하자..! maingame에서 다른 데이터가 받는 것처럼
+				// 똑같이 받으면 구조가 꼬임.
+				ZeroMemory(buf, sizeof(buf));
+				g_retval = recv(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR)
+					MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+				else
+					memcpy(&g_myid, buf, sizeof(g_myid));
 
 				// send에 성공하면, 다음 필드로 넘어간다.
 				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
 				CSoundMgr::GetInstance()->StopSoundAll();
 				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
 				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
-				// g_myinfo에 현재까지 설정된 정보를 넣어준다.
+				// tempinfo에 현재까지 설정된 정보를 넣어준다.
 				//break;
 			//}
 			}
-
+		}
 	}
+
 
 	return 0;
 }

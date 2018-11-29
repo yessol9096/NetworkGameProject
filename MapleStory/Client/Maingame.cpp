@@ -8,10 +8,10 @@ int g_retval;
 //데이터타입 구분하기
 int datatype;
 PACKETINFO packetinfo;
+PLAYERINFO g_myinfo;
 
 // 플레이어들의 정보를 담는 벡터.
 int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
-PLAYERINFO g_myinfo;
 vector<PLAYERINFO> g_vecplayer;
 
 //몬스터 정보 받기 
@@ -60,39 +60,67 @@ void CMaingame::Initialize(void)
 	g_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (g_sock == INVALID_SOCKET) // 생성 실패시
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
+
+	// -------------------------------------------------------------------------------
+	g_vecplayer.reserve(MAX_USER);
+	PLAYERINFO tempinfo;
+	ZeroMemory(&tempinfo, sizeof(tempinfo));
+	g_vecplayer.push_back(tempinfo);
+	g_vecplayer.push_back(tempinfo);
 }
 
 void CMaingame::Update(void)
 {
+	cout << "CMaingame::Update()" << endl;
 	CSceneMgr::GetInstance()->Update();
 	CSoundMgr::GetInstance()->UpdateSound();
 
-	// 이 부분 예솔이한테 물어보기.
-	if (g_retval != SOCKET_ERROR)
+	if (-1 != g_myid)
 	{
-		// 패킷 구조체를 받아온다.
-		// g_retval = recv(g_sock, (char*)&datatype, sizeof(int), 0);
-		g_retval = recv(g_sock, buf, BUFSIZE, 0);
+		// 고정 길이 - 패킷 구조체를 받아온다.
+		g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+		memcpy(&packetinfo, buf, sizeof(packetinfo));
+		if (g_retval == SOCKET_ERROR) {
+			MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+			return;
+		}
 
-
-
-		switch (/*datatype*/packetinfo.type)
+		// 가변 길이 - 
+		switch (packetinfo.type)
 		{
-		case /*OBJ_PLAYER*/CS_PACKET_PLAYERINFO_INITIALLY:
+		case SC_PACKET_ID_INITIALLY:
 		{
-
+			ZeroMemory(buf, sizeof(buf));
+			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+			else
+				memcpy(&g_myid, buf, sizeof(g_myid));
 		}
 			break;
-		case OBJ_GRRENMUSH:
+		case SC_PACKET_PLAYERINFO:
 		{
-			g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-			if (g_vecgreen[monsterinfo.id].key == NULL)
-				g_vecgreen[monsterinfo.id] = monsterinfo;
-			//cout << g_vecgreen[5].pt.x << endl;
+			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
+
+			ZeroMemory(buf, sizeof(buf));
+			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+			else
+				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
 		}
-			break;
+		break;
+		//case OBJ_GRRENMUSH:
+		//{
+		//	g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+		//	if (g_vecgreen[monsterinfo.id].key == NULL)
+		//		g_vecgreen[monsterinfo.id] = monsterinfo;
+		//	//cout << g_vecgreen[5].pt.x << endl;
+		//}
+		//	break;
 		}
 	}
+
 }
 
 void CMaingame::Render(void)
@@ -116,6 +144,28 @@ void CMaingame::Release(void)
 	CSoundMgr::GetInstance()->DestroyInstance();
 	CSceneMgr::GetInstance()->DestroyInstance();
 	ReleaseDC(g_hWnd, m_hDC);
+}
+
+int CMaingame::recvn(SOCKET s, char *buf, int len, int flags)
+{
+
+	int received;
+	char *ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+		cout << "CMaingame::recvn" << endl;
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+
+		else if (received == 0)
+			break;
+
+		left -= received;
+		ptr += received;
+	}
+	return len - left;
 }
 
 CMaingame::CMaingame(void)

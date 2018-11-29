@@ -11,7 +11,7 @@ public:
 	void Update(void);
 	void Render(void);
 	void Release(void);
-
+	int recvn(SOCKET, char*, int , int );
 private:
 	HDC		m_hDC;
 };
