@@ -11,7 +11,8 @@ public:
 	void Update(void);
 	void Render(void);
 	void Release(void);
-	int recvn(SOCKET, char*, int , int );
+	static int recvn(SOCKET, char*, int , int );
+	static DWORD WINAPI RecvThread(LPVOID);
 private:
 	HDC		m_hDC;
 };

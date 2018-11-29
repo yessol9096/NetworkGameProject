@@ -28,6 +28,9 @@ float g_fScrollY = 0.f;
 bool  g_bIsSceneChange = false;
 SCENE_TYPE g_eScene = SCENE_FIELD;
 
+
+HANDLE hThread;
+
 void CMaingame::Initialize(void)
 {
 	m_hDC = GetDC(g_hWnd);
@@ -51,6 +54,7 @@ void CMaingame::Initialize(void)
 	//-------------------------------------------------------------------------------
 	// 서버 추가.
 
+
 	// 윈속을 초기화 한다.
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -60,6 +64,9 @@ void CMaingame::Initialize(void)
 	g_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (g_sock == INVALID_SOCKET) // 생성 실패시
 		MessageBoxW(g_hWnd, L"socket()", MB_OK, MB_OK);
+	 
+	// recv 전용 스레드.
+	hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)g_sock, 0, NULL);
 
 	// -------------------------------------------------------------------------------
 	g_vecplayer.reserve(MAX_USER);
@@ -75,51 +82,6 @@ void CMaingame::Update(void)
 	CSceneMgr::GetInstance()->Update();
 	CSoundMgr::GetInstance()->UpdateSound();
 
-	if (-1 != g_myid)
-	{
-		// 고정 길이 - 패킷 구조체를 받아온다.
-		g_retval = recvn(g_sock, buf, BUFSIZE, 0);
-		memcpy(&packetinfo, buf, sizeof(packetinfo));
-		if (g_retval == SOCKET_ERROR) {
-			MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
-			return;
-		}
-
-		// 가변 길이 - 
-		switch (packetinfo.type)
-		{
-		case SC_PACKET_ID_INITIALLY:
-		{
-			ZeroMemory(buf, sizeof(buf));
-			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
-			else
-				memcpy(&g_myid, buf, sizeof(g_myid));
-		}
-			break;
-		case SC_PACKET_PLAYERINFO:
-		{
-			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
-
-			ZeroMemory(buf, sizeof(buf));
-			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
-			else
-				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
-		}
-		break;
-		//case OBJ_GRRENMUSH:
-		//{
-		//	g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-		//	if (g_vecgreen[monsterinfo.id].key == NULL)
-		//		g_vecgreen[monsterinfo.id] = monsterinfo;
-		//	//cout << g_vecgreen[5].pt.x << endl;
-		//}
-		//	break;
-		}
-	}
 
 }
 
@@ -144,6 +106,13 @@ void CMaingame::Release(void)
 	CSoundMgr::GetInstance()->DestroyInstance();
 	CSceneMgr::GetInstance()->DestroyInstance();
 	ReleaseDC(g_hWnd, m_hDC);
+
+	// ----------------------------------
+	if (hThread == NULL)
+		closesocket(g_sock);
+	else
+		CloseHandle(hThread);
+
 }
 
 int CMaingame::recvn(SOCKET s, char *buf, int len, int flags)
@@ -168,6 +137,65 @@ int CMaingame::recvn(SOCKET s, char *buf, int len, int flags)
 	return len - left;
 }
 
+DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
+{
+
+	SOCKET client_sock = (SOCKET)arg;
+
+	while (true) {
+		cout << "Recv Thread 호출" << endl;
+
+		if (-1 != g_myid)
+		{
+			// 고정 길이 - 패킷 구조체를 받아온다.
+			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+			memcpy(&packetinfo, buf, sizeof(packetinfo));
+			if (g_retval == SOCKET_ERROR) {
+				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+				return 0;
+			}
+
+			// 가변 길이 - 
+			switch (packetinfo.type)
+			{
+			case SC_PACKET_ID_INITIALLY:
+			{
+				ZeroMemory(buf, sizeof(buf));
+				g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+					return 0;
+				}
+				else
+					memcpy(&g_myid, buf, sizeof(g_myid));
+			}
+			break;
+			case SC_PACKET_PLAYERINFO:
+			{
+				int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
+
+				ZeroMemory(buf, sizeof(buf));
+				g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR)
+					MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+				else
+					memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
+			}
+			break;
+			//case OBJ_GRRENMUSH:
+			//{
+			//	g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+			//	if (g_vecgreen[monsterinfo.id].key == NULL)
+			//		g_vecgreen[monsterinfo.id] = monsterinfo;
+			//	//cout << g_vecgreen[5].pt.x << endl;
+			//}
+			//	break;
+			}
+		}
+	}
+
+	return 0;
+}
 CMaingame::CMaingame(void)
 {
 }

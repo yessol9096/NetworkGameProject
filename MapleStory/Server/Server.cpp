@@ -21,6 +21,7 @@ int greenPtr[] = {1,1,3,1,1,3};
 // 클라이언트
 vector<PLAYERINFO> g_vecplayer;
 bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
+
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
@@ -147,7 +148,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
 					memcpy(buf, &packetinfo, sizeof(packetinfo));
 					retval == send(client_sock, buf, BUFSIZE, 0);
-					cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO" << endl;
+					cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
 					if (retval == SOCKET_ERROR) {
 						err_display("send() - SC_PACKET_PLAYERINFO");
 					}
@@ -155,7 +156,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
 					memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
 					retval == send(client_sock, buf, BUFSIZE, 0);
-					cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO" << endl;
+					cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
 					if (retval == SOCKET_ERROR) {
 						err_display("send() - SC_PACKET_PLAYERINFO");
 					}
