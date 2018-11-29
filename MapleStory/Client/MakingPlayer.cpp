@@ -125,6 +125,7 @@ int CMakingPlayer::Update()
 				
 				// id를 부여받아야 다음 씬으로 넘어가도록 하자..! maingame에서 다른 데이터가 받는 것처럼
 				// 똑같이 받으면 구조가 꼬임.
+				// 가변 길이
 				ZeroMemory(buf, sizeof(buf));
 				g_retval = recv(g_sock, buf, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR)

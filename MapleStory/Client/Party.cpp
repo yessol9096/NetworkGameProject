@@ -72,8 +72,9 @@ void CParty::Render(HDC hDc)
 			RGB(0, 255, 0));
 
 		// 파티원 출력
-		for (int i = 0; g_vecplayer.size(); ++i)
+		for (int i = 0; i < g_vecplayer.size(); ++i)
 		{
+
 			int y = 0;
 			if (i == 0)	y = 128;
 			else		y = 145;

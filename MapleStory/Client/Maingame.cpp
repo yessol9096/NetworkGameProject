@@ -12,7 +12,7 @@ PLAYERINFO g_myinfo;
 
 // 플레이어들의 정보를 담는 벡터.
 int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
-vector<PLAYERINFO> g_vecplayer;
+vector<PLAYERINFO> g_vecplayer(MAX_USER);
 
 //몬스터 정보 받기 
 vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
@@ -69,11 +69,12 @@ void CMaingame::Initialize(void)
 	hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)g_sock, 0, NULL);
 
 	// -------------------------------------------------------------------------------
-	g_vecplayer.reserve(MAX_USER);
-	PLAYERINFO tempinfo;
-	ZeroMemory(&tempinfo, sizeof(tempinfo));
-	g_vecplayer.push_back(tempinfo);
-	g_vecplayer.push_back(tempinfo);
+
+	// g_vecplayer.reserve(MAX_USER);
+	//PLAYERINFO tempinfo;
+	//ZeroMemory(&tempinfo, sizeof(tempinfo));
+	//g_vecplayer.push_back(tempinfo);
+	//g_vecplayer.push_back(tempinfo);
 }
 
 void CMaingame::Update(void)

@@ -81,21 +81,14 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					memcpy(&playerinfo, buf2, sizeof(playerinfo));
 				}
 
-#ifdef DEBUGGING
-				cout << "[TCP" << inet_ntoa(clientaddr.sin_addr) << " : " << ntohs(clientaddr.sin_port) << "]";
-				if (playerinfo.job == JOB_CAPTIN)
-					cout << "[RECV]" << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 캡틴" << endl;
-				else
-					cout << "[RECV]" << "PlayerInfo - 닉네임 : " << playerinfo.nickname << ", 직업 : 스트라이커" << endl;
-#endif
 				// 초기 설정 한 playerinfo를 기반으로 vector에 push 한다.
 				int id = -1;
 				for (int i = 0; i < MAX_USER; ++i) {
 					if (false == g_arrayconnected[i]) { /// 순차적으로 접근해서 연결 되지 않은 인덱스 i를 찾고, 
+						g_arrayconnected[i] = true;
 						id = i; /// 아이디를 부여한다.
 						break;
 					}
-
 
 					/// 유저 2인 제한.
 					if (-1 == id) {
@@ -103,32 +96,21 @@ DWORD WINAPI ClientThread(LPVOID arg)
 						closesocket(client_sock);
 						break;
 					}
-					// 실제 playerinfo에 id를 부여한다.
-					playerinfo.id = id;
-					playerinfo.connected = true;
-					playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
-					playerinfo.pt.y = 500.f;
-					playerinfo.hp = 30000;
-					playerinfo.size.cx = 100.f;
-					playerinfo.size.cy = 100.f;
 				}
+				// 실제 playerinfo에 id를 부여한다.
+				playerinfo.id = id;
+				playerinfo.connected = true;
+				playerinfo.pt.x = 100.f; // 초기 좌표는 (100, 500)
+				playerinfo.pt.y = 500.f;
+				playerinfo.hp = 30000;
+				playerinfo.size.cx = 100.f;
+				playerinfo.size.cy = 100.f;
+
 				// 정보가 다 채워진 playerinfo를 g_vecplayer에 담는다.
 				g_vecplayer.push_back(playerinfo);
 			}
 			// -------------------------------------------
 			// id 를 전송한다.
-			/// 고정 길이 데이터 전송,,
-			ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
-			packetinfo.type = SC_PACKET_ID_INITIALLY;
-			packetinfo.size = sizeof(playerinfo.id);
-			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
-			retval == send(client_sock, buf, BUFSIZE, 0);
-			cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO_ID" << endl;
-			if (retval == SOCKET_ERROR) {
-				err_display("send() - SC_PACKET_PLAYERINFO_ID");
-			}
-			/// 가변 길이 데이터 전송,,
 			ZeroMemory(buf, sizeof(buf));
 			memcpy(buf, &(playerinfo.id), sizeof(playerinfo.id));
 			retval == send(client_sock, buf, BUFSIZE, 0);
@@ -219,6 +201,39 @@ DWORD WINAPI CalculateThread()
 	return 0;
 }
 
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	SOCKET client_sock = (SOCKET)arg;
+	PACKETINFO packetinfo;
+	char buf[BUFSIZE];
+	int retval{ 0 };
+	while (true) {
+		for (int i = 0; i < g_vecplayer.size(); ++i) {
+			/// 고정 길이 데이터 전송,,
+			ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
+			packetinfo.type = SC_PACKET_PLAYERINFO;
+			packetinfo.size = sizeof(g_vecplayer[i]);
+			packetinfo.id = i;
+			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			retval == send(client_sock, buf, BUFSIZE, 0);
+			cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
+			if (retval == SOCKET_ERROR) {
+				err_display("send() - SC_PACKET_PLAYERINFO");
+			}
+			/// 가변 길이 데이터 전송,,
+			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+			memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
+			retval == send(client_sock, buf, BUFSIZE, 0);
+			cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
+			if (retval == SOCKET_ERROR) {
+				err_display("send() - SC_PACKET_PLAYERINFO");
+			}
+		}
+	}
+
+}
+
 int main()
 {
 	// 공간 2개 예약.
@@ -255,7 +270,7 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	HANDLE hThread;
+	HANDLE hThread, hSendThread;
 
 	while (true) {
 		// accept()
@@ -280,6 +295,9 @@ int main()
 			closesocket(client_sock);
 		else
 			CloseHandle(hThread);
+
+		// Send 스레드 생성
+		hSendThread = CreateThread(NULL, 0, SendThread, (LPVOID)client_sock, 0, NULL);
 	}
 
 	// closesocket()
