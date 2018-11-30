@@ -74,6 +74,8 @@ void CParty::Render(HDC hDc)
 		// 파티원 출력
 		for (int i = 0; i < g_vecplayer.size(); ++i)
 		{
+			if (g_vecplayer[i].id == -1)	// 플레이어 벡터에 값이 없다면
+				continue;
 
 			int y = 0;
 			if (i == 0)	y = 128;
@@ -89,7 +91,7 @@ void CParty::Render(HDC hDc)
 			else									TextOut(hDc, 640, y, L"Striker", 7);
 
 			// 상태
-			if (g_vecplayer[i].ready == TRUE)		TextOut(hDc, 715, y, L"O", 1);
+			if (g_vecplayer[i].ready == true)		TextOut(hDc, 715, y, L"O", 1);
 			else									TextOut(hDc, 715, y, L"X", 1);
 		}
 	}

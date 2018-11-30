@@ -14,10 +14,4 @@ public:
 	virtual void Render(HDC hDc);
 	virtual void Release();
 	virtual void RecvMonsterInitalInfo();
-
-private:
-	void UpdateTile();
-	void RenderTile(HDC hDc);
-	void LoadData();
-
 };

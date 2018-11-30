@@ -39,6 +39,9 @@ void CResult::Initialize(void)
 
 int CResult::Update(void)
 {
+	if (CKeyMgr::GetInstance()->OnceKeyUp('P'))	// 임시
+		SetShowed(!m_bIsShowed);
+
 	if (m_bIsShowed)
 	{
 		// 마우스가 들어오는지
@@ -78,8 +81,11 @@ void CResult::Render(HDC hDc)
 			RGB(0, 255, 0));
 
 		// 파티원 정보, 킬 관여율
-		for (int i = 0; g_vecplayer.size(); ++i)
+		for (int i = 0; i < g_vecplayer.size(); ++i)
 		{
+			if (g_vecplayer[i].id == -1)	// 플레이어 벡터에 값이 없다면
+				continue;
+
 			int y = 0;
 			if (g_vecplayer[0].attackAccValue > g_vecplayer[1].attackAccValue)
 			{

@@ -14,6 +14,15 @@
 #include "UI.h"
 #include "Result.h"
 
+CStage1::CStage1(void)
+{
+}
+
+CStage1::~CStage1(void)
+{
+	Release();
+}
+
 void CStage1::Initialize()
 {
 	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_STAGE1);
@@ -115,8 +124,6 @@ void CStage1::Initialize()
 	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
 	//CObjMgr::GetInstance()->AddObject(
 	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 3), OBJ_MONSTER);
-
-	//LoadData();
 }
 
 int CStage1::Update()
@@ -140,15 +147,13 @@ int CStage1::Update()
 
 void CStage1::Render(HDC hDc)
 {
-	HDC hMemDC = (CBitmapMgr::GetInstance()->
-		GetMapBit()[L"BackGround_Henesis"])->GetMemDC();
+	HDC hMemDC = (CBitmapMgr::GetInstance()->GetMapBit()[L"BackGround_Henesis"])->GetMemDC();
 
 	// ** 왜 이렇게 해야 되는지 모름 ㅠㅠ
 	BitBlt(hDc, static_cast<int>(g_fScrollX), 30 + static_cast<int>(g_fScrollY), HENESISCX, HENESISCY,
 		hMemDC, 0, 0, SRCCOPY);
 
-	// 타일 버리자
-	if(GetAsyncKeyState('1'))
+	if (GetAsyncKeyState('1'))
 		CLineMgr::GetInstance()->Render(hDc);
 	CObjMgr::GetInstance()->RenderObj(hDc);
 }
@@ -164,27 +169,4 @@ void CStage1::RecvMonsterInitalInfo()
 	pGreen.pt.x = pGreenMushroom_server->pt.x;
 	pGreen.pt.y = pGreenMushroom_server->pt.y;
 	cout << pGreen.pt.x << endl;*/
-}
-
-void CStage1::UpdateTile()
-{
-
-}
-
-void CStage1::RenderTile(HDC hDc)
-{
-
-}
-
-void CStage1::LoadData()
-{
-
-}
-CStage1::CStage1(void)
-{
-}
-
-CStage1::~CStage1(void)
-{
-	Release();
 }

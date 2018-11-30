@@ -15,7 +15,6 @@ public:
 	virtual void Release();
 	
 private:
-	// 서버 추가.
 	HDC				m_hDC;
 
 	const TCHAR*	m_pImgName;

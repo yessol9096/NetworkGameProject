@@ -6,8 +6,8 @@
 #include "FirstFloor.h"
 #include "SecondFloor.h"
 #include "Shoot.h"
-#include "Leaf.h"
 #include "UI.h"
+#include "Leaf.h"
 #include "Party.h"
 
 CField::CField(void)
@@ -56,16 +56,27 @@ void CField::Initialize()
 	// 파티창
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CParty>::CreateObj(), OBJ_UI);
-
-	//CTileMgr::GetInstance()->LoadTile();
-
-	LoadData();
 }
 
 int CField::Update()
 {
 	CObjMgr::GetInstance()->UpdateObj();
-	//CTileMgr::GetInstance()->Update();
+
+	// 모든 플레이어가 대기 상태가 되면 씬 넘어가기
+	for (int i = 0; i < g_vecplayer.size(); ++i)
+	{
+		if (g_vecplayer[i].id == -1)	// 플레이어 값이 있는지 확인
+			break;
+		if (g_vecplayer[i].ready == false)	// 한 플레이어가 대기 상태가 아니라면 넘어가기
+			break;
+
+		if (i + 1 == g_vecplayer.size())	// 모든 플레이어가 대기 상태라면
+		{
+			CSceneMgr::GetInstance()->SetScene(SCENE_STAGE1);
+			g_eScene = SCENE_STAGE1;
+			g_bIsSceneChange = true;
+		}
+	}
 
 	// 예솔이 위해서 ^^ . 나중에 지울것..
 	if (KEYMGR->OnceKeyUp(VK_F1)) {
@@ -78,40 +89,19 @@ int CField::Update()
 
 void CField::Render(HDC hDc)
 {
-	HDC hMemDC = (CBitmapMgr::GetInstance()->
-		GetMapBit()[L"BackGround"])->GetMemDC();
+	HDC hMemDC = (CBitmapMgr::GetInstance()->GetMapBit()[L"BackGround"])->GetMemDC();
 
 	// ** 왜 이렇게 해야 되는지 모름 ㅠㅠ
-	BitBlt(hDc, static_cast<int>(g_fScrollX), static_cast<int>(-80 + (int)g_fScrollY), FIELDCX, FIELDCY,
-		hMemDC, 0, 0, SRCCOPY);
+	BitBlt(hDc, static_cast<int>(g_fScrollX), static_cast<int>(-80 + (int)g_fScrollY),
+		FIELDCX, FIELDCY, hMemDC, 0, 0, SRCCOPY);
 
-
-	if(GetAsyncKeyState('1'))
+	if (GetAsyncKeyState('1'))
 		CLineMgr::GetInstance()->Render(hDc);
-	// 타일 버리자
-	//CTileMgr::GetInstance()->Render(hDc);
+
 	CObjMgr::GetInstance()->RenderObj(hDc);
 }
 
 void CField::Release()
 {
-	//CTileMgr::GetInstance()->DestroyInstance();
 	CObjMgr::GetInstance()->ReleaseAll();
-}
-
-void CField::UpdateTile()
-{
-
-
-}
-
-void CField::RenderTile(HDC hDc)
-{
-
-}
-
-void CField::LoadData()
-{
-
-
 }

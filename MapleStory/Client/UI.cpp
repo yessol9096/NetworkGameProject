@@ -93,7 +93,7 @@ void CUI::Render(HDC hDc)
 
 		SetBkColor(hDc, RGB(0, 0, 0));
 		SetTextColor(hDc, RGB(255, 255, 255));
-		TextOut(hDc, 540, 575, name, strlen(g_vecplayer[g_myid].nickname));
+		TextOut(hDc, 80, 567, name, strlen(g_vecplayer[g_myid].nickname));
 		SetBkColor(hDc, RGB(255, 255, 255));
 		SetTextColor(hDc, RGB(0, 0, 0));
 	}

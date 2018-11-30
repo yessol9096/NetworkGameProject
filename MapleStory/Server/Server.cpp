@@ -1,6 +1,3 @@
-/*
-MapleStory - Server
-*/
 #include <winsock2.h>
 #include <iostream>
 #include <vector>
@@ -22,7 +19,41 @@ int greenPtr[] = {1,1,3,1,1,3};
 vector<PLAYERINFO> g_vecplayer;
 bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
 
-DWORD WINAPI ClientThread(LPVOID arg)
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	SOCKET client_sock = (SOCKET)arg;
+	PACKETINFO packetinfo;
+	char buf[BUFSIZE];
+	int retval{ 0 };
+
+	while (true) {
+		for (int i = 0; i < g_vecplayer.size(); ++i) {
+			/// 고정 길이 데이터 전송,,
+			ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
+			packetinfo.type = SC_PACKET_PLAYERINFO;
+			packetinfo.size = sizeof(g_vecplayer[i]);
+			packetinfo.id = i;
+			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			retval == send(client_sock, buf, BUFSIZE, 0);
+			cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
+			if (retval == SOCKET_ERROR) {
+				err_display("send() - SC_PACKET_PLAYERINFO");
+			}
+
+			/// 가변 길이 데이터 전송,,
+			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+			memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
+			retval == send(client_sock, buf, BUFSIZE, 0);
+			cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
+			if (retval == SOCKET_ERROR) {
+				err_display("send() - SC_PACKET_PLAYERINFO");
+			}
+		}
+	}
+}
+
+DWORD WINAPI RecvThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
 	int retval{ 0 };
@@ -187,51 +218,13 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 
 
-	
+
 	// closesocket()
 	closesocket(client_sock);
-	cout << "[클라이언트 종료]" << endl;
-	cout << "IP 주소 (" << inet_ntoa(clientaddr.sin_addr) << "), 포트 번호 ("
-		<< ntohs(clientaddr.sin_port) << ")" << endl;
+	cout << "[클라이언트 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
+		"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
 
 	return 0;
-}
-DWORD WINAPI CalculateThread()
-{
-	return 0;
-}
-
-DWORD WINAPI SendThread(LPVOID arg)
-{
-	SOCKET client_sock = (SOCKET)arg;
-	PACKETINFO packetinfo;
-	char buf[BUFSIZE];
-	int retval{ 0 };
-	while (true) {
-		for (int i = 0; i < g_vecplayer.size(); ++i) {
-			/// 고정 길이 데이터 전송,,
-			ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
-			packetinfo.type = SC_PACKET_PLAYERINFO;
-			packetinfo.size = sizeof(g_vecplayer[i]);
-			packetinfo.id = i;
-			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
-			retval == send(client_sock, buf, BUFSIZE, 0);
-			cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
-			if (retval == SOCKET_ERROR) {
-				err_display("send() - SC_PACKET_PLAYERINFO");
-			}
-			/// 가변 길이 데이터 전송,,
-			ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-			memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
-			retval == send(client_sock, buf, BUFSIZE, 0);
-			cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
-			if (retval == SOCKET_ERROR) {
-				err_display("send() - SC_PACKET_PLAYERINFO");
-			}
-		}
-	}
-
 }
 
 int main()
@@ -250,7 +243,7 @@ int main()
 		err_quit("socket()");
 
 	// 주소 구조체 생성
-	SOCKADDR_IN serveraddr;                      
+	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -286,18 +279,15 @@ int main()
 		cout << "IP 주소 (" << inet_ntoa(clientaddr.sin_addr) << "), 포트 번호 ("
 			<< ntohs(clientaddr.sin_port) << ") " << endl;
 
-		// 스레드 생성
-		hThread = CreateThread(
-			NULL, 0, ClientThread,
-			(LPVOID)client_sock, 0, NULL);
-
-		if (hThread == NULL)
-			closesocket(client_sock);
-		else
-			CloseHandle(hThread);
+		// 클라이언트 스레드 생성
+		hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)client_sock, 0, NULL);
+		if (hThread == NULL)	closesocket(client_sock);
+		else					CloseHandle(hThread);
 
 		// Send 스레드 생성
 		hSendThread = CreateThread(NULL, 0, SendThread, (LPVOID)client_sock, 0, NULL);
+		if (hSendThread == NULL)	closesocket(client_sock);
+		else						CloseHandle(hSendThread);
 	}
 
 	// closesocket()
@@ -307,8 +297,6 @@ int main()
 
 	return 0;
 }
-
-
 
 void InitializeNetwork()
 {
@@ -344,6 +332,11 @@ void AcceptThread()
 {
 }
 
+void MakeMonster()
+{
+
+}
+
 int recvn(SOCKET s, char *buf, int len, int flags)
 {
 	int received;
@@ -364,9 +357,3 @@ int recvn(SOCKET s, char *buf, int len, int flags)
 	}
 	return len - left;
 }
-
-void MakeMonster()
-{
-
-}
-

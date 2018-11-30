@@ -34,7 +34,6 @@ typedef struct Info {
 typedef struct PlayerInfo {
 	short		id;
 	char		nickname[512];
-	int			key;
 	bool		ready;
 	MYPOINT		pt;
 	MYSIZE		size;
@@ -48,7 +47,6 @@ typedef struct PlayerInfo {
 
 typedef struct MonsterInfo {
 	int			id; //vector index °ª
-	int			key;
 	MYPOINT		pt;
 	int			hp;
 	int			money;

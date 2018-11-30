@@ -7,7 +7,6 @@ CMakingPlayer::CMakingPlayer()
 {
 }
 
-
 CMakingPlayer::~CMakingPlayer()
 {
 	Release();
@@ -15,21 +14,18 @@ CMakingPlayer::~CMakingPlayer()
 
 void CMakingPlayer::Initialize()
 {
-	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_MAKINGPLAYER);
-	
+	m_hDC = (CBitmapMgr::GetInstance()->GetMapBit()[L"BackBuffer"])->GetMemDC();
 	m_pImgName = L"MakingPlayer1";
-	//m_pImgName = L"MakingPlayer1";
 
-		// 마우스
+	CBitmapMgr::GetInstance()->LoadImageByScene(SCENE_MAKINGPLAYER);
+
+	// 마우스
 	CObjMgr::GetInstance()->AddObject(
 		CAbstractFactory<CMouse>::CreateObj(), OBJ_MOUSE);
-
-	m_hDC = (CBitmapMgr::GetInstance()->GetMapBit()[L"BackBuffer"])->GetMemDC();
 }
 
 int CMakingPlayer::Update()
 {
-
 	CObjMgr::GetInstance()->UpdateObj();
 
 	// 직업 바꾸는 화살표 - 마우스 충돌 검사.
@@ -133,7 +129,7 @@ int CMakingPlayer::Update()
 				else
 					memcpy(&g_myid, buf, sizeof(g_myid));
 
-				// send에 성공하면, 다음 필드로 넘어간다.
+				// send에 성공하면, 필드로 넘어간다.
 				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
 				CSoundMgr::GetInstance()->StopSoundAll();
 				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
@@ -145,15 +141,12 @@ int CMakingPlayer::Update()
 		}
 	}
 
-
 	return 0;
 }
 
 void CMakingPlayer::Render(HDC hDc)
 {
 	CMyBmp* pBmp = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
-
 	if (NULL == pBmp)
 		return;
 
@@ -165,12 +158,11 @@ void CMakingPlayer::Render(HDC hDc)
 	// 입력하는 id 출력.
 	RECT rc = { WINCX - 240, WINCY - 313, WINCX - 100, WINCY - 293 };
 
-	// Rectangle(m_hDC, rc.left, rc.top, rc.right, rc.bottom);
-
 	DrawText(m_hDC, g_idbuf, wcslen(g_idbuf), &rc, DT_SINGLELINE);
 }
 
 void CMakingPlayer::Release()
 {
+
 }
  
