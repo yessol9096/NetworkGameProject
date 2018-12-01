@@ -19,20 +19,17 @@ public:
 	virtual void	Release(void);
 	virtual void	FrameMove();
 
-
-
 public:
 	void	Jump();
 	void	Scroll();
 	void	KeyCheck();
 	void	LineCollision();
 
-
+	void	Send();
 
 	// 밧줄태우기
 public:
 	void    SetIsRopeColl(bool bRopeColl) { m_bIsRopeColl = bRopeColl; }
-	void	RopeCollision();
 
 	// 층 태우기
 // 	void    SetIsInFirstFloor(bool bInFirstFloor) { m_bIsInFirstFloor = bInFirstFloor; }
@@ -91,6 +88,8 @@ public:
 	
 	// 충돌박스 업데이트
 	void	UpdateCollRect();
+
+	// 화살
 private:
 	template <typename T> 
 	CObj*	CreateArrow(float fX = 0.f, float fY = 0.f, ARROW_ID eID = ARROW_BASIC, int iOrder = 0)
@@ -116,6 +115,7 @@ private:
 		dynamic_cast<CSkill*>(pSkill)->SetPlayer(this);
 		return pSkill;
 	}
+
 	// 드래곤
 private:
 	template <typename T>
@@ -137,9 +137,7 @@ private:
 			pSkill->SetDir(m_eDir);
 			return pSkill;
 		}
-
 	}
-
 
 	// 파이어 스킬
 private:
@@ -164,7 +162,6 @@ private:
 			pSkill->SetDir(m_eDir);
 			return pSkill;
 		}
-
 	}
 
 	// 스윙 이펙트
@@ -188,7 +185,6 @@ private:
 			pEffect->SetDir(m_eDir);
 			return pEffect;
 		}
-		
 	}
 
 	// 화면 중앙에 나타나는 스킬
@@ -213,7 +209,6 @@ private:
 		dynamic_cast<CPlayerHP*>(pHpBar)->SetPlayer(this);
 		return pHpBar;
 	}
-
 
 	// EXP
 private:
@@ -258,11 +253,6 @@ private:
 
 	bool			m_bIsLeveling;
 
-	
-
-	
-
-
 	// 이미지
 	HDC				m_hDC;
 	HDC				m_hMemDC;
@@ -284,9 +274,7 @@ private:
 
 	DWORD			m_dwDamageTime;
 
-
 	bool			m_bIsInvincible;
-
 
 	// 라인
 	list<CLine*>	m_LineList;

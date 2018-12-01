@@ -111,7 +111,6 @@ int CMakingPlayer::Update()
 				g_retval = send(g_sock, (char*)&tempplayerinfo, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR)
 					MessageBoxW(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
-
 			}
 
 			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)
@@ -124,7 +123,7 @@ int CMakingPlayer::Update()
 				g_retval = recv(g_sock, buf, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"recv() - 고정 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
-					exit(1);
+					g_bIsProgramEnd = true;	// 프로그램 종료
 				}
 				else
 					memcpy(&temppacketinfo, buf, sizeof(temppacketinfo));
@@ -136,7 +135,7 @@ int CMakingPlayer::Update()
 					g_retval = recv(g_sock, buf, BUFSIZE, 0);
 					if (g_retval == SOCKET_ERROR) {
 						MessageBoxW(g_hWnd, L"recv() - 가변 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
-						exit(1);
+						g_bIsProgramEnd = true;	// 프로그램 종료
 					}
 					else{
 						memcpy(&tempplayerinfo, buf, sizeof(tempplayerinfo));

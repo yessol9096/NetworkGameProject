@@ -6,6 +6,9 @@ extern float g_fScrollY;
 extern SCENE_TYPE g_eScene;
 extern bool g_bIsSceneChange;
 
+extern bool g_bIsSend;
+extern bool g_bIsProgramEnd;
+
 extern int g_iTakedMob1;
 extern int g_iTakedMob2;
 extern int g_iTakedMob1Max;

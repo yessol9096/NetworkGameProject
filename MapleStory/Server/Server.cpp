@@ -84,9 +84,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				err_display("packetinfo recv()");
 				break;
 			}
-			else {
+			else
 				memcpy(&packetinfo, buf, sizeof(packetinfo));
-			}
 		}
 
 		// 가변 길이.
@@ -144,6 +143,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				playerinfo.hp = 30000;
 				playerinfo.size.cx = 100.f;
 				playerinfo.size.cy = 100.f;
+				playerinfo.attackAccValue = 0.f;
+				playerinfo.money = 0;
 			}
 
 			// 3. 나머지 멤버 변수들이 채워진 playerinfo를 벡터에 push 한다.

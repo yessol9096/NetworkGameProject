@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Result.h"
+#include <algorithm>
 
 CResult::CResult()
 	: m_bIsShowed(false)
@@ -51,10 +52,7 @@ int CResult::Update(void)
 
 		if (PtInRect(&m_tExitButton, pt) &&
 			CKeyMgr::GetInstance()->OnceKeyDown(VK_LBUTTON))
-		{
-			// 게임 종료
-			m_bIsShowed = false;
-		}
+			g_bIsProgramEnd = true;	// 프로그램 종료
 	}
 
 	return 0;
@@ -80,42 +78,48 @@ void CResult::Render(HDC hDc)
 			static_cast<int>(m_tInfo.size.cy),
 			RGB(0, 255, 0));
 
+		vector<PLAYERINFO> temp = g_vecplayer;	// 킬 관여율로 정렬
+		sort(begin(temp), end(temp), [](PLAYERINFO a, PLAYERINFO b) -> bool {
+			return a.attackAccValue > b.attackAccValue;
+		});
+
 		// 파티원 정보, 킬 관여율
-		for (int i = 0; i < g_vecplayer.size(); ++i)
+		for (int i = 0; i < temp.size(); ++i)
 		{
-			if (g_vecplayer[i].id == -1)	// 플레이어 벡터에 값이 없다면
+			if (temp[i].id == -1)	// 플레이어 벡터에 값이 없다면
 				continue;
 
 			int y = 0;
-			if (g_vecplayer[0].attackAccValue > g_vecplayer[1].attackAccValue)
-			{
-				if (i == 0)	y = 190;
-				else		y = 230;
-			}
-			else
-			{
-				if (i == 0)	y = 230;
-				else		y = 190;
-			}
+			if (i == 0)	y = 190;
+			else		y = 230;
 
 			// name
 			wchar_t name[512];
-			mbstowcs(name, g_vecplayer[i].nickname, strlen(g_vecplayer[i].nickname) + 1);
-			TextOut(hDc, 250, y, name, strlen(g_vecplayer[i].nickname));
+			mbstowcs(name, temp[i].nickname, strlen(temp[i].nickname) + 1);
+			TextOut(hDc, 260, y, name, strlen(temp[i].nickname));
 
 			// 직업
-			if (g_vecplayer[i].job == JOB_CAPTIN)	TextOut(hDc, 415, y, L"Captain", 7);
-			else									TextOut(hDc, 415, y, L"Striker", 7);
+			if (temp[i].job == JOB_CAPTIN)	TextOut(hDc, 375, y, L"Captain", 7);
+			else							TextOut(hDc, 375, y, L"Striker", 7);
+
+			// 메소
+			char bur[512];
+			sprintf(bur, "%d", temp[i].money);
+
+			wchar_t money[512];
+			mbstowcs(money, bur, strlen(bur) + 1);
+
+			TextOut(hDc, 490, y, money, strlen(bur));
 
 			// 킬 관여율
-			char bur[512];
-			sprintf(bur, "%.1f", g_vecplayer[i].attackAccValue);
+			char bur2[512];
+			sprintf(bur2, "%.1f", temp[i].attackAccValue);
 
 			wchar_t kill[512];
-			mbstowcs(kill, bur, strlen(bur) + 1);
+			mbstowcs(kill, bur2, strlen(bur2) + 1);
 
 			SetTextColor(hDc, RGB(255, 0, 0));
-			TextOut(hDc, 575, y, kill, strlen(bur));
+			TextOut(hDc, 590, y, kill, strlen(bur2));
 			SetTextColor(hDc, RGB(0, 0, 0));
 		}
 	}

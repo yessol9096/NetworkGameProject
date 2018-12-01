@@ -8,8 +8,10 @@
 #include "Fire.h"
 #include "Wing.h"
 
-extern int g_iLevel = 65;
-extern int g_iExp = 0;
+bool g_bIsSend = false;
+
+int g_iLevel = 65;
+int g_iExp = 0;
 
 CPlayer::CPlayer(void)
 	: m_bIsRopeColl(false), m_bIsJumpUp(true), m_bLineColl(true),
@@ -64,7 +66,6 @@ void CPlayer::Initialize(void)
 	// 상태 설정
 	m_eCurState = PLAYER_STAND;
 	m_ePreState = m_eCurState;
-
 
 	if (g_vecplayer[g_myid].job == JOB_STRIKER)
 		m_pImgName = L"Player_LEFT";
@@ -156,9 +157,7 @@ int CPlayer::Update(void)
 	}
 
 	if (false == m_bIsInvincible)
-	{
 		m_dwDamageTime = GetTickCount();
-	}
 
 	if (true == m_bIsInvincible)
 	{
@@ -172,23 +171,21 @@ int CPlayer::Update(void)
 
 	}
 	UpdateCollRect();
-	//m_fOffSetY = WINCY / 2.f;
 
 	Jump();
 	LineCollision();
-	RopeCollision();
 
 	KeyCheck();
 	FrameMove();
 
 	Scroll();
 
-
 	CObj::UpdateRect();
+
+	Send();
 
 	return 0;
 }
-
 
 void CPlayer::Render(HDC hDc)
 {
@@ -264,7 +261,7 @@ void CPlayer::Jump()
 
 void CPlayer::Scroll()
 {
-	switch(g_eScene)
+	switch (g_eScene)
 	{
 	case SCENE_FIELD:
 		m_fOffSetGapY = 200.f;
@@ -274,63 +271,56 @@ void CPlayer::Scroll()
 		break;
 	}
 	// Player 좌표가 Offset에서 200만큼 이동할 경우 스크롤을 진행한다.
-	if(m_tInfo.pt.x > m_fOffSet + 200.f)
+	if (m_tInfo.pt.x > m_fOffSet + 200.f)
 	{
 		g_fScrollX -= m_fSpeed;
-		m_fOffSet  += m_fSpeed;
+		m_fOffSet += m_fSpeed;
 	}
-	else if(m_tInfo.pt.x < m_fOffSet - 200.f)
+	else if (m_tInfo.pt.x < m_fOffSet - 200.f)
 	{
 		g_fScrollX += m_fSpeed;
-		m_fOffSet  -= m_fSpeed;
+		m_fOffSet -= m_fSpeed;
 	}
 
 
-	if(m_tInfo.pt.y > m_fOffSetY + m_fOffSetGapY)
+	if (m_tInfo.pt.y > m_fOffSetY + m_fOffSetGapY)
 	{
 		g_fScrollY -= m_fSpeedY;
-		m_fOffSetY  += m_fSpeedY;
+		m_fOffSetY += m_fSpeedY;
 	}
-	else if(m_tInfo.pt.y < m_fOffSetY - m_fOffSetGapY)
+	else if (m_tInfo.pt.y < m_fOffSetY - m_fOffSetGapY)
 	{
 		g_fScrollY += m_fSpeedY;
-		m_fOffSetY  -= m_fSpeedY;
+		m_fOffSetY -= m_fSpeedY;
 	}
 
-	if(g_fScrollX > 0)
+	if (g_fScrollX > 0)
 		g_fScrollX = 0;
-	if(g_fScrollY > 0)
+	if (g_fScrollY > 0)
 		g_fScrollY = 0.f;
 
 	// 필드일 때 스크롤 막기
-
-	if(SCENE_FIELD == g_eScene)
+	if (SCENE_FIELD == g_eScene)
 	{
-		if(g_fScrollX < WINCX - FIELDCX)
+		if (g_fScrollX < WINCX - FIELDCX)
 			g_fScrollX = WINCX - FIELDCX;
-		if(g_fScrollY < WINCY - FIELDCY)
+		if (g_fScrollY < WINCY - FIELDCY)
 			g_fScrollY = WINCY - FIELDCY;
 	}
 
 	// 헤네시스일때 스크롤 막기
-	if(SCENE_STAGE1 == g_eScene)
+	if (SCENE_STAGE1 == g_eScene)
 	{
-		if(g_fScrollY < WINCY - HENESISCY)
+		if (g_fScrollY < WINCY - HENESISCY)
 			g_fScrollY = WINCY - HENESISCY;
 
-		if(g_fScrollX < WINCX - HENESISCX)
+		if (g_fScrollX < WINCX - HENESISCX)
 			g_fScrollX = WINCX - HENESISCX;
 	}
-
-	
-
 }
 
 void CPlayer::KeyCheck()
 {
-	// 결론적으로 눌렸나 안 눌렸나 확인하려고.
-	bool bIsKeyDown = true;
-
 	// 플레이어 기본 동작
 	if(CKeyMgr::GetInstance()->StayKeyDown(VK_LEFT))
 	{
@@ -343,6 +333,8 @@ void CPlayer::KeyCheck()
 			m_pImgName = L"Player_LEFT";
 		else
 			m_pImgName = L"Captin_LEFT";
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_RIGHT))
 	{
@@ -355,6 +347,8 @@ void CPlayer::KeyCheck()
 			m_pImgName = L"Player_RIGHT";
 		else
 			m_pImgName = L"Captin_RIGHT";
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && !m_bIsRopeColl)
 	{
@@ -365,6 +359,8 @@ void CPlayer::KeyCheck()
 			m_eCurState = PLAYER_CRAWLATTACK;
 			m_tFrame.dwFrameSpd = 50;
 		}
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_UP) && m_bIsRopeColl)
 	{
@@ -384,6 +380,8 @@ void CPlayer::KeyCheck()
 				m_pImgName = L"Captin_LEFT";
 			m_bIsRopeColl = false;
 		}
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && m_bIsRopeColl)
 	{
@@ -393,6 +391,8 @@ void CPlayer::KeyCheck()
 		else
 			m_pImgName = L"Captin_ROPE";
 		m_tInfo.pt.y += m_fSpeedY;
+
+		g_bIsSend = true;
 	}
 
 	// 스킬
@@ -401,6 +401,8 @@ void CPlayer::KeyCheck()
 		m_eCurState = PLAYER_SWING;
 		CObjMgr::GetInstance()->AddObject(CreateSkill<CSwing>(), OBJ_SKILL_SWING);
 		CObjMgr::GetInstance()->AddObject(CreateEffect<CSwingEffect>(), OBJ_EFFECT);
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('W'))
 	{
@@ -408,6 +410,8 @@ void CPlayer::KeyCheck()
 		CObjMgr::GetInstance()->AddObject(CreateSkill<CShoot>(), OBJ_SKILL_SHOOT);
 		CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(0.f, 0.f, ARROW_BASIC, 0), OBJ_ARROW);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Shoot.MP3", CSoundMgr::CHANNEL_SKILL);
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('E'))
 	{
@@ -423,8 +427,9 @@ void CPlayer::KeyCheck()
 			CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(i * fX, (i - fY2) * fY, ARROW_DRAGON, i), OBJ_ARROW);
 		}
 
-
 		m_tState.iMp -= 100;
+
+		g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('R'))
 	{
@@ -432,21 +437,23 @@ void CPlayer::KeyCheck()
 		CObjMgr::GetInstance()->AddObject(CreateFire<CFire>(), OBJ_SKILL_FIRE);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Fire.wav", CSoundMgr::CHANNEL_SKILL);
 		m_tState.iMp -= 100;
-	}
 
+		g_bIsSend = true;
+	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('A'))
 	{
 		m_eCurState = PLAYER_SHOOT;
 		CObjMgr::GetInstance()->AddObject(CreateWing<CWing>(), OBJ_SKILL_WING);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Wing.wav", CSoundMgr::CHANNEL_SKILL);
 		m_tState.iMp -= 500;
+
+		g_bIsSend = true;
 	}
-	//
 	else
 	{
-		if(!m_bIsRopeColl && PLAYER_SHOOT != m_eCurState && PLAYER_SWING != m_eCurState && PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
+		if(!m_bIsRopeColl && PLAYER_SHOOT != m_eCurState && PLAYER_SWING != m_eCurState && 
+			PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
 			m_eCurState = PLAYER_STAND;
-		bIsKeyDown = false;
 	}
 
 	if(CKeyMgr::GetInstance()->OnceKeyUp(VK_SPACE) && !m_bIsPressed)
@@ -462,62 +469,13 @@ void CPlayer::KeyCheck()
 		m_bIsRopeColl = false;
 		CSoundMgr::GetInstance()->PlaySound(L"Player_Jump.mp3", CSoundMgr::CHANNEL_PLAYER);
 		//m_pImgName = L"Player_RIGHT";
-		bIsKeyDown = true;
+
+		g_bIsSend = true;
 	}
 	else
 	{
 		m_bIsPressed = false;
 		m_tFrame.dwFrameSpd = 150;
-	}
-	
-
-	// 1201.
-	// 결론적으로 뭔가 키가 눌리긴 했으면, 
-	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)
- 	if (bIsKeyDown) {
-		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
-		// 2. 보낼 공간 playerinfo를 만든다.
-		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
-		// 4. playerinfo를 서버에 send 한다.
-
-		// ----------------------Progress-------------------------
-		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
-		{
-			g_vecplayer[g_myid].pt.x = m_tInfo.pt.x;
-			g_vecplayer[g_myid].pt.y = m_tInfo.pt.y;
-			g_vecplayer[g_myid].frame = m_tInfo.frame;
-			g_vecplayer[g_myid].state = m_eCurState;
-		}
-		// 2. 보낼 공간 playerinfo를 만든다.
-		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
-		PLAYERINFO playerinfo;
-		{
-			memcpy(&playerinfo, &(g_vecplayer[g_myid]), sizeof(PLAYERINFO));
-		}
-		// 4. playerinfo를 서버에 send 한다.
-		{
-			char buf[BUFSIZE] = {};
-			// 고정 길이.
-			PACKETINFO packetinfo;
-			packetinfo.id = g_myid;
-			packetinfo.size = sizeof(PLAYERINFO);
-			packetinfo.type = CS_PACKET_PLAYERINFO_MOVE;
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
-			g_retval = send(g_sock, buf, BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR) {
-				MessageBox(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_MOVE", MB_OK);
-				exit(1);
-			}
-
-			// 가변 길이.
-			ZeroMemory(buf, sizeof(buf));
-			memcpy(buf, &playerinfo, sizeof(playerinfo));
-			g_retval = send(g_sock, buf, BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR) {
-				MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_MOVE", MB_OK);
-				exit(1);
-			}
-		}
 	}
 }
 
@@ -672,7 +630,6 @@ void CPlayer::UpdateCollRect()
 	m_tCollRect.top = static_cast<LONG>(m_tInfo.pt.y - (fCollRectCY / 2.f));
 }
 
-
 void CPlayer::Release(void)
 {
 
@@ -693,30 +650,71 @@ void CPlayer::LineCollision()
 			m_eCurState = PLAYER_STAND;
 		}
 	}
-// 	if(m_bIsRopeColl)
-// 	{
-// 		return;
-// 	}
 	else if(bLineCol && !m_bIsRopeColl)
 	{
   		if(1 != m_iPlayerFloor)
  			return;
 		m_tInfo.pt.y = fY;
 	}
-	if(!bLineCol)
-	{
-		m_iPlayerFloor = 1;
-	}
 
+	if(!bLineCol)
+		m_iPlayerFloor = 1;
 }
 
-void CPlayer::RopeCollision()
+bool b = true;	// 디버깅 용
+
+void CPlayer::Send()
 {
-	float fY = 0;
+	// 1201.
+	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)
+	if (g_bIsSend) {
+		g_bIsSend = false;
 
-	if(m_bIsRopeColl)
-	{
-/*		if()*/
+		b = !b;
+		cout << "Server에게 내 playerinfo를 send" << b << endl;
+
+		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
+		// 2. 보낼 공간 playerinfo를 만든다.
+		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
+		// 4. playerinfo를 서버에 send 한다.
+
+		// ----------------------Progress-------------------------
+		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
+		{
+			g_vecplayer[g_myid].pt.x = m_tInfo.pt.x;
+			g_vecplayer[g_myid].pt.y = m_tInfo.pt.y;
+			g_vecplayer[g_myid].frame = m_tInfo.frame;
+			g_vecplayer[g_myid].state = m_eCurState;
+		}
+		// 2. 보낼 공간 playerinfo를 만든다.
+		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
+		PLAYERINFO playerinfo;
+		{
+			memcpy(&playerinfo, &(g_vecplayer[g_myid]), sizeof(PLAYERINFO));
+		}
+		// 4. playerinfo를 서버에 send 한다.
+		{
+			char buf[BUFSIZE] = {};
+			// 고정 길이
+			PACKETINFO packetinfo;
+			packetinfo.id = g_myid;
+			packetinfo.size = sizeof(PLAYERINFO);
+			packetinfo.type = CS_PACKET_PLAYERINFO_MOVE;
+			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			g_retval = send(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR) {
+				MessageBox(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_MOVE", MB_OK);
+				g_bIsProgramEnd = true;	// 프로그램 종료
+			}
+
+			// 가변 길이
+			ZeroMemory(buf, sizeof(buf));
+			memcpy(buf, &playerinfo, sizeof(playerinfo));
+			g_retval = send(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR) {
+				MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_MOVE", MB_OK);
+				g_bIsProgramEnd = true;	// 프로그램 종료
+			}
+		}
 	}
-
 }

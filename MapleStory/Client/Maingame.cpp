@@ -100,6 +100,8 @@ void CMaingame::Release(void)
 	CSceneMgr::GetInstance()->DestroyInstance();
 	ReleaseDC(g_hWnd, m_hDC);
 
+	// 종료하기전에 서버에 알려주기
+
 	closesocket(g_sock);
 	WSACleanup();
 }

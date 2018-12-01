@@ -33,16 +33,16 @@ typedef struct Info {
 
 typedef struct PlayerInfo {
 	short		id;
-	char		nickname[512];
-	bool		ready;
 	MYPOINT		pt;
 	MYSIZE		size;
+	FRAME		frame;
+	char		nickname[512];
 	PLAYER_JOB	job;
 	PLAYER_STATE state; // 1201 추가
 	int			hp;
 	int			money;
-	FRAME		frame;
 	float		attackAccValue;
+	bool		ready;
 	bool		connected; // 1119 추가
 }PLAYERINFO;
 
