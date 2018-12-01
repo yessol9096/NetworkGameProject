@@ -101,6 +101,16 @@ void CMaingame::Release(void)
 	ReleaseDC(g_hWnd, m_hDC);
 
 	// 종료하기전에 서버에 알려주기
+	char buf[BUFSIZE] = {};
+	PACKETINFO packetinfo;
+	packetinfo.id = g_myid;
+	packetinfo.size = 0;
+	packetinfo.type = SC_PACKET_CLIENT_END;
+	memcpy(buf, &packetinfo, sizeof(packetinfo));
+
+	g_retval = send(g_sock, buf, BUFSIZE, 0);
+	if (g_retval == SOCKET_ERROR)
+		MessageBox(g_hWnd, L"send()", L"send - SC_PACKET_CLIENT_END", MB_OK);
 
 	closesocket(g_sock);
 	WSACleanup();

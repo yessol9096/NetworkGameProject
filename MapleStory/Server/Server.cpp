@@ -7,68 +7,33 @@ using namespace std;
 
 #pragma comment(lib, "Ws2_32.lib")
 
-// monster 정보 보냈나 안보냈나 확인
-bool bCreateMonster_check = false;
-vector<MONSTERINFO> g_vecgreen;
-int greenposX[] = {  HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
-int greenposY = HENESISCY - 460.f;
-OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
-int greenPtr[] = {1,1,3,1,1,3};
-
 // 클라이언트
 vector<PLAYERINFO> g_vecplayer;
 bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
 vector<SOCKET> g_vecsocket;
 
-DWORD WINAPI SendThread(LPVOID arg)
-{
-	return 0;
+// monster 정보 보냈나 안보냈나 확인
+bool bCreateMonster_check = false;
+vector<MONSTERINFO> g_vecgreen;
+int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
+int greenposY = HENESISCY - 460.f;
+OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
+int greenPtr[] = { 1,1,3,1,1,3 };
 
-	//SOCKET client_sock = (SOCKET)arg;
-	//PACKETINFO packetinfo;
-	//char buf[BUFSIZE];
-	//int retval{ 0 };
-
-	//while (true) {
-	//	for (int i = 0; i < g_vecplayer.size(); ++i) {
-	//		/// 고정 길이 데이터 전송,,
-	//		ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
-	//		packetinfo.type = SC_PACKET_PLAYERINFO;
-	//		packetinfo.size = sizeof(g_vecplayer[i]);
-	//		packetinfo.id = i;
-	//		ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-	//		memcpy(buf, &packetinfo, sizeof(packetinfo));
-	//		retval == send(client_sock, buf, BUFSIZE, 0);
-	//		cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
-	//		if (retval == SOCKET_ERROR) {
-	//			err_display("send() - SC_PACKET_PLAYERINFO");
-	//		}
-
-	//		/// 가변 길이 데이터 전송,,
-	//		ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-	//		memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
-	//		retval == send(client_sock, buf, BUFSIZE, 0);
-	//		cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
-	//		if (retval == SOCKET_ERROR) {
-	//			err_display("send() - SC_PACKET_PLAYERINFO");
-	//		}
-	//	}
-	//}
-}
-
-DWORD WINAPI RecvThread(LPVOID arg)
+DWORD WINAPI ClientThread(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
-	int retval{ 0 };
 	SOCKADDR_IN clientaddr;
-	int addrlen;
-	MONSTERINFO monsterinfo;
-	PLAYERINFO playerinfo;
-	PACKETINFO packetinfo;
 
 	// 클라이언트 정보 얻기
-	addrlen = sizeof(clientaddr);
+	int addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+
+	int retval{ 0 };
+
+	PACKETINFO packetinfo;
+	PLAYERINFO playerinfo;
+	MONSTERINFO monsterinfo;
 
 	// -------------------------------------------
 	// 구조 : 고정 길이 + 가변 길이.
@@ -90,7 +55,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 		// 가변 길이.
 		switch (packetinfo.type) {
-		case CS_PACKET_PLAYERINFO_INITIALLY: 	
+		case CS_PACKET_PLAYERINFO_INITIALLY:
 		{
 			// 클라이언트가 초기 설정 한 playerinfo를 recvn 한다.
 			// 1. 초기 설정된 playeinfo를 수신한다.
@@ -115,7 +80,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 					memcpy(&playerinfo, buf, sizeof(playerinfo));
 				}
 			}
-			
+
 			// 2. playerinfo의 나머지 멤버 변수들을 채워준다. (id, size, hp, mp, ..)
 			{
 				int id = -1;
@@ -170,7 +135,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				if (retval == SOCKET_ERROR)
 					err_display("send() - 가변 길이 - SC_PACKET_YOUR_PLAYERINFO");
 			}
-	
+
 			// 5. 나머지 클라이언트에게 나의 playerinfo를 전송하여 나의 접속을 알린다. (2가 접속했다면 1에게, 1이 접속했다면 아무에게도 X)
 			{
 				for (int i = 0; i < g_vecplayer.size(); ++i) {
@@ -178,11 +143,11 @@ DWORD WINAPI RecvThread(LPVOID arg)
 					if (i == playerinfo.id)
 						continue;
 					/// 고정 길이.
-					ZeroMemory(&packetinfo, sizeof(packetinfo)); 
+					ZeroMemory(&packetinfo, sizeof(packetinfo));
 					packetinfo.type = SC_PACKET_OTHER_PLAYERINFO;
 					packetinfo.size = sizeof(playerinfo);
 					packetinfo.id = playerinfo.id; /// playerinfo.id가 뉴비의 아이디임.
-					ZeroMemory(buf, sizeof(buf)); 
+					ZeroMemory(buf, sizeof(buf));
 					memcpy(buf, &packetinfo, sizeof(packetinfo));
 					retval = send(g_vecsocket[i], buf, BUFSIZE, 0);	// 다른 클라이언트한테 보내는 거니까, g_vecsocket에서 접근해야겠지.
 					if (retval == SOCKET_ERROR) {
@@ -215,7 +180,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			PLAYERINFO tempplayerinfo;
 			{
 				ZeroMemory(&tempplayerinfo, sizeof(tempplayerinfo));
-				ZeroMemory(buf, sizeof(buf));				
+				ZeroMemory(buf, sizeof(buf));
 				retval = recvn(client_sock, buf, BUFSIZE, 0);
 				if (retval == SOCKET_ERROR) {
 					cout << "failed : recvn - CS_PACKET_PLAYERINFO_MOVE" << endl;
@@ -252,21 +217,28 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				memcpy(buf, &(g_vecplayer[id]), sizeof(playerinfo));
 				if (0 == id)	// 0 정보는 1에게 보내야 한다.
 					retval = send(g_vecsocket[id + 1], buf, BUFSIZE, 0);
-				else if (1 == id )
+				else if (1 == id)
 					retval = send(g_vecsocket[id - 1], buf, BUFSIZE, 0);
 				if (retval == SOCKET_ERROR) {
 					cout << "failed : send - 가변 - SC_PACKET_OTHER_PLAYERINFO" << endl;
 					break;
 				}
-
 			}
 		}
 		break;
-		}
+		case SC_PACKET_CLIENT_END:
+		{
+			// closesocket()
+			closesocket(client_sock);
+			cout << "[클라이언트 정상 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
+				"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
 
+			return 0;
+		}
+		break;
+		}
 	}
 
-	// -------------------------------------------
 	// 몬스터
 	//bCreateMonster_check = true;
 	//if (bCreateMonster_check == true)
@@ -298,14 +270,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	//	bCreateMonster_check = false;
 	//}
 
-
-
-
-
-
-	// closesocket()
 	closesocket(client_sock);
-	cout << "[클라이언트 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
+	cout << "[클라이언트 강제 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
 		"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
 
 	return 0;
@@ -347,7 +313,7 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	HANDLE hThread, hSendThread;
+	HANDLE hThread;
 
 	while (true) {
 		// accept()
@@ -362,19 +328,13 @@ int main()
 		g_vecsocket.push_back(client_sock);
 
 		// 접속한 클라이언트 정보 출력
-		cout << "[클라이언트 접속]" << endl;
-		cout << "IP 주소 (" << inet_ntoa(clientaddr.sin_addr) << "), 포트 번호 ("
-			<< ntohs(clientaddr.sin_port) << ") " << endl;
+		cout << "[클라이언트 접속] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
+			"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
 
 		// 클라이언트 스레드 생성
-		hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)client_sock, 0, NULL);
+		hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
 		if (hThread == NULL)	closesocket(client_sock);
 		else					CloseHandle(hThread);
-
-		// Send 스레드 생성
-		hSendThread = CreateThread(NULL, 0, SendThread, (LPVOID)client_sock, 0, NULL);
-		if (hSendThread == NULL)	closesocket(client_sock);
-		else						CloseHandle(hSendThread);
 	}
 
 	// closesocket()
@@ -399,8 +359,6 @@ void EndNetwork()
 	WSACleanup();
 }
 
-
-
 int recvn(SOCKET s, char *buf, int len, int flags)
 {
 	int received;
@@ -421,3 +379,40 @@ int recvn(SOCKET s, char *buf, int len, int flags)
 	}
 	return len - left;
 }
+
+
+//DWORD WINAPI SendThread(LPVOID arg)
+//{
+//	return 0;
+//
+//	//SOCKET client_sock = (SOCKET)arg;
+//	//PACKETINFO packetinfo;
+//	//char buf[BUFSIZE];
+//	//int retval{ 0 };
+//
+//	//while (true) {
+//	//	for (int i = 0; i < g_vecplayer.size(); ++i) {
+//	//		/// 고정 길이 데이터 전송,,
+//	//		ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
+//	//		packetinfo.type = SC_PACKET_PLAYERINFO;
+//	//		packetinfo.size = sizeof(g_vecplayer[i]);
+//	//		packetinfo.id = i;
+//	//		ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+//	//		memcpy(buf, &packetinfo, sizeof(packetinfo));
+//	//		retval == send(client_sock, buf, BUFSIZE, 0);
+//	//		cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
+//	//		if (retval == SOCKET_ERROR) {
+//	//			err_display("send() - SC_PACKET_PLAYERINFO");
+//	//		}
+//
+//	//		/// 가변 길이 데이터 전송,,
+//	//		ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
+//	//		memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
+//	//		retval == send(client_sock, buf, BUFSIZE, 0);
+//	//		cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
+//	//		if (retval == SOCKET_ERROR) {
+//	//			err_display("send() - SC_PACKET_PLAYERINFO");
+//	//		}
+//	//	}
+//	//}
+//}
