@@ -64,7 +64,7 @@ void CMaingame::Initialize(void)
 
 	// recv 전용 스레드.
 	hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)g_sock, 0, NULL);
-	if (hThread != NULL)	CloseHandle(hThread);	// 사용하지 않는 핸들 닫기
+	if (NULL == hThread)	 CloseHandle(hThread);	
 
 	// 플레이어 벡터 초기화 - id로 초기화 검사
 	for (int i = 0; i < g_vecplayer.size(); ++i)
@@ -109,12 +109,11 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 	SOCKET client_sock = (SOCKET)arg;
 
 	while (true) {
+		// 아이디 부여 받기 전이면 ㄴㄴ.
 		if (-1 == g_myid)
 			continue;
 
-		//cout << "Recv Thread 호출" << endl;
-
-		// 고정 길이 - 패킷 구조체를 받아온다.
+		// 고정 길이.
 		g_retval = recvn(g_sock, buf, BUFSIZE, 0);
 		memcpy(&packetinfo, buf, sizeof(packetinfo));
 		if (g_retval == SOCKET_ERROR) {
@@ -122,22 +121,10 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			return 0;
 		}
 
-		// 가변 길이 - 패킷 타입에 따라 구조체가 달라진다.
+		// 가변 길이.
 		switch (packetinfo.type)
 		{
-		case SC_PACKET_ID_INITIALLY:
-		{
-			ZeroMemory(buf, sizeof(buf));
-			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR) {
-				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
-				return 0;
-			}
-			else
-				memcpy(&g_myid, buf, sizeof(g_myid));
-		}
-		break;
-		case SC_PACKET_PLAYERINFO:
+		case SC_PACKET_OTHER_PLAYERINFO:
 		{
 			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
 
@@ -171,7 +158,6 @@ int CMaingame::recvn(SOCKET s, char *buf, int len, int flags)
 
 	while (left > 0) {
 		received = recv(s, ptr, left, flags);
-		//cout << "CMaingame::recvn" << endl;
 
 		if (received == SOCKET_ERROR)
 			return SOCKET_ERROR;

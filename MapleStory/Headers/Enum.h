@@ -82,8 +82,11 @@ enum PLAYER_JOB { JOB_STRIKER, JOB_CAPTIN, JOB_END };
 enum FONT_TYPE { FONTTYPE_UNIT, FONTTYPE_TENS, FONTTYPE_HUND, FONTTYPE_THOU, FONTTYPE_TENTH };
 enum FONT_FLOOR { FONT_FIRSTFLOOR, FONT_SECONDFLOOR, FONT_THIRDFLOOR, FONT_FOURTHFLOOR, FONT_FIFTHFLOOR };
 
-enum PACKET_TYPE {
-	CS_PACKET_PLAYERINFO_INITIALLY,	// CS - Client to Server. SC - Server to Client.
+enum PACKET_TYPE { // CS - Client to Server. SC - Server to Client.
+	CS_PACKET_PLAYERINFO_INITIALLY,		// 클라이언트 : 내가 새로 접속했어. 나는 닉네임과 직업을 정했고, 이걸 playerinfo에 채워서 보낼게. // 서버 : 닉네임과 직업? 잘 알았어. 니 아이디를 부여하기 위한 작업을 할게.
+	CS_PACKET_PLAYERINFO_MOVE, // 클라이언트 : 나 움직였다! 내 playerinfo 보내 줄게. // 서버 : g_vecplayer[니 id]에 갱신할게. 다른 플레이어에게도 니 정보를 전송할게.
 
-	SC_PACKET_ID_INITIALLY, SC_PACKET_PLAYERINFO
+	//----------------------------------------
+	SC_PACKET_YOUR_PLAYERINFO, // 서버 : 너 상태 바뀌었지? or 새로 접속했지? 니 playerinfo는 이거야. // 오 알았어! 내 g_vecplayer[내 아이디]에 저장할게.
+	SC_PACKET_OTHER_PLAYERINFO 	// 서버 : 새로운 다른 클라이언트가 들어왔어 or 다른 클라이언트가 상태가 바뀌었어. 이 아이의 info는 이래. // 클라이언트 : 알았어. 나의 g_vecplayer[새 클라의 id]에 갱신할게.
 };

@@ -66,15 +66,15 @@ void CPlayer::Initialize(void)
 	m_ePreState = m_eCurState;
 
 
+	if (g_vecplayer[g_myid].job == JOB_STRIKER)
+		m_pImgName = L"Player_LEFT";
+	else
+		m_pImgName = L"Captin_LEFT";
+
 	m_dwDamageTime = GetTickCount();
 
 	m_dwFrameOldTime = GetTickCount();
 	m_dwFrameCurTime = 0;
-
-	if(g_myinfo.job == JOB_STRIKER)
-		m_pImgName = L"Player_LEFT";
-	else
-		m_pImgName = L"Captin_LEFT";
 
 	m_tFrame.iFrameStart = 0;
 	m_tFrame.iFrameEnd = 0;
@@ -328,6 +328,9 @@ void CPlayer::Scroll()
 
 void CPlayer::KeyCheck()
 {
+	// 결론적으로 눌렸나 안 눌렸나 확인하려고.
+	bool bIsKeyDown = true;
+
 	// 플레이어 기본 동작
 	if(CKeyMgr::GetInstance()->StayKeyDown(VK_LEFT))
 	{
@@ -443,6 +446,7 @@ void CPlayer::KeyCheck()
 	{
 		if(!m_bIsRopeColl && PLAYER_SHOOT != m_eCurState && PLAYER_SWING != m_eCurState && PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
 			m_eCurState = PLAYER_STAND;
+		bIsKeyDown = false;
 	}
 
 	if(CKeyMgr::GetInstance()->OnceKeyUp(VK_SPACE) && !m_bIsPressed)
@@ -458,6 +462,7 @@ void CPlayer::KeyCheck()
 		m_bIsRopeColl = false;
 		CSoundMgr::GetInstance()->PlaySound(L"Player_Jump.mp3", CSoundMgr::CHANNEL_PLAYER);
 		//m_pImgName = L"Player_RIGHT";
+		bIsKeyDown = true;
 	}
 	else
 	{
@@ -465,6 +470,55 @@ void CPlayer::KeyCheck()
 		m_tFrame.dwFrameSpd = 150;
 	}
 	
+
+	// 1201.
+	// 결론적으로 뭔가 키가 눌리긴 했으면, 
+	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)
+ 	if (bIsKeyDown) {
+		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
+		// 2. 보낼 공간 playerinfo를 만든다.
+		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
+		// 4. playerinfo를 서버에 send 한다.
+
+		// ----------------------Progress-------------------------
+		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
+		{
+			g_vecplayer[g_myid].pt.x = m_tInfo.pt.x;
+			g_vecplayer[g_myid].pt.y = m_tInfo.pt.y;
+			g_vecplayer[g_myid].frame = m_tInfo.frame;
+			g_vecplayer[g_myid].state = m_eCurState;
+		}
+		// 2. 보낼 공간 playerinfo를 만든다.
+		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
+		PLAYERINFO playerinfo;
+		{
+			memcpy(&playerinfo, &(g_vecplayer[g_myid]), sizeof(PLAYERINFO));
+		}
+		// 4. playerinfo를 서버에 send 한다.
+		{
+			char buf[BUFSIZE] = {};
+			// 고정 길이.
+			PACKETINFO packetinfo;
+			packetinfo.id = g_myid;
+			packetinfo.size = sizeof(PLAYERINFO);
+			packetinfo.type = CS_PACKET_PLAYERINFO_MOVE;
+			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			g_retval = send(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR) {
+				MessageBox(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_MOVE", MB_OK);
+				exit(1);
+			}
+
+			// 가변 길이.
+			ZeroMemory(buf, sizeof(buf));
+			memcpy(buf, &playerinfo, sizeof(playerinfo));
+			g_retval = send(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR) {
+				MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_MOVE", MB_OK);
+				exit(1);
+			}
+		}
+	}
 }
 
 void CPlayer::FrameMove()

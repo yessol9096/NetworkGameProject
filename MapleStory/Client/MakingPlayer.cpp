@@ -35,6 +35,8 @@ int CMakingPlayer::Update()
 	GetCursorPos(&pt);
 	ScreenToClient(g_hWnd, &pt);
 
+	PLAYERINFO tempplayerinfo;
+
 	pt2.x = static_cast<LONG>(pt.x - g_fScrollX) - 10 + static_cast<LONG>(g_fScrollX);
 	pt2.y = static_cast<LONG>(pt.y - g_fScrollY) - 21 + static_cast<LONG>(g_fScrollY);
 
@@ -42,10 +44,6 @@ int CMakingPlayer::Update()
 	rcRight.bottom = WINCY - 350; rcRight.top = WINCY - 380;
 	rcLeft.left = WINCX - 260; rcLeft.right = WINCX - 230;
 	rcLeft.bottom = WINCY - 350; rcLeft.top = WINCY - 380;
-
-	// Debugging
-	//Rectangle(m_hDC, rcRight.left, rcRight.top, rcRight.right, rcRight.bottom);
-	//Rectangle(m_hDC, rcLeft.left, rcLeft.top, rcLeft.right, rcLeft.bottom);
 
 	if (PtInRect(&rcRight, pt2))
 	{
@@ -69,74 +67,89 @@ int CMakingPlayer::Update()
 	switch (sceneNum) {
 	case 0:
 		m_pImgName = L"MakingPlayer1";
-		g_myinfo.job = JOB_STRIKER;
+		tempplayerinfo.job = JOB_STRIKER;
 		break;
 	case 1:
 		m_pImgName = L"MakingPlayer2";
-		g_myinfo.job = JOB_CAPTIN;
+		tempplayerinfo.job = JOB_CAPTIN;
 		break;
 	}
 	
 	// 캐릭터 생성 버튼 - 마우스 충돌 검사.
 	RECT rcMake{ WINCX - 300, WINCY - 180, WINCX - 200, WINCY - 130 };
 
-	// (Debugging)
-	// Rectangle(m_hDC, rcMake.left, rcMake.top, rcMake.right, rcMake.bottom);
-	
+
 	if (PtInRect(&rcMake, pt2)) {
 		if (KEYMGR->OnceKeyDown(VK_LBUTTON)) {
 			char buf[BUFSIZE];
-			// 입력 받은 id를 InitInfo.id에 갱신한다
-			char* pStr;
-			int strSize = WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, NULL, 0, NULL, NULL);
-			pStr = new char[strSize];
-			WideCharToMultiByte(CP_ACP, 0, g_idbuf, -1, pStr, strSize, 0, 0);
-			memcpy(&(g_myinfo.nickname), (pStr), strSize);
-
-			// 고정 길이 데이터를 보낸다.
-			PACKETINFO packetinfo;
-			packetinfo.type = CS_PACKET_PLAYERINFO_INITIALLY;
-			packetinfo.size = sizeof(g_myinfo);
-			// ZeroMemory(buf, sizeof(buf));
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
-			g_retval = send(g_sock, (char*)&packetinfo/*buf*/, /*sizeof(packetinfo)*/BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
-
-			// 내 PlayerInfo 정보를 서버에 send 한다.
-			ZeroMemory(buf, sizeof(buf));
-			memcpy(buf, &g_myinfo, sizeof(g_myinfo));
-			g_retval = send(g_sock, (char*)&g_myinfo/*buf*/, /*sizeof(g_myinfo)*/BUFSIZE, 0);
-			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"send()", L"send()", MB_OK);
-
+			// 캐릭터 생성 버튼을 눌렀으면,
+			// 1. 직업과 닉네임 정보가 채워진 playerinfo를 서버에 send 한다.
+			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)
+			
+			// --------------------Process---------------------
+			// 1. 직업과 닉네임 정보가 채워진 playerinfo를 서버에 send 한다.
 			{
-				// Debugging
-				{
-					if (g_myinfo.job == JOB_CAPTIN)
-						cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 캡틴 " << " / 정보 전송" << endl;
-					else
-						cout << "PlayerInfo - 닉네임 : " << g_myinfo.nickname << ", 직업 : 스트라이커 " << " / 정보 전송" << endl;
-				}
-				
-				// id를 부여받아야 다음 씬으로 넘어가도록 하자..! maingame에서 다른 데이터가 받는 것처럼
-				// 똑같이 받으면 구조가 꼬임.
-				// 가변 길이
+				// 입력 받은 id를 tempplayerinfo.id에 갱신한다.
+				char* pStr;
+				int strSize = WideCharToMultiByte(CP_ACP, 0, g_nicknamebuf, -1, NULL, 0, NULL, NULL);
+				pStr = new char[strSize];
+				WideCharToMultiByte(CP_ACP, 0, g_nicknamebuf, -1, pStr, strSize, 0, 0);
+				memcpy(&(tempplayerinfo.nickname), (pStr), strSize);
+
+				// 고정 길이.
+				PACKETINFO packetinfo;
+				packetinfo.type = CS_PACKET_PLAYERINFO_INITIALLY;
+				packetinfo.size = sizeof(tempplayerinfo);
+				memcpy(buf, &packetinfo, sizeof(packetinfo));
+				g_retval = send(g_sock, (char*)&packetinfo, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR)
+					MessageBoxW(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+
+				// 가변 길이.
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &tempplayerinfo, sizeof(tempplayerinfo));
+				g_retval = send(g_sock, (char*)&tempplayerinfo, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR)
+					MessageBoxW(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+
+			}
+
+			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)
+			{
+				PACKETINFO temppacketinfo;
+				PLAYERINFO tempplayerinfo;
+				// 고정 길이. 
+				/// 이렇게 안 해도 되긴 한데.. 안정성 있게 하자.
 				ZeroMemory(buf, sizeof(buf));
 				g_retval = recv(g_sock, buf, BUFSIZE, 0);
-				if (g_retval == SOCKET_ERROR)
-					MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBoxW(g_hWnd, L"recv() - 고정 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
+					exit(1);
+				}
 				else
-					memcpy(&g_myid, buf, sizeof(g_myid));
+					memcpy(&temppacketinfo, buf, sizeof(temppacketinfo));
 
-				// send에 성공하면, 필드로 넘어간다.
-				CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
-				CSoundMgr::GetInstance()->StopSoundAll();
-				CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
-				CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
-				// tempinfo에 현재까지 설정된 정보를 넣어준다.
-				//break;
-			//}
+				// 가변 길이. 
+				if (temppacketinfo.type == SC_PACKET_YOUR_PLAYERINFO)
+				{
+					ZeroMemory(buf, sizeof(buf));
+					g_retval = recv(g_sock, buf, BUFSIZE, 0);
+					if (g_retval == SOCKET_ERROR) {
+						MessageBoxW(g_hWnd, L"recv() - 가변 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
+						exit(1);
+					}
+					else{
+						memcpy(&tempplayerinfo, buf, sizeof(tempplayerinfo));
+						g_myid = tempplayerinfo.id;
+						g_vecplayer[g_myid] = tempplayerinfo;
+
+						// recv에 성공하면, 필드로 넘어간다.
+						CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+						CSoundMgr::GetInstance()->StopSoundAll();
+						CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
+						CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+					}
+				}
 			}
 		}
 	}
@@ -158,7 +171,7 @@ void CMakingPlayer::Render(HDC hDc)
 	// 입력하는 id 출력.
 	RECT rc = { WINCX - 240, WINCY - 313, WINCX - 100, WINCY - 293 };
 
-	DrawText(m_hDC, g_idbuf, wcslen(g_idbuf), &rc, DT_SINGLELINE);
+	DrawText(m_hDC, g_nicknamebuf, wcslen(g_nicknamebuf), &rc, DT_SINGLELINE);
 }
 
 void CMakingPlayer::Release()

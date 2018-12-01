@@ -38,6 +38,7 @@ typedef struct PlayerInfo {
 	MYPOINT		pt;
 	MYSIZE		size;
 	PLAYER_JOB	job;
+	PLAYER_STATE state; // 1201 Ãß°¡
 	int			hp;
 	int			money;
 	FRAME		frame;
