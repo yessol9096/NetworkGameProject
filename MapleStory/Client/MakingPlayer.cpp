@@ -120,7 +120,7 @@ int CMakingPlayer::Update()
 				// 고정 길이. 
 				/// 이렇게 안 해도 되긴 한데.. 안정성 있게 하자.
 				ZeroMemory(buf, sizeof(buf));
-				g_retval = recv(g_sock, buf, BUFSIZE, 0);
+				g_retval = recvn(g_sock, buf, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"recv() - 고정 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
 					g_bIsProgramEnd = true;	// 프로그램 종료
@@ -132,7 +132,7 @@ int CMakingPlayer::Update()
 				if (temppacketinfo.type == SC_PACKET_YOUR_PLAYERINFO)
 				{
 					ZeroMemory(buf, sizeof(buf));
-					g_retval = recv(g_sock, buf, BUFSIZE, 0);
+					g_retval = recvn(g_sock, buf, BUFSIZE, 0);
 					if (g_retval == SOCKET_ERROR) {
 						MessageBoxW(g_hWnd, L"recv() - 가변 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
 						g_bIsProgramEnd = true;	// 프로그램 종료
@@ -177,4 +177,27 @@ void CMakingPlayer::Release()
 {
 
 }
+
+int CMakingPlayer::recvn(SOCKET s, char* buf, int len, int flags)
+{
+	int received;
+	char *ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+
+		else if (received == 0)
+			break;
+
+		left -= received;
+		ptr += received;
+	}
+	return len - left;
+}
+
+
  

@@ -7,6 +7,9 @@ using namespace std;
 
 #pragma comment(lib, "Ws2_32.lib")
 
+// 스레드 동기화
+CRITICAL_SECTION cs;
+
 // 클라이언트
 vector<PLAYERINFO> g_vecplayer;
 bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
@@ -27,7 +30,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 	// 클라이언트 정보 얻기
 	int addrlen = sizeof(clientaddr);
+	EnterCriticalSection(&cs);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+	LeaveCriticalSection(&cs);
 
 	int retval{ 0 };
 
@@ -45,7 +50,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		// 앞으로 받을 패킷 정보를 알아낸다.
 		{
 			ZeroMemory(&packetinfo, sizeof(packetinfo));
+			EnterCriticalSection(&cs);
 			retval = recvn(client_sock, buf, BUFSIZE, 0);
+			LeaveCriticalSection(&cs);
 			if (retval == SOCKET_ERROR) {
 				err_display("packetinfo recv()");
 				break;
@@ -69,7 +76,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			// 1. 초기 설정된 playeinfo를 수신한다.
 			{
 				ZeroMemory(&buf, sizeof(buf));	 /// 재사용 할 거니까. 계속 비워줌.		
+				EnterCriticalSection(&cs);
 				retval = recvn(client_sock, buf, BUFSIZE, 0);
+				LeaveCriticalSection(&cs);
 				std::cout << "가변 길이 수신 - CS_PACKET_PLAYERINFO_INITIALLY" << endl;
 				if (retval == SOCKET_ERROR) {
 					err_display("intial playerinfo recv()");
@@ -96,7 +105,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				/// 유저 2인 제한.
 				if (-1 == id) {
 					std::cout << "user가 다 찼습니다." << std::endl;
+					EnterCriticalSection(&cs);
 					closesocket(client_sock);
+					LeaveCriticalSection(&cs);
 					break;
 				}
 
@@ -125,14 +136,18 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				packetinfo.type = SC_PACKET_YOUR_PLAYERINFO;
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &packetinfo, sizeof(packetinfo));
+				EnterCriticalSection(&cs);
 				retval = send(client_sock, buf, BUFSIZE, 0);
+				LeaveCriticalSection(&cs);
 				if (retval == SOCKET_ERROR)
 					err_display("send() - 고정 길이 - SC_PACKET_YOUR_PLAYERINFO");
 
 				// 가변 길이. 
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &(playerinfo), sizeof(playerinfo));
+				EnterCriticalSection(&cs);
 				retval = send(client_sock, buf, BUFSIZE, 0);
+				LeaveCriticalSection(&cs);
 				if (retval == SOCKET_ERROR)
 					err_display("send() - 가변 길이 - SC_PACKET_YOUR_PLAYERINFO");
 			}
@@ -150,14 +165,18 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					packetinfo.id = playerinfo.id; /// playerinfo.id가 뉴비의 아이디임.
 					ZeroMemory(buf, sizeof(buf));
 					memcpy(buf, &packetinfo, sizeof(packetinfo));
+					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[i], buf, BUFSIZE, 0);	// 다른 클라이언트한테 보내는 거니까, g_vecsocket에서 접근해야겠지.
+					LeaveCriticalSection(&cs);
 					if (retval == SOCKET_ERROR) {
 						err_display("send() - SC_PACKET_NEW_PLAYERINFO");
 					}
 					/// 가변 길이.
 					ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
 					memcpy(buf, &playerinfo, sizeof(g_vecplayer[i]));
+					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[i], buf, BUFSIZE, 0);
+					LeaveCriticalSection(&cs);
 					cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
 					if (retval == SOCKET_ERROR) {
 						err_display("send() - SC_PACKET_PLAYERINFO");
@@ -182,7 +201,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			{
 				ZeroMemory(&tempplayerinfo, sizeof(tempplayerinfo));
 				ZeroMemory(buf, sizeof(buf));
+				EnterCriticalSection(&cs);
 				retval = recvn(client_sock, buf, BUFSIZE, 0);
+				LeaveCriticalSection(&cs);
 				if (retval == SOCKET_ERROR) {
 					cout << "failed : recvn - CS_PACKET_PLAYERINFO_MOVE" << endl;
 					break;
@@ -204,10 +225,16 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				packetinfo.size = sizeof(PLAYERINFO);
 				packetinfo.type = SC_PACKET_OTHER_PLAYERINFO;
 				memcpy(buf, &packetinfo, sizeof(packetinfo));
-				if (0 == id)	// 0 정보는 1에게 보내야 한다.
+				if (0 == id) {	// 0 정보는 1에게 보내야 한다.
+					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[id + 1], buf, BUFSIZE, 0);
-				else if (1 == id)
+					LeaveCriticalSection(&cs);
+				}
+				else if (1 == id) {
+					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[id - 1], buf, BUFSIZE, 0);
+					LeaveCriticalSection(&cs);
+				}
 				if (retval == SOCKET_ERROR) {
 					cout << "failed : send - 고정 - SC_PACKET_OTHER_PLAYERINFO" << endl;
 					break;
@@ -216,10 +243,16 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				// 가변 길이
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &(g_vecplayer[id]), sizeof(playerinfo));
-				if (0 == id)	// 0 정보는 1에게 보내야 한다.
+				if (0 == id) {	// 0 정보는 1에게 보내야 한다.
+					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[id + 1], buf, BUFSIZE, 0);
-				else if (1 == id)
+					LeaveCriticalSection(&cs);
+				}
+				else if (1 == id) {
+					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[id - 1], buf, BUFSIZE, 0);
+					LeaveCriticalSection(&cs);
+				}
 				if (retval == SOCKET_ERROR) {
 					cout << "failed : send - 가변 - SC_PACKET_OTHER_PLAYERINFO" << endl;
 					break;
@@ -230,7 +263,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		case SC_PACKET_CLIENT_END:
 		{
 			// closesocket()
+			EnterCriticalSection(&cs);
 			closesocket(client_sock);
+			LeaveCriticalSection(&cs);
 			cout << "[클라이언트 정상 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
 				"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
 
@@ -256,7 +291,9 @@ DWORD WINAPI MonsterThread(LPVOID arg)
 	bool monsterthread_start = false;
 	// 클라이언트 정보 얻기
 	int addrlen = sizeof(clientaddr);
+	EnterCriticalSection(&cs);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+	LeaveCriticalSection(&cs);
 
 	int retval{ 0 };
 
@@ -289,13 +326,15 @@ DWORD WINAPI MonsterThread(LPVOID arg)
 
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &packetinfo, sizeof(packetinfo));
-
+				EnterCriticalSection(&cs);
 				retval = send(client_sock, buf, BUFSIZE, 0);
+				LeaveCriticalSection(&cs);
 				if (retval == SOCKET_ERROR) {
 					err_display("send() - SC_PACKET_GRRENMUSH_INITIALLY");
 				}
-	
+				EnterCriticalSection(&cs);
 				retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+				LeaveCriticalSection(&cs);
 
 				if (retval == SOCKET_ERROR) {
 					err_display("send()");
@@ -312,6 +351,9 @@ int main()
 	g_vecplayer.reserve(MAX_USER);
 
 	int retval;
+
+	// 임계 영역 초기화
+	InitializeCriticalSection(&cs);
 
 	// 윈속 초기화.
 	InitializeNetwork();
@@ -368,6 +410,11 @@ int main()
 		//몬스터 스레드 생성
 		hThread[1] = CreateThread(NULL, 0, MonsterThread, (LPVOID)client_sock, 0, NULL);
 	}
+	// 두 개의 스레드 종료 대기
+	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+
+	// 임계 영역 삭제
+	DeleteCriticalSection(&cs);
 
 	// closesocket()
 	closesocket(listen_sock);

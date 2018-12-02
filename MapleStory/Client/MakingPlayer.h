@@ -14,6 +14,7 @@ public:
 	virtual void Render(HDC hDc);
 	virtual void Release();
 	
+	 int recvn(SOCKET, char* , int, int);
 private:
 	HDC				m_hDC;
 
