@@ -14,7 +14,7 @@ vector<SOCKET> g_vecsocket;
 
 // monster 정보 보냈나 안보냈나 확인
 bool bCreateMonster_check = false;
-vector<MONSTERINFO> g_vecgreen;
+vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
 int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
 int greenposY = HENESISCY - 460.f;
 OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
@@ -33,8 +33,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 	PACKETINFO packetinfo;
 	PLAYERINFO playerinfo;
-	MONSTERINFO monsterinfo;
 
+
+	
 	// -------------------------------------------
 	// 구조 : 고정 길이 + 가변 길이.
 	while (true) {
@@ -239,37 +240,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		}
 	}
 
-	// 몬스터
-	//bCreateMonster_check = true;
-	//if (bCreateMonster_check == true)
-	//{
-	//	// 초록버섯 데이터 정의
-	//	for (int i = 0; i < MAX_GREEN - 1; ++i)
-	//	{
-	//		monsterinfo.id = i;
-	//		monsterinfo.hp = 100;
-	//		monsterinfo.key = OBJ_GRRENMUSH;
-	//		monsterinfo.money = 10;
-	//		monsterinfo.pt.x = greenposX[i];
-	//		monsterinfo.pt.y = greenposY;
-	//		monsterinfo.dir = greenDir[i];
-	//		monsterinfo.pattern = greenPtr[i];
-
-	//		g_vecgreen.push_back(monsterinfo);
-	//		datatype = OBJ_GRRENMUSH;
-	//		cout << "몬스터 입력 정보 전달" << endl;
-
-	//		retval = send(client_sock, (char*)&datatype, sizeof(int), 0);
-	//		retval = send(client_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-
-	//		if (retval == SOCKET_ERROR) {
-	//			err_display("send()");
-	//			return 1;
-	//		}
-	//	}
-	//	bCreateMonster_check = false;
-	//}
-
+	
 	closesocket(client_sock);
 	cout << "[클라이언트 강제 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
 		"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
@@ -277,11 +248,69 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	return 0;
 }
 
+DWORD WINAPI MonsterThread(LPVOID arg)
+{
+	SOCKET client_sock = (SOCKET)arg;
+	SOCKADDR_IN clientaddr;
+	char buf[BUFSIZE];
+	bool monsterthread_start = false;
+	// 클라이언트 정보 얻기
+	int addrlen = sizeof(clientaddr);
+	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+
+	int retval{ 0 };
+
+	PACKETINFO packetinfo{};
+	MONSTERINFO monsterinfo{};
+	while (1)
+	{
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_arrayconnected[i] == true)
+				monsterthread_start = true;
+		}
+		if (monsterthread_start == true)
+		{
+			for (int i = 0; i < MAX_GREEN ; ++i)
+			{
+				monsterinfo.id = i;
+				monsterinfo.hp = 100;
+				monsterinfo.money = 10;
+				monsterinfo.pt.x = greenposX[i];
+				monsterinfo.pt.y = greenposY;
+				monsterinfo.dir = greenDir[i];
+				monsterinfo.pattern = greenPtr[i];
+
+				g_vecgreen[i] = monsterinfo;
+
+				ZeroMemory(&packetinfo, sizeof(packetinfo));
+				packetinfo.id = i;
+				packetinfo.size = sizeof(MONSTERINFO);
+				packetinfo.type = SC_PACKET_GRRENMUSH_INITIALLY;
+
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &packetinfo, sizeof(packetinfo));
+
+				retval = send(client_sock, buf, BUFSIZE, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send() - SC_PACKET_GRRENMUSH_INITIALLY");
+				}
+	
+				retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+				cout << i << "번째 몬스터 정보 보냄" << endl;
+				if (retval == SOCKET_ERROR) {
+					err_display("send()");
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 int main()
 {
 	// 공간 2개 예약.
 	g_vecplayer.reserve(MAX_USER);
-	g_vecgreen.reserve(MAX_GREEN);
+
 	int retval;
 
 	// 윈속 초기화.
@@ -313,7 +342,7 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	HANDLE hThread;
+	HANDLE hThread[2];
 
 	while (true) {
 		// accept()
@@ -332,9 +361,12 @@ int main()
 			"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
 
 		// 클라이언트 스레드 생성
-		hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
-		if (hThread == NULL)	closesocket(client_sock);
-		else					CloseHandle(hThread);
+		hThread[0] = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
+		if (hThread[0] == NULL)	closesocket(client_sock);
+		else					CloseHandle(hThread[0]);
+
+		//몬스터 스레드 생성
+		hThread[1] = CreateThread(NULL, 0, MonsterThread, (LPVOID)client_sock, 0, NULL);
 	}
 
 	// closesocket()

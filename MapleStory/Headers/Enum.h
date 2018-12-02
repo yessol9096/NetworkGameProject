@@ -90,5 +90,6 @@ enum PACKET_TYPE { // CS - Client to Server. SC - Server to Client.
 	SC_PACKET_YOUR_PLAYERINFO, // 서버 : 너 상태 바뀌었지? or 새로 접속했지? 니 playerinfo는 이거야. // 오 알았어! 내 g_vecplayer[내 아이디]에 저장할게.
 	SC_PACKET_OTHER_PLAYERINFO, 	// 서버 : 새로운 다른 클라이언트가 들어왔어 or 다른 클라이언트가 상태가 바뀌었어. 이 아이의 info는 이래. // 클라이언트 : 알았어. 나의 g_vecplayer[새 클라의 id]에 갱신할게.
 
-	SC_PACKET_CLIENT_END	// 클라이언트 종료 서버한테 알리기
+	SC_PACKET_CLIENT_END,	// 클라이언트 종료 서버한테 알리기
+	SC_PACKET_GRRENMUSH_INITIALLY			// 몬스터 초기정보보내기 
 };

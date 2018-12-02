@@ -124,7 +124,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		// 아이디 부여 받기 전이면 ㄴㄴ.
 		if (-1 == g_myid)
 			continue;
-
 		// 고정 길이.
 		g_retval = recvn(g_sock, buf, BUFSIZE, 0);
 		memcpy(&packetinfo, buf, sizeof(packetinfo));
@@ -147,15 +146,16 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			else
 				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
 		}
-		break;
-		//case OBJ_GRRENMUSH:
-		//{
-		//	g_retval = recv(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
-		//	if (g_vecgreen[monsterinfo.id].key == NULL)
-		//		g_vecgreen[monsterinfo.id] = monsterinfo;
-		//	//cout << g_vecgreen[5].pt.x << endl;
-		//}
-		//	break;
+			break;
+		case SC_PACKET_GRRENMUSH_INITIALLY:
+		{
+			int id = packetinfo.id;
+
+			ZeroMemory(buf, sizeof(buf));
+			g_retval = recvn(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+			g_vecgreen[monsterinfo.id] = monsterinfo;
+		}
+			break;
 		}
 	}
 
