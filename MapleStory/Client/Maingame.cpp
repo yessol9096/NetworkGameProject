@@ -153,6 +153,9 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 
 			ZeroMemory(buf, sizeof(buf));
 			g_retval = recvn(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"recvn() - SC_MONSTER_ID", MB_OK, MB_OK);
+			else
 			g_vecgreen[monsterinfo.id] = monsterinfo;
 		}
 			break;
