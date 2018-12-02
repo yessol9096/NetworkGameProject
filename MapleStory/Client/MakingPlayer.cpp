@@ -88,7 +88,7 @@ int CMakingPlayer::Update()
 			
 			// --------------------Process---------------------
 			// 1. 직업과 닉네임 정보가 채워진 playerinfo를 서버에 send 한다.
-			{
+			while(true){
 				// 입력 받은 id를 tempplayerinfo.id에 갱신한다.
 				char* pStr;
 				int strSize = WideCharToMultiByte(CP_ACP, 0, g_nicknamebuf, -1, NULL, 0, NULL, NULL);
@@ -104,6 +104,8 @@ int CMakingPlayer::Update()
 				g_retval = send(g_sock, (char*)&packetinfo, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+					g_bIsProgramEnd = true;	// 프로그램 종료
+					break;
 				}
 				// 가변 길이.
 				ZeroMemory(buf, sizeof(buf));
@@ -111,11 +113,15 @@ int CMakingPlayer::Update()
 				g_retval = send(g_sock, (char*)&tempplayerinfo, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+					g_bIsProgramEnd = true;	// 프로그램 종료
+					break;
 				}
+				else
+					break;
 			}
 
 			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)
-			{
+			while(true){
 				PACKETINFO temppacketinfo;
 				PLAYERINFO tempplayerinfo;
 				// 고정 길이. 
@@ -125,6 +131,7 @@ int CMakingPlayer::Update()
 				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"recv() - 고정 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
 					g_bIsProgramEnd = true;	// 프로그램 종료
+					break;
 				}
 				else
 					memcpy(&temppacketinfo, buf, sizeof(temppacketinfo));
@@ -137,6 +144,7 @@ int CMakingPlayer::Update()
 					if (g_retval == SOCKET_ERROR) {
 						MessageBoxW(g_hWnd, L"recv() - 가변 - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
 						g_bIsProgramEnd = true;	// 프로그램 종료
+						break;
 					}
 					else{
 						memcpy(&tempplayerinfo, buf, sizeof(tempplayerinfo));
@@ -148,6 +156,7 @@ int CMakingPlayer::Update()
 						CSoundMgr::GetInstance()->StopSoundAll();
 						CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
 						CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");
+						break;
 					}
 				}
 			}
