@@ -296,7 +296,7 @@ DWORD WINAPI MonsterThread(LPVOID arg)
 				}
 	
 				retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
-				cout << i << "번째 몬스터 정보 보냄" << endl;
+
 				if (retval == SOCKET_ERROR) {
 					err_display("send()");
 				}
