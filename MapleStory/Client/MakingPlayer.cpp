@@ -102,15 +102,16 @@ int CMakingPlayer::Update()
 				packetinfo.size = sizeof(tempplayerinfo);
 				memcpy(buf, &packetinfo, sizeof(packetinfo));
 				g_retval = send(g_sock, (char*)&packetinfo, BUFSIZE, 0);
-				if (g_retval == SOCKET_ERROR)
+				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
-
+				}
 				// 가변 길이.
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &tempplayerinfo, sizeof(tempplayerinfo));
 				g_retval = send(g_sock, (char*)&tempplayerinfo, BUFSIZE, 0);
-				if (g_retval == SOCKET_ERROR)
+				if (g_retval == SOCKET_ERROR) {
 					MessageBoxW(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+				}
 			}
 
 			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)

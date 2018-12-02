@@ -95,11 +95,13 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			{
 				int id = -1;
 				for (int i = 0; i < MAX_USER; ++i) {
+					EnterCriticalSection(&cs);
 					if (false == g_arrayconnected[i]) { /// 순차적으로 접근해서 연결 되지 않은 인덱스 i를 찾고, 
 						g_arrayconnected[i] = true;
 						id = i; /// 아이디를 부여한다.
 						break;
 					}
+					LeaveCriticalSection(&cs);
 				}
 
 				/// 유저 2인 제한.
@@ -125,7 +127,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			}
 
 			// 3. 나머지 멤버 변수들이 채워진 playerinfo를 벡터에 push 한다.
+			EnterCriticalSection(&cs);
 			g_vecplayer.push_back(playerinfo);
+			LeaveCriticalSection(&cs);
 
 			// 4. 클라이언트에게 "니 정보는 이거야!" 라고 send 하여 알린다.
 			{
@@ -154,6 +158,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 			// 5. 나머지 클라이언트에게 나의 playerinfo를 전송하여 나의 접속을 알린다. (2가 접속했다면 1에게, 1이 접속했다면 아무에게도 X)
 			{
+				EnterCriticalSection(&cs);
 				for (int i = 0; i < g_vecplayer.size(); ++i) {
 					/// 나에게는 보낼 필요 없어.
 					if (i == playerinfo.id)
@@ -182,6 +187,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 						err_display("send() - SC_PACKET_PLAYERINFO");
 					}
 				}
+				LeaveCriticalSection(&cs);
 			}
 
 		}
@@ -214,11 +220,15 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 			// 3. g_vecplayer[받은 playerinfo의 id]에 접근하여 정보를 갱신한다.
 			{
+				EnterCriticalSection(&cs);
 				g_vecplayer[id] = tempplayerinfo;
+				LeaveCriticalSection(&cs);
 			}
 
 			// 4. 다른 클라이언트에게도 보낸다. (SC_PACKET_OTHER_PLAYERINFO)
+			EnterCriticalSection(&cs);
 			if (g_vecplayer.size() == 2) {// 2인 접속 시에만.
+				LeaveCriticalSection(&cs);
 				// 고정 길이. 
 				ZeroMemory(&packetinfo, sizeof(packetinfo));
 				packetinfo.id = id;
@@ -242,7 +252,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 				// 가변 길이
 				ZeroMemory(buf, sizeof(buf));
+				EnterCriticalSection(&cs);
 				memcpy(buf, &(g_vecplayer[id]), sizeof(playerinfo));
+				LeaveCriticalSection(&cs);
 				if (0 == id) {	// 0 정보는 1에게 보내야 한다.
 					EnterCriticalSection(&cs);
 					retval = send(g_vecsocket[id + 1], buf, BUFSIZE, 0);
@@ -302,8 +314,10 @@ DWORD WINAPI MonsterThread(LPVOID arg)
 	while (1)
 	{
 		for (int i = 0; i < MAX_USER; ++i) {
+			EnterCriticalSection(&cs);
 			if (g_arrayconnected[i] == true)
 				monsterthread_start = true;
+			LeaveCriticalSection(&cs);
 		}
 		if (monsterthread_start == true)
 		{
