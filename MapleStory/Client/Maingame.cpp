@@ -19,7 +19,7 @@ vector<PLAYERINFO> g_vecplayer(MAX_USER);
 int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
 
 //몬스터 정보 받기 
-vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
+vector<MONSTERINFO> g_vecgreen(MAX_GREEN+1);
 bool bMonster_check = false;
 MONSTERINFO monsterinfo{};
 
