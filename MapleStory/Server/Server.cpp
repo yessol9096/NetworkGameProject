@@ -418,17 +418,21 @@ int main()
 
 		// 클라이언트 스레드 생성
 		hThread[0] = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
-		if (hThread[0] == NULL)	closesocket(client_sock);
-		else					CloseHandle(hThread[0]);
+		//if (hThread[0] == NULL)	closesocket(client_sock);
+		//else					CloseHandle(hThread[0]);
 
 		//몬스터 스레드 생성
 		hThread[1] = CreateThread(NULL, 0, MonsterThread, (LPVOID)client_sock, 0, NULL);
+
 	}
 	// 두 개의 스레드 종료 대기
 	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
 
 	// 임계 영역 삭제
 	DeleteCriticalSection(&cs);
+
+	CloseHandle(hThread[0]);
+	CloseHandle(hThread[1]);
 
 	// closesocket()
 	closesocket(listen_sock);
