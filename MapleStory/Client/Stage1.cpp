@@ -97,6 +97,7 @@ void CStage1::Initialize()
 	{
 		CObjMgr::GetInstance()->AddObject(
 			CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[i].pt.x, g_vecgreen[i].pt.y, g_vecgreen[i].dir, g_vecgreen[i].pattern), OBJ_MONSTER);
+		cout << "그림그리는데" << g_vecgreen[i].pt.x << endl;
 	}
 	//// 커플버섯  (3층)
 	//CObjMgr::GetInstance()->AddObject(
@@ -129,19 +130,20 @@ void CStage1::Initialize()
 int CStage1::Update()
 {
 	CObjMgr::GetInstance()->UpdateObj();
-	//OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
+	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 
-	//// 몬스터 좌표 서버로 보내기 
-	//for (int i = 0; i < OBJ_END; ++i)
-	//{
-	//	OBJITER iter_begin = MonsterList.begin();
-	//	OBJITER iter_end = MonsterList.end();
-
-	//	for (; iter_begin != iter_end; ++iter_begin)
-	//	{
-	//		cout << (*iter_begin)->GetInfo().pt.x << endl;
-	//	}
-	//}
+	//// 몬스터 좌표 
+	for (int i = 0; i < OBJ_END; ++i)
+	{
+		OBJITER iter_begin = MonsterList.begin();
+		OBJITER iter_end = MonsterList.end();
+		int j = 0;
+		for (; iter_begin != iter_end; ++iter_begin)
+		{
+			(*iter_begin)->SetPos(g_vecgreen[j].pt.x, g_vecgreen[j].pt.y);
+			++j;
+		}
+	}
 	return 0;
 }
 
