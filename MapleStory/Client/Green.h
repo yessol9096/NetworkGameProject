@@ -19,7 +19,7 @@ public:
 	virtual void	UpdateCollRect();
 
 	virtual void	KnockBack();
-
+	virtual void	SendMovePacket();
 	void	LineCollision();
 
 private:

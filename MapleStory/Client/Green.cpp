@@ -2,6 +2,8 @@
 #include "Green.h"
 #include "Gold.h"
 
+bool test_check = true;
+
 CGreen::CGreen(void)
 {
 }
@@ -130,8 +132,10 @@ int CGreen::Update(void)
 	// 		}
 	// 	}
 
+	if(test_check == true)
+		SendMovePacket();
 	CObj::UpdateRect();
-
+	
 	return 0;
 }
 
@@ -163,6 +167,8 @@ void CGreen::Render( HDC hDc )
 			static_cast<int>(m_tCollRect.right + g_fScrollX),
 			static_cast<int>(m_tCollRect.bottom + g_fScrollY));
 	}
+
+	
 }
 
 void CGreen::FrameMove()
@@ -393,4 +399,52 @@ void CGreen::KnockBack()
 
 	}
 	
+}
+
+
+void CGreen::SendMovePacket()
+{
+	// 1201.
+	// Server에게 내 Monsterinfo를 send한다. (CS_PACKET_GRRENMUSH)
+
+		cout << "Server에게 Monsterinfo를 send" << endl;
+
+		// ----------------------Progress-------------------------
+		// 1. 
+		for (int i = 0; i < MAX_GREEN; ++i)
+		{
+			// 2. 보낼 공간 playerinfo를 만든다.
+			MONSTERINFO monsterinfo{};
+			// 3. monsterinfo에 moster정보를 담는다.
+			{
+				
+			}
+			// 4. monsterinfo를 서버에 send 한다.
+			{
+				char buf[BUFSIZE] = {};
+				ZeroMemory(buf, sizeof(buf));
+				// 고정 길이
+				PACKETINFO packetinfo;
+				packetinfo.id = i;
+				packetinfo.size = sizeof(MONSTERINFO);
+				packetinfo.type = CS_PACKET_GRRENMUSH;
+				memcpy(buf, &packetinfo, sizeof(packetinfo));
+				g_retval = send(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBox(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_GRRENMUSH", MB_OK);
+					g_bIsProgramEnd = true;	// 프로그램 종료
+				}
+
+				// 가변 길이
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &monsterinfo, sizeof(monsterinfo));
+				g_retval = send(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_GRRENMUSH", MB_OK);
+					g_bIsProgramEnd = true;	// 프로그램 종료
+				}
+				else
+					test_check = false;
+			}
+		}
 }
