@@ -25,24 +25,14 @@ public:
 	void	KeyCheck();
 	void	LineCollision();
 
-	void	Send();
+	void	SendMovePacket();
+	void UpdateINFOinPLAYERINFO();
 
 	// 밧줄태우기
 public:
 	void    SetIsRopeColl(bool bRopeColl) { m_bIsRopeColl = bRopeColl; }
 
 	// 층 태우기
-// 	void    SetIsInFirstFloor(bool bInFirstFloor) { m_bIsInFirstFloor = bInFirstFloor; }
-// 	void    SetIsInSecondFloor(bool bInSecondFloor) { m_bIsInSecondFloor = bInSecondFloor; }
-// 	void    SetIsInThirdFloor(bool bInThirdFloor) { m_bIsInThirdFloor = bInThirdFloor; }
-// 	void    SetIsInFourthFloor(bool bInFourthFloor) { m_bIsInFourthFloor = bInFourthFloor; }
-// 	void    SetIsInFifthFloor(bool bInFifthFloor) { m_bIsInFifthFloor = bInFifthFloor; }
-// 
-// 	bool	GetIsInFirstFloor() { return m_bIsInFirstFloor; }
-// 	bool	GetIsInSecondFloor() { return m_bIsInSecondFloor; }
-// 	bool	GetIsInThirdFloor() { return m_bIsInThirdFloor; }
-// 	bool	GetIsInFourthFloor() { return m_bIsInFourthFloor; }
-// 	bool	GetIsInFifthFloor() { return m_bIsInFifthFloor; }
 
 	void	SetPlayerFloor(int iPlayerFloor) { m_iPlayerFloor = iPlayerFloor; }
 	int		GetPlayerFloor() { return m_iPlayerFloor; }
@@ -57,7 +47,8 @@ public:
 	void	SetIsLineColl(bool bLineColl) { m_bLineColl = bLineColl;}
 	float*  GetLinepY() { return &m_fLineY; }
 
-	// 상태
+public:
+	// set, get (주로 상태)
 	PLAYER_STATE GetPlayerState() { return m_eCurState; }
 	void		 SetPlayerState(PLAYER_STATE eState) { m_eCurState = eState; }
 	void		 SetIsLeveling(bool bLeveling) { m_bIsLeveling = bLeveling; }
@@ -82,10 +73,16 @@ public:
 			m_tState.iMp += MPPORTION;
 	}
 
+	void		SetPlayerInfo(PLAYERINFO playerinfo) {
+		m_playerinfo = playerinfo; 
+		m_IsMaster = false;
+	}
+
 	// 무적 상태
 	bool		 GetIsInvincible() { return m_bIsInvincible; }
 	void		 SetIsInvincible(bool bIsInvincible) { m_bIsInvincible = bIsInvincible; }
 	
+public:
 	// 충돌박스 업데이트
 	void	UpdateCollRect();
 
@@ -230,11 +227,6 @@ private:
 			return pMpBar;
 		}
 
-
-
-
-
-
 private:
 	float			m_fJumpSpeed; // 점프 파워
 	float			m_fJumpAcc;   // 점프 가속도 (시간)
@@ -287,4 +279,9 @@ private:
 	FRAME			m_tLevelUpFrame;
 	DWORD			m_dwLevelUpCurTime;
 	DWORD			m_dwLevelUpOldTime;
+
+	// -------------------------------
+	// 서버 추가.
+	PLAYERINFO	m_playerinfo;
+	bool					m_IsMaster = true; // 내 클라이언트의 플레이어인지, 다른 클라이언트의 플레이어인지 구분.
 };

@@ -5,6 +5,7 @@ class CMonster;
 class CCommuication;
 class CParty;
 class CFloorBox;
+class CPlayer;
 
 template <typename T>
 class CAbstractFactory
@@ -70,6 +71,14 @@ public:
 		pObj->Initialize();
 		pObj->SetPos(fX, fY);
 		(dynamic_cast<CCommuication*>(pObj))->SetRenderNumber(iRenderNumber);
+		return pObj;
+	}
+	static CObj* CreatePlayer(PLAYERINFO playerinfo)
+	{
+		CObj* pObj = new T;
+		(dynamic_cast<CPlayer*>(pObj))->SetPlayerInfo(playerinfo);
+		pObj->Initialize();
+		pObj->SetPos(playerinfo.pt.x, playerinfo.pt.y);
 		return pObj;
 	}
 };

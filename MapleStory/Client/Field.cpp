@@ -33,6 +33,10 @@ void CField::Initialize()
 	CObj* pPlayer = CAbstractFactory<CPlayer>::CreateObj();
 	CObjMgr::GetInstance()->AddObject(pPlayer, OBJ_PLAYER);
 
+	 pPlayer = CAbstractFactory<CPlayer>::CreateObj(300, 500);
+	CObjMgr::GetInstance()->AddObject(pPlayer, OBJ_PLAYER);
+
+
 	// นๅมู
 	for (int i = 0; i < 7; ++i)
 		CObjMgr::GetInstance()->AddObject(

@@ -25,11 +25,32 @@ CPlayer::~CPlayer(void)
 
 void CPlayer::Initialize(void)
 {
-	m_tInfo.pt.x = 100.f;
-	m_tInfo.pt.y = 500.f;
+	// 서버 추가.
+	{
+		// if (내가 조종 중인 클라이언트라면) {
+	//		MakingPlayer에서 g_vecplayer[g_myid]에 playerinfo를 받았다.
+	//		g_vecplayer[g_myid]로부터 CPlayer::m_playerinfo를 최초 한번 받아 와야 한다.
+	// }
+	// else if (내가 조종할 수 없는, 다른 클라이언트라면) { 
+	//		MakingPlayer에서 g_vecplayer[다른 클라이언트 id]에 playerinfo를 받았다.
+	//		g_vecplayer[다른 클라이언트 id]로부터 CPlayer::m_playerinfo를 최초 한번 받아 와야 한다.
 
-	m_tInfo.size.cx = 100.f;
-	m_tInfo.size.cy = 100.f;
+	// --------------- Process -------------------
+		if (!m_IsMaster) {
+			if (g_myid == 0)
+				g_vecplayer[g_myid + 1].job = m_playerinfo.job;
+			else if (g_myid == 1)
+				g_vecplayer[g_myid - 1].job = m_playerinfo.job;
+		}
+	}
+
+
+	//// 이 부분은 이제 안 해도 될듯..?
+	//m_tInfo.pt.x = 100.f;
+	//m_tInfo.pt.y = 500.f;
+
+	//m_tInfo.size.cx = 100.f;
+	//m_tInfo.size.cy = 100.f;
 
 	// 스테이터스 초기설정
 	m_tState.iAtt = 300;
@@ -106,16 +127,18 @@ int CPlayer::Update(void)
 	// 죽으면 오브젝트 삭제
 	if (true == m_bIsDead)	return 1;
 
+
 	// 레벨업
-	if (g_iExp >= m_tState.iMaxExp)
-	{
-		m_bIsLeveling = true; // 레벨업 판정
-		// 레벨업 이펙트 만들때 추후 수정..
-		g_iLevel++;
-		g_iExp = 0;
-		m_dwLevelUpOldTime = GetTickCount();
+	if (!m_IsMaster) {
+		if (g_iExp >= m_tState.iMaxExp)
+		{
+			m_bIsLeveling = true; // 레벨업 판정
+			// 레벨업 이펙트 만들때 추후 수정..
+			g_iLevel++;
+			g_iExp = 0;
+			m_dwLevelUpOldTime = GetTickCount();
+		}
 	}
-	//
 
 	// 화면 밖으로 못나가게끔
 	if (m_tInfo.pt.x <= 30)
@@ -172,18 +195,29 @@ int CPlayer::Update(void)
 	}
 	UpdateCollRect();
 
-	Jump();
-	LineCollision();
+	if (m_IsMaster)
+		Jump();
 
-	KeyCheck();
-	FrameMove();
+	if (m_IsMaster)
+		LineCollision();
 
-	Scroll();
+	if (m_IsMaster)
+		KeyCheck();
+
+	if (m_IsMaster)
+		FrameMove();
+
+	if (m_IsMaster) 
+		Scroll();
 
 	CObj::UpdateRect();
 
-	Send();
-
+	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
+	if (m_IsMaster)
+		SendMovePacket(); 
+	// m_tInfo를 계속 쓰되, 서버에서 계속 갱신될 playerinfo를 기준으로 업데이트 해 줘야 한다.
+	UpdateINFOinPLAYERINFO(); 
+	
 	return 0;
 }
 
@@ -321,6 +355,9 @@ void CPlayer::Scroll()
 
 void CPlayer::KeyCheck()
 {
+	if (m_IsMaster == false)
+		return;
+
 	// 플레이어 기본 동작
 	if(CKeyMgr::GetInstance()->StayKeyDown(VK_LEFT))
 	{
@@ -663,7 +700,7 @@ void CPlayer::LineCollision()
 
 bool b = true;	// 디버깅 용
 
-void CPlayer::Send()
+void CPlayer::SendMovePacket()
 {
 	// 1201.
 	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)
@@ -687,8 +724,8 @@ void CPlayer::Send()
 			g_vecplayer[g_myid].state = m_eCurState;
 		}
 		// 2. 보낼 공간 playerinfo를 만든다.
-		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
 		PLAYERINFO playerinfo;
+		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
 		{
 			memcpy(&playerinfo, &(g_vecplayer[g_myid]), sizeof(PLAYERINFO));
 		}
@@ -717,4 +754,32 @@ void CPlayer::Send()
 			}
 		}
 	}
+}
+
+void CPlayer::UpdateINFOinPLAYERINFO()
+{
+	// 이거 아닌 거 같아;;
+////	m_tInfo.frame = m_playerinfo.frame; 애니메이션 동기화 구현하고나서 하는걸로             
+//	m_tInfo.hp = m_playerinfo.hp;
+//	m_tInfo.pt = m_playerinfo.pt;
+//	m_tInfo.size = m_playerinfo.size;
+//	m_eCurState = m_playerinfo.state;
+
+	int id{ 0 };
+	if (m_IsMaster) {
+		id = g_myid;
+	}
+	else {
+		if (g_myid == 0)
+			id = 1;
+		else
+			id = 0;
+	}
+
+	// m_tInfo.frame = g_vecplayer[g_myid].frame;
+	m_tInfo.hp = g_vecplayer[id].hp;
+	m_tInfo.pt = g_vecplayer[id].pt;
+	m_tInfo.size = g_vecplayer[id].size;
+	m_eCurState = g_vecplayer[id].state;
+
 }

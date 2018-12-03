@@ -73,6 +73,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			// 3. 나머지 멤버 변수들이 채워진 playerinfo를 벡터에 push 한다.
 			// 4. 클라이언트에게 "니 정보는 이거야!" 라고 send 하여 알린다.
 			// 5. 나머지 다른 클라이언트에게 나의 playerinfo를 전송하여 나의 접속을 알린다. (2가 접속했다면 1에게, 1이 접속했다면 아무에게도 X)
+			// 6. 새 클라이언트에게 이미 존재하는 클라이언트의 정보를 send 한다.
 
 			// --------------------Process---------------------
 			// 1. 초기 설정된 playeinfo를 수신한다.
@@ -128,10 +129,12 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			}
 
 			// 3. 나머지 멤버 변수들이 채워진 playerinfo를 벡터에 push 한다.
+			{
 #ifdef DEBUG
-			cout << "정보가 채워진 playerinfo를 g_vecplayer에 push 했어요!" << endl;
+				cout << "정보가 채워진 playerinfo를 g_vecplayer에 push 했어요!" << endl;
 #endif
-			g_vecplayer.push_back(playerinfo);
+				g_vecplayer.push_back(playerinfo);
+			}
 
 			// 4. 클라이언트에게 "니 정보는 이거야!" 라고 send 하여 알린다.
 			{
@@ -173,7 +176,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 						continue;
 					/// 고정 길이.
 					ZeroMemory(&packetinfo, sizeof(packetinfo));
-					packetinfo.type = SC_PACKET_OTHER_PLAYERINFO;
+					packetinfo.type = SC_PACKET_NEW_OTHER_PLAYERINFO;
 					packetinfo.size = sizeof(playerinfo);
 					packetinfo.id = playerinfo.id; /// playerinfo.id가 뉴비의 아이디임.
 					ZeroMemory(buf, sizeof(buf));
@@ -199,11 +202,48 @@ DWORD WINAPI ClientThread(LPVOID arg)
 #endif
 				}
 			}
+
+			// 6. 새 클라이언트에게 이미 존재하는 클라이언트의 정보를 send 한다.
+			if(g_vecplayer.size() >= 2) { 
+				// 동접 플레이어가 2일 때만 해당한다.
+				// 고정 길이.
+				PACKETINFO temppacketinfo = {};
+				temppacketinfo.id = 0;// 1번째 클라이언트는 0번째 클라이언트의 정보를 받아야 한다.
+				temppacketinfo.size = sizeof(g_vecplayer[temppacketinfo.id]);
+				temppacketinfo.type = SC_PACKET_NEW_OTHER_PLAYERINFO;
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &temppacketinfo, sizeof(temppacketinfo));
+				retval = send(g_vecsocket[packetinfo.id], buf, BUFSIZE, 0); // packetinfo.id == 새로 접속한 클라이언트 id
+				if (retval == SOCKET_ERROR) {
+					err_display("send() - SC_PACKET_NEW_OTHER_PLAYERINFO");
+					break;
+				}
+				else {
+#ifdef DEBUG
+					cout << "새로 접속한 [" << packetinfo.id << "] 에게 이미 존재한 [" << temppacketinfo.id << "] 번째 클라이언트의 고정 길이를 보냈어요!" << endl;
+#endif 
+				}
+
+				// 가변 길이.
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &(g_vecplayer[temppacketinfo.id]), sizeof(g_vecplayer[temppacketinfo.id]));
+				retval = send(g_vecsocket[packetinfo.id], buf, BUFSIZE, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send() - SC_PACKET_NEW_OTHER_PLAYERINFO");
+					break;
+				}
+				else {
+#ifdef DEBUG
+					cout << "새로 접속한 [" << packetinfo.id << "] 에게 이미 존재한 [" << temppacketinfo.id << "] 번째 클라이언트의 고정 길이를 보냈어요!" << endl;
+#endif 
+				}
+			}
 		}
 		break;
 		case CS_PACKET_PLAYERINFO_MOVE:
 		{
 			// 플레이어가 움직였을 때 패킷을 보내어 들어오는 부분.
+			// 1. 고정 길이 패킷에서, 어느 클라에 해당되는지 id 알아옴.
 			// 2. 가변 길이 패킷을 받아 playerinfo을 받는다.
 			// 3. g_vecplayer[받은 playerinfo의 id] 에 접근하여 정보를 갱신한다.
 			// 4. 다른 클라이언트에게도 보낸다. (SC_PACKET_OTHER_PLAYERINFO)
@@ -212,9 +252,8 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			// 1. 고정 길이 패킷에서, 어느 클라에 해당되는지 id 알아옴.
 			int id = packetinfo.id;
 			// 2. 가변 길이 패킷을 받아 playerinfo를 받는다.
-			PLAYERINFO tempplayerinfo;
+			PLAYERINFO tempplayerinfo = {};
 			{
-				ZeroMemory(&tempplayerinfo, sizeof(tempplayerinfo));
 				ZeroMemory(buf, sizeof(buf));
 				retval = recvn(client_sock, buf, BUFSIZE, 0);
 				if (retval == SOCKET_ERROR) {
@@ -227,6 +266,8 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				cout << id << "번째 클라이언트가 움직였으므로 가변 길이 패킷을 받아왔어요!" << endl;
 #endif
 			}
+
+
 
 			// 3. g_vecplayer[받은 playerinfo의 id]에 접근하여 정보를 갱신한다.
 			{
@@ -431,7 +472,7 @@ int main()
 		//	 CloseHandle(hThread[1]);
 	}
 	// 두 개의 스레드 종료 대기
-	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+	WaitForMultipleObjects(1, hThread, TRUE, INFINITE);
 
 	// closesocket()
 	closesocket(listen_sock);

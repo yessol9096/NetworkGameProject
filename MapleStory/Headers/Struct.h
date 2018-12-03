@@ -44,6 +44,7 @@ typedef struct PlayerInfo {
 	float		attackAccValue;
 	bool		ready;
 	bool		connected; // 1119 추가
+	int		speed; // 1203 추가
 }PLAYERINFO;
 
 typedef struct MonsterInfo {

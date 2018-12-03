@@ -1,5 +1,6 @@
 ﻿#include "StdAfx.h"
 #include "Maingame.h"
+#include "Player.h"
 
 IMPLEMENT_SINGLETON(CMaingame)
 
@@ -125,24 +126,78 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		// 아이디 부여 받기 전이면 ㄴㄴ.
 		if (-1 == g_myid)
 			continue;
+
 		// 고정 길이.
-		g_retval = recvn(g_sock, buf, BUFSIZE, 0);
-		memcpy(&packetinfo, buf, sizeof(packetinfo));
-		if (g_retval == SOCKET_ERROR) {
-			MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
-			return 0;
-		}
-		else {
+		{
+			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+			memcpy(&packetinfo, buf, sizeof(packetinfo));
+			if (g_retval == SOCKET_ERROR) {
+				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+				return 0;
+			}
+			else {
 #ifdef DEBUG
-			cout << "OTHER PLAYERINFO - 고정 길이를 받아왔어요!" << endl;
+				cout << "OTHER PLAYERINFO - 고정 길이를 받아왔어요!" << endl;
 #endif
+			}
+
 		}
 
 		// 가변 길이.
 		switch (packetinfo.type)
 		{
+		case SC_PACKET_NEW_OTHER_PLAYERINFO:
+		{
+			// 새로 접속한 다른 플레이어 info를 받아온다.
+
+			// 1. 고정 길이 패킷을 받아온다. (packetinfo)
+			// 2. 새로 접속한 플레이어의 id를, 고정 길이 패킷을 통해 알아낸다.
+			// 3. 가변 길이 패킷을 받아온다. (playerinfo)
+			// 4. g_vecplayer[새로 접속한 플레이어 id]에 접근하여, playerinfo 정보를 갱신한다.
+			// 5. ★ CreateObj로 CPlayer를 할당 하고, 정보로는 playerinfo를 넣는다.
+
+			// ------------------Process---------------------
+			// 필요한 변수들
+			int newplayerid{ 0 };
+			PLAYERINFO newplayerinfo = {};
+			// 1. 새로 접속한 플레이어의 id를, 고정 길이 패킷을 통해 알아낸다.
+			{
+				newplayerid = packetinfo.id; 
+			}
+
+			// 2. 가변 길이 패킷을 받아온다. (playerinfo)
+			// 3. g_vecplayer[새로 접속한 플레이어 id]에 접근하여, playerinfo 정보를 갱신한다.
+			{
+				ZeroMemory(buf, sizeof(buf));
+				g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+					break;
+				}
+				else {
+					memcpy(&newplayerinfo, buf, sizeof(newplayerinfo));
+					g_vecplayer[newplayerid] = newplayerinfo;
+#ifdef DEBUG
+					cout << "NEW OTHER PLAYERINFO - 가변 길이를 받아왔어요!" << endl;
+#endif
+				}
+			}
+			// 4. ★ CreateObj로 CPlayer를 할당 하고, 정보로는 playerinfo를 넣는다.
+			{
+				CObj* player = CAbstractFactory<CPlayer>::CreatePlayer(newplayerinfo);
+				CObjMgr::GetInstance()->AddObject(player, OBJ_PLAYER);
+			}
+
+			// 5. 확인해 본다.
+			{
+				cout << "----------현재 접속 정보-----------" << endl;
+				cout << "[0번째 클라이언트] 닉네임 : " << g_vecplayer[0].nickname << ", 직업 : " << g_vecplayer[0].job << endl;
+				cout << "[1번째 클라이언트] 닉네임 : " << g_vecplayer[1].nickname << ", 직업 : " << g_vecplayer[1].job << endl;
+			}
+		}
 		case SC_PACKET_OTHER_PLAYERINFO:
 		{
+			// 상태가 바뀐 다른 플레이어 info를 받아온다.
 			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
 
 			ZeroMemory(buf, sizeof(buf));
