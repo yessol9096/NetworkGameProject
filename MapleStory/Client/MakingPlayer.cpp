@@ -87,7 +87,7 @@ int CMakingPlayer::Update()
 			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)
 			
 			// --------------------Process---------------------
-			// 1. 직업과 닉네임 정보가 채워진 playerinfo를 서버에 send 한다.
+			// 1. 직업과 닉네임 정보가 채워진 playerinfo를 서버에 send 한다.   
 			while(true){
 				// 입력 받은 id를 tempplayerinfo.id에 갱신한다.
 				char* pStr;

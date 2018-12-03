@@ -88,10 +88,8 @@ void CPlayer::Initialize(void)
 	m_eCurState = PLAYER_STAND;
 	m_ePreState = m_eCurState;
 
-	if (g_vecplayer[g_myid].job == JOB_STRIKER)
-		m_pImgName = L"Player_LEFT";
-	else
-		m_pImgName = L"Captin_LEFT";
+	// job에 따른 이미지 설정.
+	UpdateImageInJob(DIR_LEFT);
 
 	m_dwDamageTime = GetTickCount();
 
@@ -129,7 +127,7 @@ int CPlayer::Update(void)
 
 
 	// 레벨업
-	if (!m_IsMaster) {
+	if (m_IsMaster) {
 		if (g_iExp >= m_tState.iMaxExp)
 		{
 			m_bIsLeveling = true; // 레벨업 판정
@@ -138,83 +136,76 @@ int CPlayer::Update(void)
 			g_iExp = 0;
 			m_dwLevelUpOldTime = GetTickCount();
 		}
-	}
 
-	// 화면 밖으로 못나가게끔
-	if (m_tInfo.pt.x <= 30)
-		m_tInfo.pt.x = 30;
+		// 화면 밖으로 못나가게끔
+		if (m_tInfo.pt.x <= 30)
+			m_tInfo.pt.x = 30;
 
-	switch (g_eScene)
-	{
-	case SCENE_FIELD:
-	{
-		if (m_tInfo.pt.x >= FIELDCX - 30)
-			m_tInfo.pt.x = FIELDCX - 30;
-	}
-	break;
-	case SCENE_STAGE1:
-	{
-		if (m_tInfo.pt.x >= HENESISCX - 30)
-			m_tInfo.pt.x = HENESISCX - 30;
-	}
-	break;
-	}
-
-	// 씬 바뀔 때
-	if (true == g_bIsSceneChange)
-	{
-		// 플레이어 좌표 설정
-		m_tInfo.pt.x = 100.f;
-		m_tInfo.pt.y = 100.f;
-		// 오프셋 값 원위치
-		m_fOffSet = WINCX / 2.f;
-
-		if (g_eScene == SCENE_STAGE1)
+		switch (g_eScene)
 		{
-			g_fScrollX = 0.f;
-			g_fScrollY = (WINCY - HENESISCY);
-			m_fOffSetY = WINCY / 2.f + 100.f;
+		case SCENE_FIELD:
+		{
+			if (m_tInfo.pt.x >= FIELDCX - 30)
+				m_tInfo.pt.x = FIELDCX - 30;
+		}
+		break;
+		case SCENE_STAGE1:
+		{
+			if (m_tInfo.pt.x >= HENESISCX - 30)
+				m_tInfo.pt.x = HENESISCX - 30;
+		}
+		break;
 		}
 
-		g_bIsSceneChange = false;
-	}
-
-	if (false == m_bIsInvincible)
-		m_dwDamageTime = GetTickCount();
-
-	if (true == m_bIsInvincible)
-	{
-		if (m_dwDamageTime + 3000 < GetTickCount())
+		// 씬 바뀔 때
+		if (true == g_bIsSceneChange)
 		{
+			// 플레이어 좌표 설정
+			m_tInfo.pt.x = 100.f;
+			m_tInfo.pt.y = 100.f;
+			// 오프셋 값 원위치
+			m_fOffSet = WINCX / 2.f;
+
+			if (g_eScene == SCENE_STAGE1)
+			{
+				g_fScrollX = 0.f;
+				g_fScrollY = (WINCY - HENESISCY);
+				m_fOffSetY = WINCY / 2.f + 100.f;
+			}
+
+			g_bIsSceneChange = false;
+		}
+
+		if (false == m_bIsInvincible)
 			m_dwDamageTime = GetTickCount();
-			m_eCurState = m_ePreState;
-			m_bIsInvincible = false;
-			m_bCollMode = true;
+
+		if (true == m_bIsInvincible)
+		{
+			if (m_dwDamageTime + 3000 < GetTickCount())
+			{
+				m_dwDamageTime = GetTickCount();
+				m_eCurState = m_ePreState;
+				m_bIsInvincible = false;
+				m_bCollMode = true;
+			}
+
 		}
 
 	}
+
 	UpdateCollRect();
 
-	if (m_IsMaster)
+	if (m_IsMaster) {
 		Jump();
-
-	if (m_IsMaster)
 		LineCollision();
-
-	if (m_IsMaster)
 		KeyCheck();
-
-	if (m_IsMaster)
 		FrameMove();
-
-	if (m_IsMaster) 
 		Scroll();
+		SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
+	}
 
 	CObj::UpdateRect();
 
-	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
-	if (m_IsMaster)
-		SendMovePacket(); 
 	// m_tInfo를 계속 쓰되, 서버에서 계속 갱신될 playerinfo를 기준으로 업데이트 해 줘야 한다.
 	UpdateINFOinPLAYERINFO(); 
 	
@@ -366,10 +357,7 @@ void CPlayer::KeyCheck()
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
 		m_bIsRopeColl = false;
-		if (g_vecplayer[g_myid].job == JOB_STRIKER)
-			m_pImgName = L"Player_LEFT";
-		else
-			m_pImgName = L"Captin_LEFT";
+		UpdateImageInJob(DIR_LEFT);
 
 		g_bIsSend = true;
 	}
@@ -380,10 +368,7 @@ void CPlayer::KeyCheck()
 		if(PLAYER_DAMAGED != m_eCurState)
 			m_eCurState = PLAYER_WALK;
 		m_bIsRopeColl = false;
-		if (g_vecplayer[g_myid].job == JOB_STRIKER)
-			m_pImgName = L"Player_RIGHT";
-		else
-			m_pImgName = L"Captin_RIGHT";
+		UpdateImageInJob(DIR_RIGHT);
 
 		g_bIsSend = true;
 	}
@@ -411,10 +396,7 @@ void CPlayer::KeyCheck()
 		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_SPACE))
 		{
 			m_eCurState = PLAYER_JUMP;
-			if (g_vecplayer[g_myid].job == JOB_STRIKER)
-				m_pImgName = L"Player_LEFT";
-			else
-				m_pImgName = L"Captin_LEFT";
+			UpdateImageInJob(DIR_LEFT);
 			m_bIsRopeColl = false;
 		}
 
@@ -766,6 +748,7 @@ void CPlayer::UpdateINFOinPLAYERINFO()
 //	m_eCurState = m_playerinfo.state;
 
 	int id{ 0 };
+
 	if (m_IsMaster) {
 		id = g_myid;
 	}
@@ -782,4 +765,77 @@ void CPlayer::UpdateINFOinPLAYERINFO()
 	m_tInfo.size = g_vecplayer[id].size;
 	m_eCurState = g_vecplayer[id].state;
 
+}
+
+void CPlayer::UpdateImageInJob(OBJECT_DIR dir)
+{
+	if (dir == DIR_LEFT) {
+		if (!m_IsMaster) {	// 조종 불가능한, 다른 클라이언트라면
+			if (g_myid == 0) { // id를 받아오고
+				if (g_vecplayer[g_myid + 1].job == JOB_STRIKER)
+					m_pImgName = L"Player_LEFT";
+				else
+					m_pImgName = L"Captin_LEFT";
+			}
+			else if (g_myid == 1) {
+				if (g_vecplayer[g_myid - 1].job == JOB_STRIKER)
+					m_pImgName = L"Player_LEFT";
+				else
+					m_pImgName = L"Captin_LEFT";
+
+			}
+		}
+		else { // 조종 가능한 나의 클라이언트라면
+			if (g_vecplayer[g_myid].job == JOB_STRIKER)
+				m_pImgName = L"Player_LEFT";
+			else
+				m_pImgName = L"Captin_LEFT";
+		}
+	}
+	else if (dir == DIR_RIGHT) {
+		if (!m_IsMaster) { // 조종 불가능한, 다른 클라이언트라면
+			if (g_myid == 0) { // id를 받아오고
+				if (g_vecplayer[g_myid + 1].job == JOB_STRIKER)
+					m_pImgName = L"Player_RIGHT";
+				else
+					m_pImgName = L"Captin_RIGHT";
+			}
+			else if (g_myid == 1) {
+				if (g_vecplayer[g_myid - 1].job == JOB_STRIKER)
+					m_pImgName = L"Player_RIGHT";
+				else
+					m_pImgName = L"Captin_RIGHT";
+
+			}
+		}
+		else { // 조종 가능한 나의 클라이언트라면
+			if (g_vecplayer[g_myid].job == JOB_STRIKER)
+				m_pImgName = L"Player_RIGHT";
+			else
+				m_pImgName = L"Captin_RIGHT";
+		}
+	}
+	else if (dir == DIR_ROPE) {
+		if (!m_IsMaster) { // 조종 불가능한, 다른 클라이언트라면
+			if (g_myid == 0) { // id를 받아오고
+				if (g_vecplayer[g_myid + 1].job == JOB_STRIKER)
+					m_pImgName = L"Player_ROPE";
+				else
+					m_pImgName = L"Captin_ROPE";
+			}
+			else if (g_myid == 1) {
+				if (g_vecplayer[g_myid - 1].job == JOB_STRIKER)
+					m_pImgName = L"Player_ROPE";
+				else
+					m_pImgName = L"Captin_ROPE";
+
+			}
+		}
+		else { // 조종 가능한 나의 클라이언트라면
+			if (g_vecplayer[g_myid].job == JOB_STRIKER)
+				m_pImgName = L"Player_ROPE";
+			else
+				m_pImgName = L"Captin_ROPE";
+		}
+	}
 }

@@ -24,9 +24,10 @@ public:
 	void	Scroll();
 	void	KeyCheck();
 	void	LineCollision();
-
+	
 	void	SendMovePacket();
 	void UpdateINFOinPLAYERINFO();
+	void UpdateImageInJob(OBJECT_DIR dir);
 
 	// 밧줄태우기
 public:

@@ -212,7 +212,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			}
 		}
 			break;
-		case SC_PACKET_GRRENMUSH_INITIALLY:
+		case SC_PACKET_GRRENMUSH:
 		{
 			int id = packetinfo.id;
 
