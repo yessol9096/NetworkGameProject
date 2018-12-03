@@ -132,6 +132,11 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
 			return 0;
 		}
+		else {
+#ifdef DEBUG
+			cout << "OTHER PLAYERINFO - 고정 길이를 받아왔어요!" << endl;
+#endif
+		}
 
 		// 가변 길이.
 		switch (packetinfo.type)
@@ -147,7 +152,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			else {
 				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
 #ifdef DEBUG
-			cout << i << "번째 클라이언트에게 " << playerinfo.id << "의 OTHER_PLAYERINFO를 가변 길이 전송했어요!" << endl;
+			cout << "OTHER PLAYERINFO - 가변 길이를 받아왔어요!"<< endl;
 #endif
 			}
 		}
