@@ -15,6 +15,7 @@ public:
 	virtual void Release();
 	
 	 int recvn(SOCKET, char* , int, int);
+	 void err_display(const char *);
 private:
 	HDC				m_hDC;
 

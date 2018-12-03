@@ -9,9 +9,6 @@ using namespace std;
 
 #define DEBUG
 
-// 스레드 동기화
-HANDLE hPlayerEvent;
-HANDLE hMonsterEvent;
 
 // 클라이언트
 vector<PLAYERINFO> g_vecplayer;
@@ -46,7 +43,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	// -------------------------------------------
 	// 구조 : 고정 길이 + 가변 길이.
 	while (true) {
-		retval = WaitForSingleObject(hMonsterEvent, INFINITE);
+		cout << "--Player Thread--" << endl;
 
 		char buf[BUFSIZE];
 
@@ -80,7 +77,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			// --------------------Process---------------------
 			// 1. 초기 설정된 playeinfo를 수신한다.
 			{
-				ZeroMemory(&buf, sizeof(buf));	 /// 재사용 할 거니까. 계속 비워줌.		
+				ZeroMemory(buf, sizeof(buf));	 /// 재사용 할 거니까. 계속 비워줌.		
 				retval = recvn(client_sock, buf, BUFSIZE, 0);
 				if (retval == SOCKET_ERROR) {
 					err_display("intial playerinfo recv()");
@@ -182,26 +179,26 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					ZeroMemory(buf, sizeof(buf));
 					memcpy(buf, &packetinfo, sizeof(packetinfo));
 					retval = send(g_vecsocket[i], buf, BUFSIZE, 0);	// 다른 클라이언트한테 보내는 거니까, g_vecsocket에서 접근해야겠지.
-#ifdef DEBUG
-					cout << i << "번째 클라이언트에게" << playerinfo.id << "의 OTHER_PLAYERINFO를 고정 길이 전송했어요!" << endl;
-#endif
 					if (retval == SOCKET_ERROR) {
 						err_display("send() - SC_PACKET_NEW_PLAYERINFO");
+						break;
 					}
+#ifdef DEBUG
+					cout << i << "번째 클라이언트에게 " << playerinfo.id << "의 OTHER_PLAYERINFO를 고정 길이 전송했어요!" << endl;
+#endif
 					/// 가변 길이.
 					ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
 					memcpy(buf, &playerinfo, sizeof(g_vecplayer[i]));
 					retval = send(g_vecsocket[i], buf, BUFSIZE, 0);
-#ifdef DEBUG
-					cout << i << "번째 클라이언트에게" << playerinfo.id << "의 OTHER_PLAYERINFO를 가변 길이 전송했어요!" << endl;
-#endif
-
 					if (retval == SOCKET_ERROR) {
 						err_display("send() - SC_PACKET_PLAYERINFO");
+						break;
 					}
+#ifdef DEBUG
+					cout << i << "번째 클라이언트에게 " << playerinfo.id << "의 OTHER_PLAYERINFO를 가변 길이 전송했어요!" << endl;
+#endif
 				}
 			}
-			SetEvent(hPlayerEvent);
 		}
 		break;
 		case CS_PACKET_PLAYERINFO_MOVE:
@@ -275,7 +272,6 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				cout << id << "번째 클라이언트가 움직였으므로 " << id + 1 << "번째 클라이언트에게 가변 길이 패킷을 전송합니다!" << endl;
 #endif
 			}
-			SetEvent(hPlayerEvent);
 		}
 		break;
 		case SC_PACKET_CLIENT_END:
@@ -284,6 +280,8 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			closesocket(client_sock);
 			cout << "[클라이언트 정상 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
 				"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
+			//CloseHandle(hThread[0]);
+			//CloseHandle(hThread[1]);
 			//SetEvent(hPlayerEvent);
 			return 0;
 		}
@@ -316,8 +314,8 @@ DWORD WINAPI MonsterThread(LPVOID arg)
 	MONSTERINFO monsterinfo{};
 	while (1)
 	{
-		retval = WaitForSingleObject(hPlayerEvent, INFINITE);
 
+		cout << "--Monster Thread--" << endl;
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (g_arrayconnected[i] == true)
 				monsterthread_start = true;
@@ -346,20 +344,17 @@ DWORD WINAPI MonsterThread(LPVOID arg)
 				retval = send(client_sock, buf, BUFSIZE, 0);
 				if (retval == SOCKET_ERROR) {
 					err_display("send() - SC_PACKET_GRRENMUSH_INITIALLY");
-					SetEvent(hMonsterEvent);
 					break;
 				}
 				retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
 
 				if (retval == SOCKET_ERROR) {
 					err_display("send()");
-					SetEvent(hMonsterEvent);
 					break;
 				}
 			}
 
 		}
-		SetEvent(hMonsterEvent);
 	}
 	return 0;
 }
@@ -371,11 +366,8 @@ int main()
 
 	int retval;
 
-	// 스레드 동기화.
-	hPlayerEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (hPlayerEvent == NULL) return 1;
-	hMonsterEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	if (hMonsterEvent == NULL) return 1;
+	HANDLE hThread[2];
+
 
 	// 윈속 초기화.
 	InitializeNetwork();
@@ -406,7 +398,7 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	HANDLE hThread[2];
+
 
 	while (true) {
 		// accept()
@@ -432,18 +424,14 @@ int main()
 			 CloseHandle(hThread[0]);
 
 		//몬스터 스레드 생성
-		hThread[1] = CreateThread(NULL, 0, MonsterThread, (LPVOID)client_sock, 0, NULL);
-		 if (hThread[1] == NULL)	
-			 closesocket(client_sock);
-		else					
-			 CloseHandle(hThread[1]);
+		//hThread[1] = CreateThread(NULL, 0, MonsterThread, (LPVOID)client_sock, 0, NULL);
+		// if (hThread[1] == NULL)	
+		//	 closesocket(client_sock);
+		//else					
+		//	 CloseHandle(hThread[1]);
 	}
 	// 두 개의 스레드 종료 대기
 	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
-
-	// 이벤트 제거
-	CloseHandle(hPlayerEvent);
-	CloseHandle(hMonsterEvent);
 
 	// closesocket()
 	closesocket(listen_sock);

@@ -64,7 +64,8 @@ void CMaingame::Initialize(void)
 
 	// recv 전용 스레드.
 	hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)g_sock, 0, NULL);
-	if (NULL == hThread)	 CloseHandle(hThread);	
+	if (NULL == hThread)	 
+		CloseHandle(hThread);	
 
 	// 플레이어 벡터 초기화 - id로 초기화 검사
 	for (int i = 0; i < g_vecplayer.size(); ++i)
@@ -143,8 +144,12 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
 			if (g_retval == SOCKET_ERROR)
 				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
-			else
+			else {
 				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
+#ifdef DEBUG
+			cout << i << "번째 클라이언트에게 " << playerinfo.id << "의 OTHER_PLAYERINFO를 가변 길이 전송했어요!" << endl;
+#endif
+			}
 		}
 			break;
 		case SC_PACKET_GRRENMUSH_INITIALLY:

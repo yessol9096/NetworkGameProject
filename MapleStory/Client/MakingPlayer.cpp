@@ -101,23 +101,32 @@ int CMakingPlayer::Update()
 				packetinfo.type = CS_PACKET_PLAYERINFO_INITIALLY;
 				packetinfo.size = sizeof(tempplayerinfo);
 				memcpy(buf, &packetinfo, sizeof(packetinfo));
-				g_retval = send(g_sock, (char*)&packetinfo, BUFSIZE, 0);
+				g_retval = send(g_sock, buf, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR) {
-					MessageBoxW(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+					err_display("send() - 고정 - PLAYERINFO_INITIALLY");
+					//MessageBoxW(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
 					g_bIsProgramEnd = true;	// 프로그램 종료
 					break;
 				}
+#ifdef DEBUG
+				cout << "PLAYERINFO_INITIALLY - 고정 길이 패킷을 보냈어요!" << endl;
+#endif
 				// 가변 길이.
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &tempplayerinfo, sizeof(tempplayerinfo));
-				g_retval = send(g_sock, (char*)&tempplayerinfo, BUFSIZE, 0);
+				g_retval = send(g_sock, buf, BUFSIZE, 0);
 				if (g_retval == SOCKET_ERROR) {
-					MessageBoxW(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
+					err_display("send() - 고정 - PLAYERINFO_INITIALLY");
+					//MessageBoxW(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INITIALLY", MB_OK);
 					g_bIsProgramEnd = true;	// 프로그램 종료
 					break;
 				}
-				else
+				else {
+#ifdef DEBUG
+					cout << "PLAYERINFO_INITIALLY - 가변 길이 패킷을 보냈어요!" << endl;
+#endif
 					break;
+				}
 			}
 
 			// 2. 나머지 멤버 변수들이 채워진 playerinfo를 받는다. (여기서 id도 받는다.)
@@ -133,9 +142,12 @@ int CMakingPlayer::Update()
 					g_bIsProgramEnd = true;	// 프로그램 종료
 					break;
 				}
-				else
+				else {
 					memcpy(&temppacketinfo, buf, sizeof(temppacketinfo));
-
+#ifdef DEBUG
+					cout << "YOUR_PLAYERINFO - 고정 길이 패킷을 받아왔어요!" << endl;
+#endif
+				}
 				// 가변 길이. 
 				if (temppacketinfo.type == SC_PACKET_YOUR_PLAYERINFO)
 				{
@@ -147,6 +159,9 @@ int CMakingPlayer::Update()
 						break;
 					}
 					else{
+#ifdef DEBUG
+						cout << "YOUR_PLAYERINFO - 가변 길이 패킷을 받아왔어요!" << endl;
+#endif
 						memcpy(&tempplayerinfo, buf, sizeof(tempplayerinfo));
 						g_myid = tempplayerinfo.id;
 						g_vecplayer[g_myid] = tempplayerinfo;
@@ -210,4 +225,15 @@ int CMakingPlayer::recvn(SOCKET s, char* buf, int len, int flags)
 }
 
 
- 
+// 소켓 함수 오류 출력
+void CMakingPlayer::err_display(const char *msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf, 0, NULL);
+	printf("[%s] %s", msg, (char *)lpMsgBuf);
+	LocalFree(lpMsgBuf);
+}
