@@ -9,6 +9,8 @@ using namespace std;
 
 #define DEBUG
 
+// 스레드 동기화
+CRITICAL_SECTION cs;
 
 // 클라이언트
 vector<PLAYERINFO> g_vecplayer;
@@ -204,7 +206,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			}
 
 			// 6. 새 클라이언트에게 이미 존재하는 클라이언트의 정보를 send 한다.
-			if(g_vecplayer.size() >= 2) { 
+			if (g_vecplayer.size() >= 2) {
 				// 동접 플레이어가 2일 때만 해당한다.
 				// 고정 길이.
 				PACKETINFO temppacketinfo = {};
@@ -242,6 +244,8 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		break;
 		case CS_PACKET_PLAYERINFO_MOVE:
 		{
+			EnterCriticalSection(&cs);
+
 			// 플레이어가 움직였을 때 패킷을 보내어 들어오는 부분.
 			// 1. 고정 길이 패킷에서, 어느 클라에 해당되는지 id 알아옴.
 			// 2. 가변 길이 패킷을 받아 playerinfo을 받는다.
@@ -267,15 +271,13 @@ DWORD WINAPI ClientThread(LPVOID arg)
 #endif
 			}
 
-
-
 			// 3. g_vecplayer[받은 playerinfo의 id]에 접근하여 정보를 갱신한다.
 			{
 				g_vecplayer[id] = tempplayerinfo;
 			}
 
 			// 4. 다른 클라이언트에게도 보낸다. (SC_PACKET_OTHER_PLAYERINFO)
-			if (g_vecplayer.size() == 2) {// 2인 접속 시에만.
+			if (g_vecplayer.size() == 2) { // 2인 접속 시에만.
 				// 고정 길이. 
 				ZeroMemory(&packetinfo, sizeof(packetinfo));
 				packetinfo.id = id;
@@ -292,9 +294,11 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					cout << "failed : send - 고정 - SC_PACKET_OTHER_PLAYERINFO" << endl;
 					break;
 				}
+				else {
 #ifdef DEBUG
-				cout << id << "번째 클라이언트가 움직였으므로 " << "다른 클라이언트에게 고정 길이 패킷을 전송합니다!" << endl;
+					cout << id << "번째 클라이언트가 움직였으므로 " << "다른 클라이언트에게 고정 길이 패킷을 전송합니다!" << endl;
 #endif
+				}
 
 				// 가변 길이
 				ZeroMemory(buf, sizeof(buf));
@@ -309,10 +313,14 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					cout << "failed : send - 가변 - SC_PACKET_OTHER_PLAYERINFO" << endl;
 					break;
 				}
+				else {
 #ifdef DEBUG
-				cout << id << "번째 클라이언트가 움직였으므로 " << id + 1 << "번째 클라이언트에게 가변 길이 패킷을 전송합니다!" << endl;
+					cout << id << "번째 클라이언트가 움직였으므로 " << "다른 클라이언트에게 가변 길이 패킷을 전송합니다!" << endl;
 #endif
+				}
+
 			}
+			LeaveCriticalSection(&cs);
 		}
 		break;
 		case SC_PACKET_CLIENT_END:
@@ -327,8 +335,59 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			return 0;
 		}
 		break;
-		}
+		case CS_PACKET_GRRENMUSH:
+		{
+			// -------------------Process---------------------
+			int id = packetinfo.id;
+			MONSTERINFO tempmonsterinfo = {};
+			{
+				ZeroMemory(buf, sizeof(buf));
+				retval = recvn(client_sock, buf, BUFSIZE, 0);
+				if (retval == SOCKET_ERROR) {
+					cout << "실패 - recvn - CS_PACKET_GRRENMUSH" << endl;
+					break;
+				}
+				else
+					memcpy(&tempmonsterinfo, buf, sizeof(tempmonsterinfo));
+#ifdef DEBUG
+				cout << id << "번째 버섯 클라에서 받아옴" << endl;
+#endif
+				{
+					MONSTERINFO monsterinfo{};
+					monsterinfo.id = id;
+					monsterinfo.hp = 100;
+					monsterinfo.money = 10;
+					monsterinfo.pt.x = greenposX[id];
+					monsterinfo.pt.y = greenposY;
+					monsterinfo.dir = greenDir[id];
+					monsterinfo.pattern = greenPtr[id];
 
+					g_vecgreen[id] = monsterinfo;
+
+					ZeroMemory(&packetinfo, sizeof(packetinfo));
+					packetinfo.id = id;
+					packetinfo.size = sizeof(MONSTERINFO);
+					packetinfo.type = SC_PACKET_GRRENMUSH;
+
+					ZeroMemory(buf, sizeof(buf));
+					memcpy(buf, &packetinfo, sizeof(packetinfo));
+					retval = send(client_sock, buf, BUFSIZE, 0);
+					if (retval == SOCKET_ERROR) {
+						err_display("send() - SC_PACKET_GRRENMUSH_INITIALLY");
+						break;
+					}
+					retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+
+				}
+			}
+		}
+		break;
+		}
 	}
 
 	
@@ -339,69 +398,11 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	return 0;
 }
 
-DWORD WINAPI MonsterThread(LPVOID arg)
-{
-	SOCKET client_sock = (SOCKET)arg;
-	SOCKADDR_IN clientaddr;
-	char buf[BUFSIZE];
-	bool monsterthread_start = false;
-	// 클라이언트 정보 얻기
-	int addrlen = sizeof(clientaddr);
-	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
-
-	int retval{ 0 };
-
-	PACKETINFO packetinfo{};
-	MONSTERINFO monsterinfo{};
-	while (1)
-	{
-
-		cout << "--Monster Thread--" << endl;
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_arrayconnected[i] == true)
-				monsterthread_start = true;
-		}
-		if (monsterthread_start == true)
-		{
-			for (int i = 0; i < MAX_GREEN ; ++i)
-			{
-				monsterinfo.id = i;
-				monsterinfo.hp = 100;
-				monsterinfo.money = 10;
-				monsterinfo.pt.x = greenposX[i];
-				monsterinfo.pt.y = greenposY;
-				monsterinfo.dir = greenDir[i];
-				monsterinfo.pattern = greenPtr[i];
-
-				g_vecgreen[i] = monsterinfo;
-
-				ZeroMemory(&packetinfo, sizeof(packetinfo));
-				packetinfo.id = i;
-				packetinfo.size = sizeof(MONSTERINFO);
-				packetinfo.type = SC_PACKET_GRRENMUSH_INITIALLY;
-
-				ZeroMemory(buf, sizeof(buf));
-				memcpy(buf, &packetinfo, sizeof(packetinfo));
-				retval = send(client_sock, buf, BUFSIZE, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send() - SC_PACKET_GRRENMUSH_INITIALLY");
-					break;
-				}
-				retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
-
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-			}
-
-		}
-	}
-	return 0;
-}
-
 int main()
-{
+{	
+	// 임계 영역 초기화
+	InitializeCriticalSection(&cs);
+	
 	// 공간 2개 예약.
 	g_vecplayer.reserve(MAX_USER);
 
@@ -473,6 +474,9 @@ int main()
 	}
 	// 두 개의 스레드 종료 대기
 	WaitForMultipleObjects(1, hThread, TRUE, INFINITE);
+
+	// 임계 영역 삭제
+	DeleteCriticalSection(&cs);
 
 	// closesocket()
 	closesocket(listen_sock);
