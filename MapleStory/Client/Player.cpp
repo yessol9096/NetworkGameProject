@@ -8,6 +8,9 @@
 #include "Fire.h"
 #include "Wing.h"
 
+// 스레드 동기화
+CRITICAL_SECTION cs2;
+
 bool g_bIsSend = false;
 
 int g_iLevel = 65;
@@ -45,13 +48,15 @@ void CPlayer::Initialize(void)
 		}
 	}
 
+	// 임계 영역 초기화
+	InitializeCriticalSection(&cs2);
 
 	//// 이 부분은 이제 안 해도 될듯..?
-	//m_tInfo.pt.x = 100.f;
-	//m_tInfo.pt.y = 500.f;
+	m_tInfo.pt.x = 100.f;
+	m_tInfo.pt.y = 500.f;
 
-	//m_tInfo.size.cx = 100.f;
-	//m_tInfo.size.cy = 100.f;
+	m_tInfo.size.cx = 100.f;
+	m_tInfo.size.cy = 100.f;
 
 	// 스테이터스 초기설정
 	m_tState.iAtt = 300;
@@ -123,6 +128,8 @@ void CPlayer::Initialize(void)
 
 int CPlayer::Update(void)
 {
+	EnterCriticalSection(&cs2);
+
 	// 죽으면 오브젝트 삭제
 	if (true == m_bIsDead)	return 1;
 
@@ -200,8 +207,8 @@ int CPlayer::Update(void)
 		KeyCheck();
 		FrameMove();
 		Scroll();
-		SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
 	}
+	SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
 	Jump();
 	LineCollision();
 	CObj::UpdateRect();
@@ -209,11 +216,16 @@ int CPlayer::Update(void)
 	// m_tInfo를 계속 쓰되, 서버에서 계속 갱신될 playerinfo를 기준으로 업데이트 해 줘야 한다.
 	UpdateINFOinPLAYERINFO(); 
 	
+
+	LeaveCriticalSection(&cs2);
 	return 0;
 }
 
 void CPlayer::Render(HDC hDc)
 {
+#ifdef DEBUG
+	cout << "m_tInfo : (" << m_tInfo.pt.x << ", " << m_tInfo.pt.y << ")" << endl;
+#endif
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
 	if (NULL == pBit)  return;
 
@@ -388,10 +400,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_UP) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
-		if (g_vecplayer[g_myid].job == JOB_STRIKER)
-			m_pImgName = L"Player_ROPE";
-		else
-			m_pImgName = L"Captin_ROPE";
+		UpdateImageInJob(DIR_ROPE);
 		m_tInfo.pt.y -= m_fSpeedY;
 
 		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_SPACE))
@@ -406,10 +415,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
-		if (g_vecplayer[g_myid].job == JOB_STRIKER)
-			m_pImgName = L"Player_ROPE";
-		else
-			m_pImgName = L"Captin_ROPE";
+		UpdateImageInJob(DIR_ROPE);
 		m_tInfo.pt.y += m_fSpeedY;
 
 		g_bIsSend = true;
@@ -627,7 +633,7 @@ void CPlayer::FrameMove()
 		m_tLevelUpFrame.iFrameStart = 100;
 	}
 
-	g_bIsSend = true;
+	
 }
 
 void CPlayer::UpdateCollRect()
@@ -644,7 +650,8 @@ void CPlayer::UpdateCollRect()
 
 void CPlayer::Release(void)
 {
-
+	// 임계 영역 삭제
+	DeleteCriticalSection(&cs2);
 }
 
 void CPlayer::LineCollision()
@@ -671,6 +678,18 @@ void CPlayer::LineCollision()
 
 	if(!bLineCol)
 		m_iPlayerFloor = 1;
+
+	// g_vecplayer 갱신.
+	int id{ 0 };
+	if (m_IsMaster) {
+		id = g_myid;
+	}
+	else {
+		if (g_myid == 0)
+			id = 1;
+		else
+			id = 0;
+	}
 }
 
 bool b = true;	// 디버깅 용
@@ -684,7 +703,6 @@ void CPlayer::SendMovePacket()
 
 		// 내가 조종 중인 클라이언트인지, 다른 클라이언트인지 구분.
 		int id{ 0 };
-
 		if (m_IsMaster) {
 			id = g_myid;
 		}
@@ -696,7 +714,7 @@ void CPlayer::SendMovePacket()
 		}
 
 		b = !b;
-		cout << "Server에게 내 playerinfo를 send" << b << endl;
+//		cout << "Server에게 내 playerinfo를 send" << b << endl;
 
 		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
 		// 2. 보낼 공간 playerinfo를 만든다.

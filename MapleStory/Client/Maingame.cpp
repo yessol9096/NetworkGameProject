@@ -19,7 +19,7 @@ PACKETINFO packetinfo;
 PLAYERINFO g_myinfo;
 
 // 플레이어들의 정보를 담는 벡터.
-vector<PLAYERINFO> g_vecplayer(MAX_USER);
+vector<PLAYERINFO> g_vecplayer;
 int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
 
 //몬스터 정보 받기 
@@ -74,7 +74,11 @@ void CMaingame::Initialize(void)
 	if (NULL == hThread)	 
 		CloseHandle(hThread);	
 
+
 	// 플레이어 벡터 초기화 - id로 초기화 검사
+	g_vecplayer.push_back(PLAYERINFO());
+	g_vecplayer.push_back(PLAYERINFO());
+
 	for (int i = 0; i < g_vecplayer.size(); ++i)
 		g_vecplayer[i].id = -1;
 }
@@ -151,7 +155,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 				cout << "OTHER PLAYERINFO - 고정 길이를 받아왔어요!" << endl;
 #endif
 			}
-
 		}
 
 		// 가변 길이.
@@ -214,7 +217,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			ZeroMemory(buf, sizeof(buf));
 			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
 			if (g_retval == SOCKET_ERROR)
-				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_PLAYERINFO_ID", MB_OK, MB_OK);
+				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_OTHER_PLAYERINFO", MB_OK, MB_OK);
 			else {
 				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
 #ifdef DEBUG
@@ -223,6 +226,22 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			}
 		}
 			break;
+		case SC_PACKET_YOUR_PLAYERINFO:
+		{
+			// 상태가 바뀐 나의 플레이어 info를 받아온다.
+			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
+			ZeroMemory(buf, sizeof(buf));
+			g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+			if (g_retval == SOCKET_ERROR)
+				MessageBoxW(g_hWnd, L"recvn() - SC_PACKET_YOUR_PLAYERINFO", MB_OK, MB_OK);
+			else {
+				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
+#ifdef DEBUG
+				cout << "YOUR_PLAYERINFO - 가변 길이를 받아왔어요!" << endl;
+#endif
+			}
+		}
+		break;
 		case SC_PACKET_GRRENMUSH:
 		{
 			int id = packetinfo.id;
