@@ -320,7 +320,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				}
 
 			}
-			LeaveCriticalSection(&cs);
+			LeaveCriticalSection(&cs); 
 		}
 		break;
 		case SC_PACKET_CLIENT_END:

@@ -10,6 +10,9 @@ int g_retval;
 char buf[BUFSIZE];	// 데이터 버퍼
 HANDLE hThread;
 
+// 스레드 동기화
+CRITICAL_SECTION cs;
+
 //데이터타입 구분하기
 int datatype;
 PACKETINFO packetinfo;
@@ -32,6 +35,9 @@ SCENE_TYPE g_eScene = SCENE_FIELD;
 
 void CMaingame::Initialize(void)
 {
+	// 임계 영역 초기화
+	InitializeCriticalSection(&cs);
+
 	m_hDC = GetDC(g_hWnd);
 
 	// 콘솔창 디버깅용
@@ -116,6 +122,9 @@ void CMaingame::Release(void)
 
 	closesocket(g_sock);
 	WSACleanup();
+
+	// 임계 영역 삭제
+	DeleteCriticalSection(&cs);
 }
 
 DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
@@ -123,6 +132,8 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 	SOCKET client_sock = (SOCKET)arg;
 
 	while (true) {
+		EnterCriticalSection(&cs);
+
 		// 아이디 부여 받기 전이면 ㄴㄴ.
 		if (-1 == g_myid)
 			continue;
@@ -225,6 +236,8 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		}
 			break;
 		}
+
+		LeaveCriticalSection(&cs);
 	}
 
 	return 0;

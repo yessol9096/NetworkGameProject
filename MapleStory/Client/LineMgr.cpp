@@ -258,7 +258,7 @@ void CLineMgr::LoadData()
 	DWORD dwByte = 0;
 
 
-	HANDLE hFile = CreateFile(__T("../Data/Line_Field.dat"), GENERIC_READ, 0, NULL,
+	HANDLE hFile = CreateFile(__T("../Data/Line_Field.dat"), GENERIC_READ, FILE_SHARE_READ, NULL,
 			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if(INVALID_HANDLE_VALUE == hFile)
@@ -299,44 +299,44 @@ void CLineMgr::LoadData()
 
 
 
-	hFile = CreateFile(__T("../Data/Line_Kritias.dat"), GENERIC_READ, 0, NULL,
-		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	//hFile = CreateFile(__T("../Data/Line_Kritias.dat"), GENERIC_READ, 0, NULL,
+	//	OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	if(INVALID_HANDLE_VALUE == hFile)
-	{
-		MessageBox(g_hWnd, L"../Data/Line_Kritias.dat", L"Load Failed!!!", MB_OK);
-		return;
-	}
+	//if(INVALID_HANDLE_VALUE == hFile)
+	//{
+	//	MessageBox(g_hWnd, L"../Data/Line_Kritias.dat", L"Load Failed!!!", MB_OK);
+	//	return;
+	//}
 
-	while(true)
-	{
-		ReadFile(hFile, &tTemp, sizeof(LINEINFO), &dwByte, NULL);
+	//while(true)
+	//{
+	//	ReadFile(hFile, &tTemp, sizeof(LINEINFO), &dwByte, NULL);
 
-		if(0 == dwByte)
-			break;
+	//	if(0 == dwByte)
+	//		break;
 
-		m_LineList[LINE_STAGE2].push_back(new CLine(tTemp.tLPoint, tTemp.tRPoint));
-	}
+	//	m_LineList[LINE_STAGE2].push_back(new CLine(tTemp.tLPoint, tTemp.tRPoint));
+	//}
 
 
-	hFile = CreateFile(__T("../Data/Line_Boss.dat"), GENERIC_READ, 0, NULL,
-		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	//hFile = CreateFile(__T("../Data/Line_Boss.dat"), GENERIC_READ, 0, NULL,
+	//	OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	if(INVALID_HANDLE_VALUE == hFile)
-	{
-		MessageBox(g_hWnd, L"../Data/Line_Boss.dat", L"Load Failed!!!", MB_OK);
-		return;
-	}
+	//if(INVALID_HANDLE_VALUE == hFile)
+	//{
+	//	MessageBox(g_hWnd, L"../Data/Line_Boss.dat", L"Load Failed!!!", MB_OK);
+	//	return;
+	//}
 
-	while(true)
-	{
-		ReadFile(hFile, &tTemp, sizeof(LINEINFO), &dwByte, NULL);
+	//while(true)
+	//{
+	//	ReadFile(hFile, &tTemp, sizeof(LINEINFO), &dwByte, NULL);
 
-		if(0 == dwByte)
-			break;
+	//	if(0 == dwByte)
+	//		break;
 
-		m_LineList[LINE_BOSS].push_back(new CLine(tTemp.tLPoint, tTemp.tRPoint));
-	}
+	//	m_LineList[LINE_BOSS].push_back(new CLine(tTemp.tLPoint, tTemp.tRPoint));
+	//}
 
 
 

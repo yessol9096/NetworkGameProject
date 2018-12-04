@@ -15,7 +15,8 @@ int g_iExp = 0;
 
 CPlayer::CPlayer(void)
 	: m_bIsRopeColl(false), m_bIsJumpUp(true), m_bLineColl(true),
-	m_fLineY(0.f), m_bIsSkillPressed(false), m_iPlayerFloor(1), m_fOffSetGapY(0.f), m_bIsInvincible(false)
+	m_fLineY(0.f), m_bIsSkillPressed(false), m_iPlayerFloor(1), m_fOffSetGapY(0.f), m_bIsInvincible(false),
+	m_IsMaster(true)
 {
 }
 
@@ -196,14 +197,13 @@ int CPlayer::Update(void)
 	UpdateCollRect();
 
 	if (m_IsMaster) {
-		Jump();
-		LineCollision();
 		KeyCheck();
 		FrameMove();
 		Scroll();
 		SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
 	}
-
+	Jump();
+	LineCollision();
 	CObj::UpdateRect();
 
 	// m_tInfo를 계속 쓰되, 서버에서 계속 갱신될 playerinfo를 기준으로 업데이트 해 줘야 한다.
@@ -280,8 +280,9 @@ void CPlayer::Jump()
 			m_bIsJumpUp = true;
 
 		m_tInfo.pt.y -= fY;
-	}
 
+		g_bIsSend = true;
+	}
 }
 
 void CPlayer::Scroll()
@@ -625,16 +626,8 @@ void CPlayer::FrameMove()
 	{
 		m_tLevelUpFrame.iFrameStart = 100;
 	}
-	// 	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd
-	// 		&& m_bIsLeveling)
-	// 	{
-	// 		m_tLevelUpFrame.iFrameStart = 101;
-	// 	}
-	// 	if(m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd
-	// 		&& !m_bIsLeveling)
-	// 	{
-	// 		m_tLevelUpFrame.iFrameStart = 100;
-	// 	}
+
+	g_bIsSend = true;
 }
 
 void CPlayer::UpdateCollRect()
@@ -689,6 +682,19 @@ void CPlayer::SendMovePacket()
 	if (g_bIsSend) {
 		g_bIsSend = false;
 
+		// 내가 조종 중인 클라이언트인지, 다른 클라이언트인지 구분.
+		int id{ 0 };
+
+		if (m_IsMaster) {
+			id = g_myid;
+		}
+		else {
+			if (g_myid == 0)
+				id = 1;
+			else
+				id = 0;
+		}
+
 		b = !b;
 		cout << "Server에게 내 playerinfo를 send" << b << endl;
 
@@ -700,23 +706,23 @@ void CPlayer::SendMovePacket()
 		// ----------------------Progress-------------------------
 		// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
 		{
-			g_vecplayer[g_myid].pt.x = m_tInfo.pt.x;
-			g_vecplayer[g_myid].pt.y = m_tInfo.pt.y;
-			g_vecplayer[g_myid].frame = m_tInfo.frame;
-			g_vecplayer[g_myid].state = m_eCurState;
+			g_vecplayer[id].pt.x = m_tInfo.pt.x;
+			g_vecplayer[id].pt.y = m_tInfo.pt.y;
+			g_vecplayer[id].frame = m_tInfo.frame;
+			g_vecplayer[id].state = m_eCurState;
 		}
 		// 2. 보낼 공간 playerinfo를 만든다.
 		PLAYERINFO playerinfo;
 		// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
 		{
-			memcpy(&playerinfo, &(g_vecplayer[g_myid]), sizeof(PLAYERINFO));
+			memcpy(&playerinfo, &(g_vecplayer[id]), sizeof(PLAYERINFO));
 		}
 		// 4. playerinfo를 서버에 send 한다.
 		{
 			char buf[BUFSIZE] = {};
 			// 고정 길이
 			PACKETINFO packetinfo;
-			packetinfo.id = g_myid;
+			packetinfo.id = id;
 			packetinfo.size = sizeof(PLAYERINFO);
 			packetinfo.type = CS_PACKET_PLAYERINFO_MOVE;
 			memcpy(buf, &packetinfo, sizeof(packetinfo));
@@ -759,7 +765,7 @@ void CPlayer::UpdateINFOinPLAYERINFO()
 			id = 0;
 	}
 
-	// m_tInfo.frame = g_vecplayer[g_myid].frame;
+	m_tInfo.frame = g_vecplayer[id].frame;
 	m_tInfo.hp = g_vecplayer[id].hp;
 	m_tInfo.pt = g_vecplayer[id].pt;
 	m_tInfo.size = g_vecplayer[id].size;
