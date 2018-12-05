@@ -32,9 +32,10 @@ void CField::Initialize()
 	// 플레이어
 	CObj* pPlayer = CAbstractFactory<CPlayer>::CreateObj();
 	CObjMgr::GetInstance()->AddObject(pPlayer, OBJ_PLAYER);
+	m_pPlayer = dynamic_cast<CPlayer*>(pPlayer);
 
-	 pPlayer = CAbstractFactory<CPlayer>::CreateObj(300, 500);
-	CObjMgr::GetInstance()->AddObject(pPlayer, OBJ_PLAYER);
+	// pPlayer = CAbstractFactory<CPlayer>::CreateObj(300, 500);
+	//CObjMgr::GetInstance()->AddObject(pPlayer, OBJ_PLAYER);
 
 
 	// 밧줄

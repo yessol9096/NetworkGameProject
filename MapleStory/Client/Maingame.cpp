@@ -1,6 +1,7 @@
 ﻿#include "StdAfx.h"
 #include "Maingame.h"
 #include "Player.h"
+#include "Field.h"
 
 IMPLEMENT_SINGLETON(CMaingame)
 
@@ -200,6 +201,15 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			{
 				CObj* player = CAbstractFactory<CPlayer>::CreatePlayer(newplayerinfo);
 				CObjMgr::GetInstance()->AddObject(player, OBJ_PLAYER);
+		
+				/// 생성한 다른 클라이언트의 플레이어 포인터를 씬에서 저장한다.
+				/// 나중에 OTHER_PLAYERINFO 패킷을 받았을 때, 바로 SetInfoPt를 해 주기 위해서임.
+				if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
+					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
+					if (pScene != nullptr) {
+						dynamic_cast<CField*>(pScene)->SetOtherPlayer(dynamic_cast<CPlayer*>(player));
+					}
+				}
 			}
 
 			// 5. 확인해 본다.
@@ -209,6 +219,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 				cout << "[1번째 클라이언트] 닉네임 : " << g_vecplayer[1].nickname << ", 직업 : " << g_vecplayer[1].job << endl;
 			}
 		}
+		break;
 		case SC_PACKET_OTHER_PLAYERINFO:
 		{
 			// 상태가 바뀐 다른 플레이어 info를 받아온다.
@@ -221,8 +232,20 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			else {
 				memcpy(&(g_vecplayer[id]), buf, sizeof(g_vecplayer[id]));
 #ifdef DEBUG
-			cout << "OTHER PLAYERINFO - 가변 길이를 받아왔어요!"<< endl;
+				cout << "OTHER PLAYERINFO - 가변 길이를 받아왔어요!" << endl;
 #endif
+				// 순서 문제 때문에 추가.
+				/// Field 씬일 때, CField가 가지고 있는 CPlayer에 직접 접근하여 
+				/// 서버로부터 받아온 좌표를 직접 넘겨준다.
+				if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
+					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
+					if (pScene != nullptr) {
+						CPlayer* pOtherPlayer = dynamic_cast<CField*>(pScene)->GetOtherPlayer();
+						if (pOtherPlayer != nullptr) {
+							pOtherPlayer->SetInfoPt(g_vecplayer[id].pt);
+						}
+					}
+				}
 			}
 		}
 			break;
@@ -239,6 +262,18 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 #ifdef DEBUG
 				cout << "YOUR_PLAYERINFO - 가변 길이를 받아왔어요!" << endl;
 #endif
+			}
+			// 순서 문제 때문에 추가.
+			/// Field 씬일 때, CField가 가지고 있는 CPlayer에 직접 접근하여 
+			/// 서버로부터 받아온 좌표를 직접 넘겨준다.
+			if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
+				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
+				if (pScene != nullptr) {
+					CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
+					if (pPlayer != nullptr) {
+						pPlayer->SetInfoPt(g_vecplayer[id].pt);
+					}
+				}
 			}
 		}
 		break;

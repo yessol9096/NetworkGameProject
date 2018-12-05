@@ -15,6 +15,7 @@ public:
 public:
 	void SetScene(SCENE_TYPE eType);
 	void SetChangeScene(SCENE_TYPE eType);
+	CScene* GetScene() { return m_pScene; }
 
 public:
 	void Update();

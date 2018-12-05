@@ -128,96 +128,40 @@ void CPlayer::Initialize(void)
 
 int CPlayer::Update(void)
 {
-	EnterCriticalSection(&cs2);
+	//EnterCriticalSection(&cs2);
 
 	// 죽으면 오브젝트 삭제
 	if (true == m_bIsDead)	return 1;
 
-
-	// 레벨업
-	if (m_IsMaster) {
-		if (g_iExp >= m_tState.iMaxExp)
-		{
-			m_bIsLeveling = true; // 레벨업 판정
-			// 레벨업 이펙트 만들때 추후 수정..
-			g_iLevel++;
-			g_iExp = 0;
-			m_dwLevelUpOldTime = GetTickCount();
-		}
-
-		// 화면 밖으로 못나가게끔
-		if (m_tInfo.pt.x <= 30)
-			m_tInfo.pt.x = 30;
-
-		switch (g_eScene)
-		{
-		case SCENE_FIELD:
-		{
-			if (m_tInfo.pt.x >= FIELDCX - 30)
-				m_tInfo.pt.x = FIELDCX - 30;
-		}
-		break;
-		case SCENE_STAGE1:
-		{
-			if (m_tInfo.pt.x >= HENESISCX - 30)
-				m_tInfo.pt.x = HENESISCX - 30;
-		}
-		break;
-		}
-
-		// 씬 바뀔 때
-		if (true == g_bIsSceneChange)
-		{
-			// 플레이어 좌표 설정
-			m_tInfo.pt.x = 100.f;
-			m_tInfo.pt.y = 100.f;
-			// 오프셋 값 원위치
-			m_fOffSet = WINCX / 2.f;
-
-			if (g_eScene == SCENE_STAGE1)
-			{
-				g_fScrollX = 0.f;
-				g_fScrollY = (WINCY - HENESISCY);
-				m_fOffSetY = WINCY / 2.f + 100.f;
-			}
-
-			g_bIsSceneChange = false;
-		}
-
-		if (false == m_bIsInvincible)
-			m_dwDamageTime = GetTickCount();
-
-		if (true == m_bIsInvincible)
-		{
-			if (m_dwDamageTime + 3000 < GetTickCount())
-			{
-				m_dwDamageTime = GetTickCount();
-				m_eCurState = m_ePreState;
-				m_bIsInvincible = false;
-				m_bCollMode = true;
-			}
-
-		}
-
-	}
-
-	UpdateCollRect();
-
+	// UpdateINFOinPLAYERINFO();
+	 
 	if (m_IsMaster) {
 		KeyCheck();
 		FrameMove();
 		Scroll();
+		LevelUp();
+		PreventOut();
 	}
-	SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
+
 	Jump();
 	LineCollision();
-	CObj::UpdateRect();
+	InChangingScene();
+	InInvincible();
 
+	// 조종 가능한 클라이언트일 때만 계쏙 보내는 걸로.
+	if (/*m_IsMaster*/1) {
+		g_bIsSend = true;
+	}
+
+	SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
 	// m_tInfo를 계속 쓰되, 서버에서 계속 갱신될 playerinfo를 기준으로 업데이트 해 줘야 한다.
-	UpdateINFOinPLAYERINFO(); 
-	
 
-	LeaveCriticalSection(&cs2);
+	//LeaveCriticalSection(&cs2);
+
+	CObj::UpdateRect();
+	UpdateCollRect();
+
+
 	return 0;
 }
 
@@ -229,8 +173,16 @@ void CPlayer::Render(HDC hDc)
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
 	if (NULL == pBit)  return;
 
+	int id = WhatIsID();
+
+	RECT rc{ g_vecplayer[id].pt.x - (g_vecplayer[id].size.cx * 0.5f),
+		g_vecplayer[id].pt.y - (g_vecplayer[id].size.cy * 0.5f),
+		g_vecplayer[id].pt.x + (g_vecplayer[id].size.cx * 0.5f),
+		g_vecplayer[id].pt.y - (g_vecplayer[id].size.cy * 0.5f)
+	};
+
 	TransparentBlt(hDc,
-		static_cast<int>(m_tRect.left + g_fScrollX),
+		static_cast<int>(rc.left + g_fScrollX),
 		static_cast<int>(m_tRect.top + g_fScrollY),
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
@@ -240,6 +192,19 @@ void CPlayer::Render(HDC hDc)
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		RGB(0, 255, 0));
+
+
+	//TransparentBlt(hDc,
+	//	static_cast<int>(m_tRect.left + g_fScrollX),
+	//	static_cast<int>(m_tRect.top + g_fScrollY),
+	//	static_cast<int>(m_tInfo.size.cx),
+	//	static_cast<int>(m_tInfo.size.cy),
+	//	pBit->GetMemDC(),
+	//	static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+	//	static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+	//	static_cast<int>(m_tInfo.size.cx),
+	//	static_cast<int>(m_tInfo.size.cy),
+	//	RGB(0, 255, 0));
 
 	// 히트박스
 	if (GetAsyncKeyState('2'))
@@ -299,6 +264,61 @@ void CPlayer::Jump()
 
 void CPlayer::Scroll()
 {
+	int id = WhatIsID();
+#ifdef DEBUG_SCROLL
+	cout << "g_fScrollX : " << g_fScrollX << endl;
+	cout << "g_vecplayer[id].pt.x : " << g_vecplayer[id].pt.x << endl;
+	cout << "m_tInfo.pt.x : " << m_tInfo.pt.x << endl;
+	cout << "m_fOffSet : " << m_fOffSet << endl;
+#endif 
+
+	bool next = true;
+
+	if (g_fScrollX > 0) {
+		g_fScrollX = 0.f;
+		next = false;
+
+	}
+	if (g_fScrollY > 0) {
+		g_fScrollY = 0.f;
+		next = false;
+
+	}
+
+	// 필드일 때 스크롤 막기
+	if (SCENE_FIELD == g_eScene)
+	{
+		if (g_fScrollX < WINCX - FIELDCX) {
+			g_fScrollX = WINCX - FIELDCX;
+			next = false;
+
+		}
+		if (g_fScrollY < WINCY - FIELDCY) {
+			g_fScrollY = WINCY - FIELDCY;
+			next = false;
+
+		}
+	}
+
+	// 헤네시스일때 스크롤 막기
+	if (SCENE_STAGE1 == g_eScene)
+	{
+		if (g_fScrollY < WINCY - HENESISCY) {
+			g_fScrollY = WINCY - HENESISCY;
+			next = false;
+
+		}
+
+		if (g_fScrollX < WINCX - HENESISCX) {
+			g_fScrollX = WINCX - HENESISCX;
+			next = false;
+
+		}
+	}
+
+	if (!next)
+		return;
+
 	switch (g_eScene)
 	{
 	case SCENE_FIELD:
@@ -309,52 +329,31 @@ void CPlayer::Scroll()
 		break;
 	}
 	// Player 좌표가 Offset에서 200만큼 이동할 경우 스크롤을 진행한다.
-	if (m_tInfo.pt.x > m_fOffSet + 200.f)
+
+	if (g_vecplayer[id].pt.x > m_fOffSet + 200.f)
 	{
-		g_fScrollX -= m_fSpeed;
+		g_fScrollX -= m_fSpeed * 0.5f;
 		m_fOffSet += m_fSpeed;
 	}
-	else if (m_tInfo.pt.x < m_fOffSet - 200.f)
+	else if (g_vecplayer[id].pt.x <= m_fOffSet - 200.f)
 	{
-		g_fScrollX += m_fSpeed;
+		g_fScrollX += m_fSpeed * 0.5f;
 		m_fOffSet -= m_fSpeed;
 	}
 
 
-	if (m_tInfo.pt.y > m_fOffSetY + m_fOffSetGapY)
+	if (g_vecplayer[id].pt.y > m_fOffSetY + m_fOffSetGapY)
 	{
 		g_fScrollY -= m_fSpeedY;
 		m_fOffSetY += m_fSpeedY;
 	}
-	else if (m_tInfo.pt.y < m_fOffSetY - m_fOffSetGapY)
+	else if (g_vecplayer[id].pt.y < m_fOffSetY - m_fOffSetGapY)
 	{
 		g_fScrollY += m_fSpeedY;
 		m_fOffSetY -= m_fSpeedY;
 	}
 
-	if (g_fScrollX > 0)
-		g_fScrollX = 0;
-	if (g_fScrollY > 0)
-		g_fScrollY = 0.f;
 
-	// 필드일 때 스크롤 막기
-	if (SCENE_FIELD == g_eScene)
-	{
-		if (g_fScrollX < WINCX - FIELDCX)
-			g_fScrollX = WINCX - FIELDCX;
-		if (g_fScrollY < WINCY - FIELDCY)
-			g_fScrollY = WINCY - FIELDCY;
-	}
-
-	// 헤네시스일때 스크롤 막기
-	if (SCENE_STAGE1 == g_eScene)
-	{
-		if (g_fScrollY < WINCY - HENESISCY)
-			g_fScrollY = WINCY - HENESISCY;
-
-		if (g_fScrollX < WINCX - HENESISCX)
-			g_fScrollX = WINCX - HENESISCX;
-	}
 }
 
 void CPlayer::KeyCheck()
@@ -680,16 +679,7 @@ void CPlayer::LineCollision()
 		m_iPlayerFloor = 1;
 
 	// g_vecplayer 갱신.
-	int id{ 0 };
-	if (m_IsMaster) {
-		id = g_myid;
-	}
-	else {
-		if (g_myid == 0)
-			id = 1;
-		else
-			id = 0;
-	}
+	int id = WhatIsID();
 }
 
 bool b = true;	// 디버깅 용
@@ -702,16 +692,7 @@ void CPlayer::SendMovePacket()
 		g_bIsSend = false;
 
 		// 내가 조종 중인 클라이언트인지, 다른 클라이언트인지 구분.
-		int id{ 0 };
-		if (m_IsMaster) {
-			id = g_myid;
-		}
-		else {
-			if (g_myid == 0)
-				id = 1;
-			else
-				id = 0;
-		}
+		int id = WhatIsID();
 
 		b = !b;
 //		cout << "Server에게 내 playerinfo를 send" << b << endl;
@@ -771,17 +752,7 @@ void CPlayer::UpdateINFOinPLAYERINFO()
 //	m_tInfo.size = m_playerinfo.size;
 //	m_eCurState = m_playerinfo.state;
 
-	int id{ 0 };
-
-	if (m_IsMaster) {
-		id = g_myid;
-	}
-	else {
-		if (g_myid == 0)
-			id = 1;
-		else
-			id = 0;
-	}
+	int id = WhatIsID();
 
 	m_tInfo.frame = g_vecplayer[id].frame;
 	m_tInfo.hp = g_vecplayer[id].hp;
@@ -862,4 +833,97 @@ void CPlayer::UpdateImageInJob(OBJECT_DIR dir)
 				m_pImgName = L"Captin_ROPE";
 		}
 	}
+}
+
+int CPlayer::WhatIsID()
+{
+	// 내가 조종 중인 클라이언트인지, 다른 클라이언트인지 구분.
+	int id{ 0 };
+	if (m_IsMaster) {
+		id = g_myid;
+	}
+	else {
+		if (g_myid == 0)
+			id = 1;
+		else
+			id = 0;
+	}
+
+	return id;
+}
+
+void CPlayer::PreventOut()
+{
+	// 화면 밖으로 못나가게끔
+	if (m_tInfo.pt.x <= 30)
+		m_tInfo.pt.x = 30;
+
+	switch (g_eScene)
+	{
+	case SCENE_FIELD:
+	{
+		if (m_tInfo.pt.x >= FIELDCX - 30)
+			m_tInfo.pt.x = FIELDCX - 30;
+	}
+	break;
+	case SCENE_STAGE1:
+	{
+		if (m_tInfo.pt.x >= HENESISCX - 30)
+			m_tInfo.pt.x = HENESISCX - 30;
+	}
+	break;
+	}
+}
+
+void CPlayer::InChangingScene()
+{
+	// 씬 바뀔 때
+	if (true == g_bIsSceneChange)
+	{
+		// 플레이어 좌표 설정
+		m_tInfo.pt.x = 100.f;
+		m_tInfo.pt.y = 100.f;
+		// 오프셋 값 원위치
+		m_fOffSet = WINCX / 2.f;
+
+		if (g_eScene == SCENE_STAGE1)
+		{
+			g_fScrollX = 0.f;
+			g_fScrollY = (WINCY - HENESISCY);
+			m_fOffSetY = WINCY / 2.f + 100.f;
+		}
+
+		g_bIsSceneChange = false;
+	}
+}
+
+void CPlayer::InInvincible()
+{
+	if (false == m_bIsInvincible)
+		m_dwDamageTime = GetTickCount();
+
+	if (true == m_bIsInvincible)
+	{
+		if (m_dwDamageTime + 3000 < GetTickCount())
+		{
+			m_dwDamageTime = GetTickCount();
+			m_eCurState = m_ePreState;
+			m_bIsInvincible = false;
+			m_bCollMode = true;
+		}
+
+	}
+}
+
+void CPlayer::LevelUp()
+{	// 레벨업 
+		if (g_iExp >= m_tState.iMaxExp)
+		{
+			m_bIsLeveling = true; // 레벨업 판정
+			// 레벨업 이펙트 만들때 추후 수정..
+			g_iLevel++;
+			g_iExp = 0;
+			m_dwLevelUpOldTime = GetTickCount();
+		}
+
 }

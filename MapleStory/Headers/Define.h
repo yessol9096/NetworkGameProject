@@ -7,7 +7,8 @@
 #define MAX_USER		2
 #define MAX_GREEN		6
 
-#define DEBUG
+// #define DEBUG
+#define DEBUG_SCROLL
 
 // --------------------------------------------------------------------------
 // 클라이언트 컨텐츠 적인 변수들.

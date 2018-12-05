@@ -28,16 +28,19 @@ public:
 	void	SendMovePacket();
 	void UpdateINFOinPLAYERINFO();
 	void UpdateImageInJob(OBJECT_DIR dir);
+	int WhatIsID();
+	void LevelUp();
+	void PreventOut();
+	void InChangingScene();
+	void InInvincible();
 
 	// 밧줄태우기
 public:
 	void    SetIsRopeColl(bool bRopeColl) { m_bIsRopeColl = bRopeColl; }
 
 	// 층 태우기
-
 	void	SetPlayerFloor(int iPlayerFloor) { m_iPlayerFloor = iPlayerFloor; }
 	int		GetPlayerFloor() { return m_iPlayerFloor; }
-
 	bool	GetIsJumpUp() { return m_bIsJumpUp; }
 
 	// 몬스터랑 충돌할 때 뒤로 포물선 그리면서 밀리기
@@ -74,10 +77,12 @@ public:
 			m_tState.iMp += MPPORTION;
 	}
 
+	// (서버) 조종 불가능한, 다른 클라이언트를 생성할 때 사용함.
 	void		SetPlayerInfo(PLAYERINFO playerinfo) {
 		m_playerinfo = playerinfo; 
 		m_IsMaster = false;
 	}
+	void SetInfoPt(MYPOINT pt) { m_tInfo.pt = pt; }
 
 	// 무적 상태
 	bool		 GetIsInvincible() { return m_bIsInvincible; }
