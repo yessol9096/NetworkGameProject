@@ -128,8 +128,6 @@ void CPlayer::Initialize(void)
 
 int CPlayer::Update(void)
 {
-	//EnterCriticalSection(&cs2);
-
 	// 죽으면 오브젝트 삭제
 	if (true == m_bIsDead)	return 1;
 
@@ -138,25 +136,26 @@ int CPlayer::Update(void)
 	if (m_IsMaster) {
 		KeyCheck();
 		FrameMove();
-		Scroll();
 		LevelUp();
 		PreventOut();
+		Scroll();
+		LineCollision();
 	}
-
 	Jump();
-	LineCollision();
+
 	InChangingScene();
 	InInvincible();
 
-	// 조종 가능한 클라이언트일 때만 계쏙 보내는 걸로.
-	if (/*m_IsMaster*/1) {
-		g_bIsSend = true;
-	}
+	// 조종 가능한 클라이언트일 때만 계속 보내는 걸로.
+	/// 계속해서 보내니까 부하 생기고 키 입력도 안 받아지넹..
+	//if (/*m_IsMaster*/1) {
+	//	g_bIsSend = true;
+	//}
 
-	SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
+	if(m_IsMaster)	// 키 입력 받아서 보내는건 조종 가능한 클라이언트일 때만 보내는 것임.
+		SendMovePacket(); 	// move 할 때마다 서버에게 MOVE_PACKET을 보낸다.
 	// m_tInfo를 계속 쓰되, 서버에서 계속 갱신될 playerinfo를 기준으로 업데이트 해 줘야 한다.
 
-	//LeaveCriticalSection(&cs2);
 
 	CObj::UpdateRect();
 	UpdateCollRect();
@@ -264,7 +263,12 @@ void CPlayer::Jump()
 
 void CPlayer::Scroll()
 {
+	//if (!m_bIsAdmitSend_inFrame) {
+	//	return;
+	//}
+
 	int id = WhatIsID();
+
 #ifdef DEBUG_SCROLL
 	cout << "g_fScrollX : " << g_fScrollX << endl;
 	cout << "g_vecplayer[id].pt.x : " << g_vecplayer[id].pt.x << endl;
@@ -282,7 +286,6 @@ void CPlayer::Scroll()
 	if (g_fScrollY > 0) {
 		g_fScrollY = 0.f;
 		next = false;
-
 	}
 
 	// 필드일 때 스크롤 막기
@@ -291,12 +294,10 @@ void CPlayer::Scroll()
 		if (g_fScrollX < WINCX - FIELDCX) {
 			g_fScrollX = WINCX - FIELDCX;
 			next = false;
-
 		}
 		if (g_fScrollY < WINCY - FIELDCY) {
 			g_fScrollY = WINCY - FIELDCY;
 			next = false;
-
 		}
 	}
 
@@ -306,18 +307,16 @@ void CPlayer::Scroll()
 		if (g_fScrollY < WINCY - HENESISCY) {
 			g_fScrollY = WINCY - HENESISCY;
 			next = false;
-
 		}
 
 		if (g_fScrollX < WINCX - HENESISCX) {
 			g_fScrollX = WINCX - HENESISCX;
 			next = false;
-
 		}
 	}
 
-	if (!next)
-		return;
+	//if (!next)
+	//	return;
 
 	switch (g_eScene)
 	{
@@ -332,12 +331,12 @@ void CPlayer::Scroll()
 
 	if (g_vecplayer[id].pt.x > m_fOffSet + 200.f)
 	{
-		g_fScrollX -= m_fSpeed * 0.5f;
+		g_fScrollX -= m_fSpeed /** 0.5f*/; // 1초에 60번이 아니라, 30번만 보내기 때문에.. 이렇게 할 필요 없음.
 		m_fOffSet += m_fSpeed;
 	}
 	else if (g_vecplayer[id].pt.x <= m_fOffSet - 200.f)
 	{
-		g_fScrollX += m_fSpeed * 0.5f;
+		g_fScrollX += m_fSpeed/* * 0.5f*/;
 		m_fOffSet -= m_fSpeed;
 	}
 
@@ -655,8 +654,9 @@ void CPlayer::Release(void)
 
 void CPlayer::LineCollision()
 {
+	int id = WhatIsID();
 	float fY = 0;
-	bool bLineCol = CLineMgr::GetInstance()->LineCollision(this, m_tInfo.pt.x, &fY);
+	bool bLineCol = CLineMgr::GetInstance()->LineCollision(this, g_vecplayer[id].pt.x/*m_tInfo.pt.x*/, &fY);
 
 	if(m_bIsJump)
 	{
@@ -678,14 +678,17 @@ void CPlayer::LineCollision()
 	if(!bLineCol)
 		m_iPlayerFloor = 1;
 
-	// g_vecplayer 갱신.
-	int id = WhatIsID();
 }
 
 bool b = true;	// 디버깅 용
 
 void CPlayer::SendMovePacket()
 {
+	m_bIsAdmitSend_inFrame = !m_bIsAdmitSend_inFrame;
+	if (!m_bIsAdmitSend_inFrame) {
+		return;
+	}
+
 	// 1201.
 	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)
 	if (g_bIsSend) {
@@ -880,9 +883,12 @@ void CPlayer::InChangingScene()
 	// 씬 바뀔 때
 	if (true == g_bIsSceneChange)
 	{
+		int id = WhatIsID();
 		// 플레이어 좌표 설정
+		g_vecplayer[id].pt.x = 100.f;
+		// g_vecplayer[id].pt.y = 100.f;
 		m_tInfo.pt.x = 100.f;
-		m_tInfo.pt.y = 100.f;
+		// m_tInfo.pt.y = 100.f;
 		// 오프셋 값 원위치
 		m_fOffSet = WINCX / 2.f;
 
@@ -894,6 +900,8 @@ void CPlayer::InChangingScene()
 		}
 
 		g_bIsSceneChange = false;
+		g_bIsSend = true;
+		SendMovePacket();
 	}
 }
 

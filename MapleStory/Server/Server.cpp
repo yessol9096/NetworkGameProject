@@ -326,39 +326,40 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			}
 
 			// 5. 움직인 클라이언트에게도 보낸다. (SC_PACKET_YOUR_PLAYERINFO)
-			 {  
-				// 고정 길이. 
-				ZeroMemory(&packetinfo, sizeof(packetinfo));
-				packetinfo.id = id;
-				packetinfo.size = sizeof(PLAYERINFO);
-				packetinfo.type = SC_PACKET_YOUR_PLAYERINFO;
-				memcpy(buf, &packetinfo, sizeof(packetinfo));
-					retval = send(g_vecsocket[id], buf, BUFSIZE, 0);
-				if (retval == SOCKET_ERROR) {
-					cout << "failed : send - 고정 - SC_PACKET_OTHER_PLAYERINFO" << endl;
-					break;
-				}
-				else {
-#ifdef DEBUG
-					cout << id << "번째 클라이언트가 움직였으므로 " << "해당 클라이언트에게 고정 길이 패킷을 전송합니다!" << endl;
-#endif
-				}
+//			 {  
+//				// 고정 길이. 
+//				ZeroMemory(&packetinfo, sizeof(packetinfo));
+//				packetinfo.id = id;
+//				packetinfo.size = sizeof(PLAYERINFO);
+//				packetinfo.type = SC_PACKET_YOUR_PLAYERINFO;
+//				memcpy(buf, &packetinfo, sizeof(packetinfo));
+//					retval = send(g_vecsocket[id], buf, BUFSIZE, 0);
+//				if (retval == SOCKET_ERROR) {
+//					cout << "failed : send - 고정 - SC_PACKET_OTHER_PLAYERINFO" << endl;
+//					break;
+//				}
+//				else {
+//#ifdef DEBUG
+//					cout << id << "번째 클라이언트가 움직였으므로 " << "해당 클라이언트에게 고정 길이 패킷을 전송합니다!" << endl;
+//#endif
+//				}
+//
+//				// 가변 길이
+//				ZeroMemory(buf, sizeof(buf));
+//				memcpy(buf, &(g_vecplayer[id]), sizeof(playerinfo));
+//				retval = send(g_vecsocket[id], buf, BUFSIZE, 0);
+//				if (retval == SOCKET_ERROR) {
+//					cout << "failed : send - 가변 - SC_PACKET_OTHER_PLAYERINFO" << endl;
+//					break;
+//				}
+//				else {
+//#ifdef DEBUG
+//					cout << id << "번째 클라이언트가 움직였으므로 " << "해당 클라이언트에게 가변 길이 패킷을 전송합니다!" << endl;
+//#endif
+//				}
+//
+//			}
 
-				// 가변 길이
-				ZeroMemory(buf, sizeof(buf));
-				memcpy(buf, &(g_vecplayer[id]), sizeof(playerinfo));
-				retval = send(g_vecsocket[id], buf, BUFSIZE, 0);
-				if (retval == SOCKET_ERROR) {
-					cout << "failed : send - 가변 - SC_PACKET_OTHER_PLAYERINFO" << endl;
-					break;
-				}
-				else {
-#ifdef DEBUG
-					cout << id << "번째 클라이언트가 움직였으므로 " << "해당 클라이언트에게 가변 길이 패킷을 전송합니다!" << endl;
-#endif
-				}
-
-			}
 			LeaveCriticalSection(&cs); 
 		}
 		break;

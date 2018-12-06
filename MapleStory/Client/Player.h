@@ -34,6 +34,10 @@ public:
 	void InChangingScene();
 	void InInvincible();
 
+	// ---------------------
+	// 서버 추가
+	// static DWORD WINAPI SendThread(LPVOID, int, bool&, INFO&, PLAYER_STATE&)
+
 	// 밧줄태우기
 public:
 	void    SetIsRopeColl(bool bRopeColl) { m_bIsRopeColl = bRopeColl; }
@@ -290,4 +294,5 @@ private:
 	// 서버 추가.
 	PLAYERINFO	m_playerinfo;
 	bool					m_IsMaster = true; // 내 클라이언트의 플레이어인지, 다른 클라이언트의 플레이어인지 구분.
+	bool					m_bIsAdmitSend_inFrame = false; // 1초당 30번만 제한하기 위해서 만듦.
 };

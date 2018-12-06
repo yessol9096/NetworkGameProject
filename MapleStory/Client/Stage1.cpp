@@ -129,6 +129,12 @@ void CStage1::Initialize()
 
 int CStage1::Update()
 {
+#ifdef DEBUG_1206
+	cout << "----------현재 접속 정보-----------" << endl;
+	cout << "[0번째 클라이언트] 닉네임 : " << g_vecplayer[0].nickname << ", 직업 : " << g_vecplayer[0].job << "좌표 (" << g_vecplayer[0].pt.x << ", " << g_vecplayer[0].pt.y << ")" << endl;
+	cout << "[1번째 클라이언트] 닉네임 : " << g_vecplayer[1].nickname << ", 직업 : " << g_vecplayer[1].job << "좌표 (" << g_vecplayer[1].pt.x << ", " << g_vecplayer[1].pt.y << ")" << endl;
+#endif
+
 	CObjMgr::GetInstance()->UpdateObj();
 	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 

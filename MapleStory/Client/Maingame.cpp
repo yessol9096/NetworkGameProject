@@ -248,7 +248,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 				}
 			}
 		}
-			break;
+		break;
 		case SC_PACKET_YOUR_PLAYERINFO:
 		{
 			// 상태가 바뀐 나의 플레이어 info를 받아온다.
