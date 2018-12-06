@@ -31,7 +31,7 @@ private:
 	DWORD m_dwDeadOldTime;
 	DWORD m_dwDeadTime;
 	
-
+	DWORD m_ServerCurTime;
 
 
 };

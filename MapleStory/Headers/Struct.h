@@ -54,6 +54,7 @@ typedef struct MonsterInfo {
 	int			money;
 	OBJECT_DIR  dir;
 	int			pattern;
+	MONSTER_STATE	state;
 }MONSTERINFO;
 
 typedef struct PacketInfo {
