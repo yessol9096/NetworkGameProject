@@ -23,6 +23,14 @@ void CObjMgr::UpdateObj()
 
 		for (; iter_begin != iter_end;)
 		{
+
+			int id = 0;
+			if (i == OBJ_PLAYER) {
+				cout << "플레이어 " << ++id << "(" << (*iter_begin)->GetInfo().pt.x << ", " << (*iter_begin)->GetInfo().pt.y << endl;
+				if (id == 1)
+					id = 0;
+			}
+
 			if (1 == (*iter_begin)->Update())
 			{
 				SafeDelete<CObj*>(*iter_begin);

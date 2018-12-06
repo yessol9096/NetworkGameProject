@@ -140,10 +140,9 @@ int CPlayer::Update(void)
 		PreventOut();
 		Scroll();
 		LineCollision();
+		InChangingScene();
 	}
 	Jump();
-
-	InChangingScene();
 	InInvincible();
 
 	// 조종 가능한 클라이언트일 때만 계속 보내는 걸로.
@@ -684,10 +683,10 @@ bool b = true;	// 디버깅 용
 
 void CPlayer::SendMovePacket()
 {
-	m_bIsAdmitSend_inFrame = !m_bIsAdmitSend_inFrame;
-	if (!m_bIsAdmitSend_inFrame) {
-		return;
-	}
+	//m_bIsAdmitSend_inFrame = !m_bIsAdmitSend_inFrame;
+	//if (!m_bIsAdmitSend_inFrame) {
+	//	return;
+	//}
 
 	// 1201.
 	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)

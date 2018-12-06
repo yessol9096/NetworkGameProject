@@ -14,4 +14,12 @@ public:
 	virtual void Render(HDC hDc);
 	virtual void Release();
 	virtual void RecvMonsterInitalInfo();
+public:
+	void SetOtherPlayer(CPlayer* pOtherPlayer) { m_pOtherPlayer = pOtherPlayer; }
+	void SetPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }
+	CPlayer* GetPlayer() { return m_pPlayer; }
+	CPlayer* GetOtherPlayer() { return m_pOtherPlayer; }
+private:
+	CPlayer* m_pPlayer = nullptr;
+	CPlayer* m_pOtherPlayer = nullptr;
 };

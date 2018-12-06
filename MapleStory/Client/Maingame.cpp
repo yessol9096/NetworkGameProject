@@ -2,6 +2,7 @@
 #include "Maingame.h"
 #include "Player.h"
 #include "Field.h"
+#include "Stage1.h"
 
 IMPLEMENT_SINGLETON(CMaingame)
 
@@ -177,7 +178,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			PLAYERINFO newplayerinfo = {};
 			// 1. 새로 접속한 플레이어의 id를, 고정 길이 패킷을 통해 알아낸다.
 			{
-				newplayerid = packetinfo.id; 
+				newplayerid = packetinfo.id;
 			}
 
 			// 2. 가변 길이 패킷을 받아온다. (playerinfo)
@@ -201,7 +202,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			{
 				CObj* player = CAbstractFactory<CPlayer>::CreatePlayer(newplayerinfo);
 				CObjMgr::GetInstance()->AddObject(player, OBJ_PLAYER);
-		
+
 				/// 생성한 다른 클라이언트의 플레이어 포인터를 씬에서 저장한다.
 				/// 나중에 OTHER_PLAYERINFO 패킷을 받았을 때, 바로 SetInfoPt를 해 주기 위해서임.
 				if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
@@ -246,6 +247,16 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 						}
 					}
 				}
+				else if (SCENE_STAGE1 == CSceneMgr::GetInstance()->GetSceneType()) {
+					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
+					if (pScene != nullptr) {
+						CPlayer* pOtherPlayer = dynamic_cast<CStage1*>(pScene)->GetOtherPlayer();
+						if (pOtherPlayer != nullptr) {
+							pOtherPlayer->SetInfoPt(g_vecplayer[id].pt);
+						}
+					}
+				}
+
 			}
 		}
 		break;
@@ -268,12 +279,21 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			/// 서버로부터 받아온 좌표를 직접 넘겨준다.
 			if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
 				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
-				if (pScene != nullptr) {
-					CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
-					if (pPlayer != nullptr) {
-						pPlayer->SetInfoPt(g_vecplayer[id].pt);
+					if (pScene != nullptr) {
+						CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
+							if (pPlayer != nullptr) {
+								pPlayer->SetInfoPt(g_vecplayer[id].pt);
+							}
 					}
-				}
+			}
+			else if (SCENE_STAGE1 == CSceneMgr::GetInstance()->GetSceneType()) {
+				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
+					if (pScene != nullptr) {
+						CPlayer* pPlayer = dynamic_cast<CStage1*>(pScene)->GetPlayer();
+						if (pPlayer != nullptr) {
+							pPlayer->SetInfoPt(g_vecplayer[id].pt);
+						}
+					}
 			}
 		}
 		break;

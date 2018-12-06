@@ -21,9 +21,17 @@ void CSceneMgr::SetScene(SCENE_TYPE eType)
 {
 	m_eSceneType = eType;
 
+	// Field에 있던 Player 포인터를, Stage1가 갖고 있도록 넘겨주어야 한다.
+	CPlayer* pPlayer = nullptr;
+	CPlayer* pOtherPlayer = nullptr;
 	// 기존에 Scene이 할당 되어 있다면 해제할 것
 	if (NULL != m_pScene)
 	{
+		if (eType == SCENE_STAGE1) {
+			// 스테이지1로 넘어가고 필드 씬을 지우기 전에! player 포인터를 넘겨 준다.
+			pPlayer = dynamic_cast<CField*>(m_pScene)->GetPlayer();
+			pOtherPlayer = dynamic_cast<CField*>(m_pScene)->GetOtherPlayer();
+		}
 		SafeDelete<CScene*>(m_pScene);
 		//g_fScrollX = 0.f;
 		//g_fScrollY = 0.f;
@@ -42,6 +50,10 @@ void CSceneMgr::SetScene(SCENE_TYPE eType)
 		break;
 	case SCENE_STAGE1:
 		m_pScene = new CStage1;
+		if (pPlayer != nullptr && pOtherPlayer != nullptr) {
+			dynamic_cast<CStage1*>(m_pScene)->SetPlayer(pPlayer);
+			dynamic_cast<CStage1*>(m_pScene)->SetPlayer(pOtherPlayer);
+		}
 		break;
 	}
 	m_pScene->Initialize();
