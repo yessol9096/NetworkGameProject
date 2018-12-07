@@ -26,6 +26,10 @@ int greenposY = HENESISCY - 460.f;
 OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
 int greenPtr[] = { 1,1,3,1,1,3 };
 
+//소켓 클라이언트 체크 
+
+bool test = false;
+bool test2 = false;
 DWORD WINAPI ClientThread(LPVOID arg)
 {
 	int retval{ 0 };
@@ -41,13 +45,16 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	PACKETINFO packetinfo;
 	PLAYERINFO playerinfo;
 
-
 	
 	// -------------------------------------------
 	// 구조 : 고정 길이 + 가변 길이.
 	while (true) {
 		cout << "--Player Thread--" << endl;
-
+		if (g_vecplayer.size() >= 1)
+			test = true;
+		if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
+			test2 = true;
+		cout << "플레이어벡터크기:" << g_vecplayer.size() << endl;
 		char buf[BUFSIZE];
 
 		// 고정 길이.
@@ -105,7 +112,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					if (false == g_arrayconnected[i]) { /// 순차적으로 접근해서 연결 되지 않은 인덱스 i를 찾고, 
 						g_arrayconnected[i] = true;
 						id = i; /// 아이디를 부여한다.
-#ifdef DEBUG
+#ifdef DEBUG		
 						cout << "접속한 플레이어에게 id를 부여했습니다!" << endl;
 #endif
 						break;
@@ -138,6 +145,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				cout << "정보가 채워진 playerinfo를 g_vecplayer에 push 했어요!" << endl;
 #endif
 				g_vecplayer.push_back(playerinfo);
+				test = true;
 			}
 
 			// 4. 새로 접속한 클라이언트에게 "니 정보는 이거야!" 라고 send 하여 알린다.
@@ -593,6 +601,79 @@ DWORD WINAPI CalculateThread(LPVOID arg)
 	}
 	return 0;
 }
+DWORD test_old_time = GetTickCount();
+
+DWORD WINAPI MonsterThread(LPVOID)
+{
+	int retval{ 0 };
+
+
+	PACKETINFO packetinfo;
+	char buf[BUFSIZE];
+	DWORD test_cur_time;
+	while (1)
+	{
+		test_cur_time = GetTickCount();
+		if (test_cur_time - test_old_time > 50)
+		{
+			EnterCriticalSection(&cs);
+			if (test == true)
+			{
+				cout << "g_Vec사이즈:" << g_vecsocket.size() << endl;
+				for (int id = 0; id < MAX_GREEN; ++id)
+				{
+					MONSTERINFO monsterinfo{};
+					monsterinfo.id = id;
+					monsterinfo.hp = g_vecgreen[id].hp;
+					monsterinfo.money = g_vecgreen[id].money;
+					monsterinfo.pt.x = g_vecgreen[id].pt.x;
+					monsterinfo.pt.y = g_vecgreen[id].pt.y;
+					monsterinfo.dir = g_vecgreen[id].dir;
+					monsterinfo.pattern = g_vecgreen[id].pattern;
+					monsterinfo.state = g_vecgreen[id].state;
+
+					ZeroMemory(&packetinfo, sizeof(packetinfo));
+					packetinfo.id = id;
+					packetinfo.size = sizeof(MONSTERINFO);
+					packetinfo.type = SC_PACKET_GRRENMUSH;
+					//고정 데이터 보내기 
+					ZeroMemory(buf, sizeof(buf));
+					memcpy(buf, &packetinfo, sizeof(packetinfo));
+				
+					retval = send(g_vecsocket[0], buf, BUFSIZE, 0);
+					
+					
+					cout << "몬스터 고정 값 보내기" << endl;
+					if (retval == SOCKET_ERROR) {
+						err_display("send() - SC_PACKET_GRRENMUSH");
+						break;
+					}
+					// 가변데이터 보내기 
+					
+					{
+						retval = send(g_vecsocket[0], (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+					
+					}
+					if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
+					{
+						retval = send(g_vecsocket[1], buf, BUFSIZE, 0);
+						retval = send(g_vecsocket[1], (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+					}
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+				}
+			}
+			LeaveCriticalSection(&cs);
+			test_old_time = GetTickCount();
+		}
+	}
+	closesocket(g_vecsocket[0]);
+	if(g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
+		closesocket(g_vecsocket[1]);
+	return 0;
+}
 
 int main()
 {	
@@ -604,7 +685,7 @@ int main()
 
 	int retval;
 
-	HANDLE hThread[2];
+	HANDLE hThread[3];
 
 	// 몬스터 좌표 초기화
 	InitializeMonsterInfo();
@@ -638,7 +719,7 @@ int main()
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 
-
+	int test_num{};
 	while (true) {
 		// accept()
 		addrlen = sizeof(clientaddr);
@@ -650,7 +731,7 @@ int main()
 
 		// 접속한 클라이언트 socket을 배열에 담는다. (1201)
 		g_vecsocket.push_back(client_sock);
-
+		cout << "연결!:" << g_vecsocket.size() << endl;
 		// 접속한 클라이언트 정보 출력
 		cout << "[클라이언트 접속] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
 			"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
@@ -661,13 +742,28 @@ int main()
 			 closesocket(client_sock);
 		else					
 			 CloseHandle(hThread[0]);
-
+		 
 		 //계산 스레드 생성
-		 hThread[1] = CreateThread(NULL, 0, CalculateThread, NULL, 0, NULL);
-		 if (hThread[1] == NULL)
-			 closesocket(client_sock);
-		 else
-			 CloseHandle(hThread[1]);
+		 if (g_vecsocket.size() < 2)
+		 {
+			 cout << "스레드 생성 test" << endl;
+			 hThread[1] = CreateThread(NULL, 0, CalculateThread, NULL, 0, NULL);
+			 if (hThread[1] == NULL)
+				 closesocket(client_sock);
+			 else
+				 CloseHandle(hThread[1]);
+
+			// //몬스터 스레드 생성
+
+			 hThread[2] = CreateThread(NULL, 0, MonsterThread, NULL, 0, NULL);
+			 if (hThread[2] == NULL)
+			 {
+				 closesocket(client_sock);
+			 }
+			 else
+				 CloseHandle(hThread[2]);
+		 }
+
 	}
 	// 두 개의 스레드 종료 대기
 	WaitForMultipleObjects(1, hThread, TRUE, INFINITE);

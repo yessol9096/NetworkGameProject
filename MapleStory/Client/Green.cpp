@@ -131,13 +131,13 @@ int CGreen::Update(void)
 	// 		}
 	// 	}
 
-	m_ServerCurTime = GetTickCount();
+	//m_ServerCurTime = GetTickCount();
 
-	if (m_ServerCurTime - m_ServerOldTime > 50)
-	{
-		// SendMovePacket();
-		m_ServerOldTime = GetTickCount();
-	}
+	//if (m_ServerCurTime - m_ServerOldTime > 50)
+	//{
+	//	// SendMovePacket();
+	//	m_ServerOldTime = GetTickCount();
+	//}
 	CObj::UpdateRect();
 	
 	return 0;

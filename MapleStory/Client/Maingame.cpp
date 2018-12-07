@@ -25,7 +25,7 @@ vector<PLAYERINFO> g_vecplayer;
 int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
 
 //몬스터 정보 받기 
-vector<MONSTERINFO> g_vecgreen(MAX_GREEN+1);
+vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
 bool bMonster_check = false;
 MONSTERINFO monsterinfo{};
 
@@ -164,6 +164,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		{
 		case SC_PACKET_NEW_OTHER_PLAYERINFO:
 		{
+			cout << "SC_PACKET_NEW_OTHER_PLAYERINFO" << endl;
 			// 새로 접속한 다른 플레이어 info를 받아온다.
 
 			// 1. 고정 길이 패킷을 받아온다. (packetinfo)
@@ -223,6 +224,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		break;
 		case SC_PACKET_OTHER_PLAYERINFO:
 		{
+			cout << "SC_PACKET_OTHER_PLAYERINFO" << endl;
 			// 상태가 바뀐 다른 플레이어 info를 받아온다.
 			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
 
@@ -264,6 +266,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		break;
 		case SC_PACKET_YOUR_PLAYERINFO:
 		{
+			cout << "SC_PACKET_YOUR_PLAYERINFO" << endl;
 			// 상태가 바뀐 나의 플레이어 info를 받아온다.
 			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
 			ZeroMemory(buf, sizeof(buf));
@@ -303,14 +306,15 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		break;
 		case SC_PACKET_GRRENMUSH:
 		{
+			cout << "SC_PACKET_GRRENMUSH" << endl;
 			int id = packetinfo.id;
-
 			ZeroMemory(buf, sizeof(buf));
 			g_retval = recvn(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
 			if (g_retval == SOCKET_ERROR)
 				MessageBoxW(g_hWnd, L"recvn() - SC_MONSTER_ID", MB_OK, MB_OK);
 			else
 			g_vecgreen[monsterinfo.id] = monsterinfo;
+			cout << g_vecgreen[monsterinfo.id].pt.x << endl;
 		}
 			break;
 		case SC_PACKET_SKILL_CREATE:

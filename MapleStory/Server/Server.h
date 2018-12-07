@@ -3,6 +3,8 @@
 
 DWORD WINAPI ClientThread(LPVOID);
 DWORD WINAPI CalculateThread(LPVOID);
+//몬스터 스레드
+DWORD WINAPI MonsterThread(LPVOID);
 
 void InitializeNetwork();
 void EndNetwork();
