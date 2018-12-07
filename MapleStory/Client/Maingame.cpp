@@ -205,10 +205,10 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 
 				/// 생성한 다른 클라이언트의 플레이어 포인터를 씬에서 저장한다.
 				/// 나중에 OTHER_PLAYERINFO 패킷을 받았을 때, 바로 SetInfoPt를 해 주기 위해서임.
-				if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
+				if (SCENE_FIELD == g_eScene) {
 					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
 					if (pScene != nullptr) {
-						dynamic_cast<CField*>(pScene)->SetOtherPlayer(dynamic_cast<CPlayer*>(player));
+						(dynamic_cast<CField*>(pScene))->SetOtherPlayer(dynamic_cast<CPlayer*>(player));
 					}
 				}
 			}
@@ -238,20 +238,22 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 				// 순서 문제 때문에 추가.
 				/// Field 씬일 때, CField가 가지고 있는 CPlayer에 직접 접근하여 
 				/// 서버로부터 받아온 좌표를 직접 넘겨준다.
-				if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
+				if (SCENE_FIELD == g_eScene) {
 					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
 					if (pScene != nullptr) {
 						CPlayer* pOtherPlayer = dynamic_cast<CField*>(pScene)->GetOtherPlayer();
 						if (pOtherPlayer != nullptr) {
+							cout << "★★ other player set Info ★★" << endl;
 							pOtherPlayer->SetInfoPt(g_vecplayer[id].pt);
 						}
 					}
 				}
-				else if (SCENE_STAGE1 == CSceneMgr::GetInstance()->GetSceneType()) {
+				 if (SCENE_STAGE1 == g_eScene) {
 					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
 					if (pScene != nullptr) {
 						CPlayer* pOtherPlayer = dynamic_cast<CStage1*>(pScene)->GetOtherPlayer();
 						if (pOtherPlayer != nullptr) {
+							cout << "★★ other player set Info ★★" << endl;
 							pOtherPlayer->SetInfoPt(g_vecplayer[id].pt);
 						}
 					}
@@ -277,21 +279,23 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			// 순서 문제 때문에 추가.
 			/// Field 씬일 때, CField가 가지고 있는 CPlayer에 직접 접근하여 
 			/// 서버로부터 받아온 좌표를 직접 넘겨준다.
-			if (SCENE_FIELD == CSceneMgr::GetInstance()->GetSceneType()) {
+			if (SCENE_FIELD == g_eScene) {
 				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
 					if (pScene != nullptr) {
 						CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
 							if (pPlayer != nullptr) {
 								pPlayer->SetInfoPt(g_vecplayer[id].pt);
+								cout << "★★ your player set Info ★★" << endl;
 							}
 					}
 			}
-			else if (SCENE_STAGE1 == CSceneMgr::GetInstance()->GetSceneType()) {
+			if (SCENE_STAGE1 == g_eScene) {
 				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
 					if (pScene != nullptr) {
 						CPlayer* pPlayer = dynamic_cast<CStage1*>(pScene)->GetPlayer();
 						if (pPlayer != nullptr) {
 							pPlayer->SetInfoPt(g_vecplayer[id].pt);
+							cout << "★★ your player set Info ★★" << endl;
 						}
 					}
 			}

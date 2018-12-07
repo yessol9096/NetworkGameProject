@@ -84,6 +84,7 @@ enum FONT_FLOOR { FONT_FIRSTFLOOR, FONT_SECONDFLOOR, FONT_THIRDFLOOR, FONT_FOURT
 enum PACKET_TYPE { // CS - Client to Server. SC - Server to Client.
 	CS_PACKET_PLAYERINFO_INITIALLY,		// 클라이언트 : 내가 새로 접속했어. 나는 닉네임과 직업을 정했고, 이걸 playerinfo에 채워서 보낼게. // 서버 : 닉네임과 직업? 잘 알았어. 니 아이디를 부여하기 위한 작업을 할게.
 	CS_PACKET_PLAYERINFO_MOVE, // 클라이언트 : 나 움직였다! 내 playerinfo 보내 줄게. // 서버 : g_vecplayer[니 id]에 갱신할게. 다른 플레이어에게도 니 정보를 전송할게.
+	CS_PACKET_PLAYERINFO_INCHANGINGSCENE,// 클라이언트 : 나 씬 바꾼다! 바뀐 내 좌표 너한테 보내줄게. // 서버 : g_vecplayer[니 id]에 갱신할게. 다른 플레이어한테도 니 정보를 전송할게 그럼.
 
 	CS_PACKET_GRRENMUSH,
 	//----------------------------------------

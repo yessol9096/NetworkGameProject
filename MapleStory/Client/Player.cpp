@@ -176,12 +176,12 @@ void CPlayer::Render(HDC hDc)
 	RECT rc{ g_vecplayer[id].pt.x - (g_vecplayer[id].size.cx * 0.5f),
 		g_vecplayer[id].pt.y - (g_vecplayer[id].size.cy * 0.5f),
 		g_vecplayer[id].pt.x + (g_vecplayer[id].size.cx * 0.5f),
-		g_vecplayer[id].pt.y - (g_vecplayer[id].size.cy * 0.5f)
+		g_vecplayer[id].pt.y + (g_vecplayer[id].size.cy * 0.5f)
 	};
 
 	TransparentBlt(hDc,
 		static_cast<int>(rc.left + g_fScrollX),
-		static_cast<int>(m_tRect.top + g_fScrollY),
+		static_cast<int>(rc.top + g_fScrollY),
 		static_cast<int>(m_tInfo.size.cx),
 		static_cast<int>(m_tInfo.size.cy),
 		pBit->GetMemDC(),
@@ -745,6 +745,62 @@ void CPlayer::SendMovePacket()
 	}
 }
 
+void CPlayer::SendSceneChangePacket()
+{
+	// 씬이 바뀌었을 때,
+	// Server에게 내 playerinfo를 send한다. (CS_PACKET_PLAYERINFO_MOVE)
+
+
+	// 내가 조종 중인 클라이언트인지, 다른 클라이언트인지 구분.
+	int id = WhatIsID();
+
+
+	// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
+	// 2. 보낼 공간 playerinfo를 만든다.
+	// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
+	// 4. playerinfo를 서버에 send 한다.
+
+	// ----------------------Progress-------------------------
+	// 1. 클라의 g_vecplayer[g_myid]에 정보를 갱신한다. 
+	{
+		g_vecplayer[id].pt.x = m_tInfo.pt.x;
+		g_vecplayer[id].pt.y = m_tInfo.pt.y;
+		g_vecplayer[id].frame = m_tInfo.frame;
+		g_vecplayer[id].state = m_eCurState;
+	}
+	// 2. 보낼 공간 playerinfo를 만든다.
+	PLAYERINFO playerinfo;
+	// 3. playerinfo에 내 위치, frame 정보, state를 담는다.
+	{
+		memcpy(&playerinfo, &(g_vecplayer[id]), sizeof(PLAYERINFO));
+	}
+	// 4. playerinfo를 서버에 send 한다.
+	{
+		char buf[BUFSIZE] = {};
+		// 고정 길이
+		PACKETINFO packetinfo;
+		packetinfo.id = id;
+		packetinfo.size = sizeof(PLAYERINFO);
+		packetinfo.type = CS_PACKET_PLAYERINFO_INCHANGINGSCENE;
+		memcpy(buf, &packetinfo, sizeof(packetinfo));
+		g_retval = send(g_sock, buf, BUFSIZE, 0);
+		if (g_retval == SOCKET_ERROR) {
+			MessageBox(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_PLAYERINFO_INCHANGINGSCENE", MB_OK);
+			g_bIsProgramEnd = true;	// 프로그램 종료
+		}
+
+		// 가변 길이
+		ZeroMemory(buf, sizeof(buf));
+		memcpy(buf, &playerinfo, sizeof(playerinfo));
+		g_retval = send(g_sock, buf, BUFSIZE, 0);
+		if (g_retval == SOCKET_ERROR) {
+			MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INCHANGINGSCENE", MB_OK);
+			g_bIsProgramEnd = true;	// 프로그램 종료
+		}
+	}
+	
+}
+
 void CPlayer::UpdateINFOinPLAYERINFO()
 {
 	// 이거 아닌 거 같아;;
@@ -854,6 +910,23 @@ int CPlayer::WhatIsID()
 	return id;
 }
 
+int CPlayer::WhatIsOtherID()
+{
+	// 내가 조종 중인 클라이언트인지, 다른 클라이언트인지 구분.
+	int id{ 0 };
+	if (!m_IsMaster) {
+		id = g_myid;
+	}
+	else {
+		if (g_myid == 0)
+			id = 1;
+		else
+			id = 0;
+	}
+
+	return id;
+}
+
 void CPlayer::PreventOut()
 {
 	// 화면 밖으로 못나가게끔
@@ -883,11 +956,11 @@ void CPlayer::InChangingScene()
 	if (true == g_bIsSceneChange)
 	{
 		int id = WhatIsID();
+		int otherid = WhatIsOtherID();
 		// 플레이어 좌표 설정
 		g_vecplayer[id].pt.x = 100.f;
-		// g_vecplayer[id].pt.y = 100.f;
+		g_vecplayer[otherid].pt.x = 100.f;
 		m_tInfo.pt.x = 100.f;
-		// m_tInfo.pt.y = 100.f;
 		// 오프셋 값 원위치
 		m_fOffSet = WINCX / 2.f;
 
@@ -899,8 +972,9 @@ void CPlayer::InChangingScene()
 		}
 
 		g_bIsSceneChange = false;
-		g_bIsSend = true;
-		SendMovePacket();
+		// g_bIsSend = true;
+		// SendMovePacket();
+		SendSceneChangePacket();
 	}
 }
 

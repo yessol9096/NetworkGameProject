@@ -168,6 +168,8 @@ int CMakingPlayer::Update()
 
 						// recv에 성공하면, 필드로 넘어간다.
 						CSceneMgr::GetInstance()->SetScene(SCENE_FIELD);
+						g_eScene = SCENE_FIELD;
+						g_bIsSceneChange = true;
 						CSoundMgr::GetInstance()->StopSoundAll();
 						CSoundMgr::GetInstance()->PlaySound(L"Start.MP3", CSoundMgr::CHANNEL_EFFECT);
 						CSoundMgr::GetInstance()->PlayBGM(L"BGM_Field.mp3");

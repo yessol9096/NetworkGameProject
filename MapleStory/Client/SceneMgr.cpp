@@ -27,7 +27,7 @@ void CSceneMgr::SetScene(SCENE_TYPE eType)
 	// 기존에 Scene이 할당 되어 있다면 해제할 것
 	if (NULL != m_pScene)
 	{
-		if (eType == SCENE_STAGE1) {
+		if (g_eScene == SCENE_STAGE1) {
 			// 스테이지1로 넘어가고 필드 씬을 지우기 전에! player 포인터를 넘겨 준다.
 			pPlayer = dynamic_cast<CField*>(m_pScene)->GetPlayer();
 			pOtherPlayer = dynamic_cast<CField*>(m_pScene)->GetOtherPlayer();

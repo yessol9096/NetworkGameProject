@@ -26,13 +26,16 @@ public:
 	void	LineCollision();
 	
 	void	SendMovePacket();
+	void SendSceneChangePacket();
 	void UpdateINFOinPLAYERINFO();
 	void UpdateImageInJob(OBJECT_DIR dir);
 	int WhatIsID();
+	int WhatIsOtherID();
 	void LevelUp();
 	void PreventOut();
 	void InChangingScene();
 	void InInvincible();
+
 
 	// ---------------------
 	// 서버 추가
