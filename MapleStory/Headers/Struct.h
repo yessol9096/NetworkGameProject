@@ -1,6 +1,7 @@
 #pragma once
 
 // 기획 부분
+#pragma pack(1)
 typedef struct tagFrame
 {
 	int			iFrameStart; // 스프라이트 이미지의 x축 시작점.
@@ -45,6 +46,7 @@ typedef struct PlayerInfo {
 	bool		ready;
 	bool		connected; // 1119 추가
 	int		speed; // 1203 추가
+	OBJECT_DIR dir; // 1207 추가
 }PLAYERINFO;
 
 typedef struct MonsterInfo {
@@ -126,3 +128,4 @@ typedef struct tagLineInfo
 	MYPOINT	tRPoint;
 }LINEINFO;
 
+#pragma pack()

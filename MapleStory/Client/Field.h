@@ -17,8 +17,8 @@ public:
 
 public:
 	void SetOtherPlayer(CPlayer* pOtherPlayer) { m_pOtherPlayer = pOtherPlayer; }
-	CPlayer* GetPlayer() { if(m_pPlayer != nullptr) return m_pPlayer; }
-	CPlayer* GetOtherPlayer() { if (m_pOtherPlayer != nullptr ) return m_pOtherPlayer; }
+	CPlayer* GetPlayer() { return m_pPlayer; }
+	CPlayer* GetOtherPlayer() {  return m_pOtherPlayer; }
 private:
 	CPlayer* m_pPlayer = nullptr;
 	CPlayer* m_pOtherPlayer = nullptr;

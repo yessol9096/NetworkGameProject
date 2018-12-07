@@ -77,8 +77,8 @@ int CField::Update()
 
 		if (i + 1 == g_vecplayer.size())	// 모든 플레이어가 대기 상태라면
 		{
-			CSceneMgr::GetInstance()->SetScene(SCENE_STAGE1);
 			g_eScene = SCENE_STAGE1;
+			CSceneMgr::GetInstance()->SetScene(SCENE_STAGE1);
 			g_bIsSceneChange = true;
 		}
 	}

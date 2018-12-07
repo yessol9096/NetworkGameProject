@@ -135,7 +135,7 @@ int CGreen::Update(void)
 
 	if (m_ServerCurTime - m_ServerOldTime > 50)
 	{
-		SendMovePacket();
+		// SendMovePacket();
 		m_ServerOldTime = GetTickCount();
 	}
 	CObj::UpdateRect();

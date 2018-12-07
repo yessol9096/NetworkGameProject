@@ -69,6 +69,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		switch (packetinfo.type) {
 		case CS_PACKET_PLAYERINFO_INITIALLY:
 		{
+			EnterCriticalSection(&cs);
 			// 클라이언트가 초기 설정 한 playerinfo를 recvn 한다.
 			// 1. 초기 설정된 playeinfo를 수신한다.
 			// 2. playerinfo의 나머지 멤버 변수들을 채워준다. (id, size, hp, mp, ..)
@@ -238,6 +239,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 #endif 
 				}
 			}
+			LeaveCriticalSection(&cs);
 		}
 
 		break;
@@ -364,6 +366,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		break;
 		case CS_PACKET_PLAYERINFO_INCHANGINGSCENE:
 		{
+			EnterCriticalSection(&cs);
 			// 씬이 바뀌었을 때, 클라이언트는 이 패킷을 한번 보낸다.
 			// 1. 고정 길이 패킷에서, 어느 클라에 해당되는지 id 알아온다.
 			// 2. 가변 길이 패킷을 받고, 받아온 정보대로 playerinfo를 저장한다.
@@ -438,6 +441,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 				}
 			}
+			LeaveCriticalSection(&cs);
 		}
 		break;
 		case SC_PACKET_CLIENT_END:
@@ -454,6 +458,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 		break;
 		case CS_PACKET_GRRENMUSH:
 		{
+			EnterCriticalSection(&cs);
 			// -------------------Process---------------------
 			int id = packetinfo.id;
 			MONSTERINFO tempmonsterinfo = {};
@@ -501,6 +506,8 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					}
 				}
 			}
+
+			LeaveCriticalSection(&cs);
 		}
 		break;
 		}
