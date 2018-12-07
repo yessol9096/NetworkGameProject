@@ -463,8 +463,9 @@ void CPlayer::KeyCheck()
 		CObjMgr::GetInstance()->AddObject(CreateFire<CFire>(), OBJ_SKILL_FIRE);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Fire.wav", CSoundMgr::CHANNEL_SKILL);
 		m_tState.iMp -= 100;
-
 		g_bIsSend = true;
+
+		SendSkillCreatePacket(SKILL_FIRE);
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('A'))
 	{
@@ -800,6 +801,48 @@ void CPlayer::SendSceneChangePacket()
 		if (g_retval == SOCKET_ERROR) {
 			MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_PLAYERINFO_INCHANGINGSCENE", MB_OK);
 			g_bIsProgramEnd = true;	// 프로그램 종료
+		}
+	}
+	
+}
+
+void CPlayer::SendSkillCreatePacket(SKILL_TYPE eType)
+{
+	// 스킬 키를 입력 받을 때마다 호출된다.
+	// CS_PACKET_SKILL_CREATE 
+	
+	// 0. 필요한 변수들.
+	char buf[BUFSIZE];
+	int id = WhatIsID();
+	// 1. 서버에게 고정 길이 패킷을 보낸다.
+	{
+		PACKETINFO packetinfo = {};
+		packetinfo.id = WhatIsID();
+		packetinfo.size = sizeof(SKILLINFO);
+		packetinfo.type = CS_PACKET_SKILL_CREATE;
+		
+		memcpy(buf, &packetinfo, sizeof(packetinfo));
+		g_retval == send(g_sock, buf, BUFSIZE, 0);
+
+		if (g_retval == SOCKET_ERROR) {
+			MessageBox(g_hWnd, L"send()", L"send() - 고정 - CS_PACKET_SKILL_CREATE", NULL);
+			return;
+		}
+	}
+	// 2. 서버에게 가변 길이 패킷을 보낸다.
+	{
+		SKILLINFO skillinfo = {};
+		skillinfo.type = eType;
+		skillinfo.pt = MYPOINT{ g_vecplayer[id].pt.x - FIREX, g_vecplayer[id].pt.y - FIREY };
+		skillinfo.id = -1;
+
+		ZeroMemory(buf, sizeof(buf));
+		memcpy(buf, &skillinfo, sizeof(skillinfo));
+		g_retval == send(g_sock, buf, BUFSIZE, 0);
+
+		if (g_retval == SOCKET_ERROR) {
+			MessageBox(g_hWnd, L"send()", L"send() - 가변 - CS_PACKET_SKILL_CREATE", NULL);
+			return;
 		}
 	}
 	

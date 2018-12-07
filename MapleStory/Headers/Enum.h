@@ -75,6 +75,9 @@ enum FONT_ID { FONTID_DAMAGED, FONTID_ATTACK, FONTID_CRITICAL };
 // Player
 enum PLAYER_JOB { JOB_STRIKER, JOB_CAPTIN, JOB_END };
 
+// Skill
+enum SKILL_TYPE { SKILL_SHOOT, SKILL_FIRE, SKILL_END };
+
 //--------------------------------------------------------------
 // 서버 --------------------------------------------------------
 // 충돌 체크 관련해서 폰트 띄울 때.
@@ -85,12 +88,16 @@ enum PACKET_TYPE { // CS - Client to Server. SC - Server to Client.
 	CS_PACKET_PLAYERINFO_INITIALLY,		// 클라이언트 : 내가 새로 접속했어. 나는 닉네임과 직업을 정했고, 이걸 playerinfo에 채워서 보낼게. // 서버 : 닉네임과 직업? 잘 알았어. 니 아이디를 부여하기 위한 작업을 할게.
 	CS_PACKET_PLAYERINFO_MOVE, // 클라이언트 : 나 움직였다! 내 playerinfo 보내 줄게. // 서버 : g_vecplayer[니 id]에 갱신할게. 다른 플레이어에게도 니 정보를 전송할게.
 	CS_PACKET_PLAYERINFO_INCHANGINGSCENE,// 클라이언트 : 나 씬 바꾼다! 바뀐 내 좌표 너한테 보내줄게. // 서버 : g_vecplayer[니 id]에 갱신할게. 다른 플레이어한테도 니 정보를 전송할게 그럼.
+	CS_PACKET_SKILL_CREATE,	// 클라이언트 : 나 스킬 썼어! 이 Skillinfo를 보내줄게. // 서버 : 그럼 그 스킬에 id를 부여할게. 그리고 g_vecSkill[id]에 갱신할게. 그리고 다른 클라이언트에게도 이 스킬 정보를 보낼게.
+	CS_PACKET_SKILL_MOVE,
 
 	CS_PACKET_GRRENMUSH,
 	//----------------------------------------
 	SC_PACKET_YOUR_PLAYERINFO, // 서버 : 너 상태 바뀌었지? or 새로 접속했지? 니 playerinfo는 이거야. // 오 알았어! 내 g_vecplayer[내 아이디]에 저장할게.
 	SC_PACKET_OTHER_PLAYERINFO, 	// 서버 : 다른 클라이언트가 상태가 바뀌었어. 이 아이의 info는 이래. // 클라이언트 : 알았어. 나의 g_vecplayer[상태 바뀐 클라의 id]에 갱신할게.
 	SC_PACKET_NEW_OTHER_PLAYERINFO, // 서버:  새로운 다른 클라이언트가 들어왔어. 이 아이의 info는 이래. // 클라이언트 : 알았어. CreateObj를 해서 걔의 정보를 넣고, 나의 g_vecplayer[상태 바뀐 클라의 id]에 갱신할게.
+	SC_PACKET_SKILL_CREATE, // 서버 : 어떤 클라이언트가 이런 스킬을 생성했어. 정보를 보낼게. // 클라이언트 : 그러면 그 스킬을 새로 만들게.
+	SC_PACKET_SKILL_MOVE,
 
 	SC_PACKET_CLIENT_END,	// 클라이언트 종료 서버한테 알리기
 	SC_PACKET_GRRENMUSH

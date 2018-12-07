@@ -27,6 +27,8 @@ public:
 	
 	void	SendMovePacket();
 	void SendSceneChangePacket();
+	void SendSkillCreatePacket(SKILL_TYPE eType);
+
 	void UpdateINFOinPLAYERINFO();
 	void UpdateImageInJob(OBJECT_DIR dir);
 	int WhatIsID();
@@ -104,8 +106,9 @@ private:
 	template <typename T> 
 	CObj*	CreateArrow(float fX = 0.f, float fY = 0.f, ARROW_ID eID = ARROW_BASIC, int iOrder = 0)
 	{
+		int id = WhatIsID();
 		CObj* pArrow = CAbstractFactory<T>::CreateObj(
-			m_tInfo.pt.x + fX, m_tInfo.pt.y + fY);
+			g_vecplayer[id].pt.x/*m_tInfo.pt.x*/ + fX, g_vecplayer[id].pt.y/*m_tInfo.pt.y*/ + fY);
 		pArrow->SetAtt(this->GetState().iAtt);
 		pArrow->SetDir(m_eDir);
 		dynamic_cast<CArrow*>(pArrow)->SetID(eID);

@@ -32,6 +32,8 @@ typedef struct Info {
 	int			hp;
 }INFO;
 
+
+
 typedef struct PlayerInfo {
 	short		id;
 	MYPOINT		pt;
@@ -64,6 +66,12 @@ typedef struct PacketInfo {
 	int					size;
 	int					id{ -1 };
 }PACKETINFO;
+
+typedef struct SkillInfo {
+	short id{ -1 };
+	SKILL_TYPE type;
+	MYPOINT pt;
+}SKILLINFO;
 
 //--------------------------------------------------------------------------------
 

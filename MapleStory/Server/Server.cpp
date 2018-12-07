@@ -16,6 +16,7 @@ CRITICAL_SECTION cs;
 vector<PLAYERINFO> g_vecplayer;
 bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
 vector<SOCKET> g_vecsocket;
+vector<SKILLINFO> g_vecskill;
 
 // monster 정보 보냈나 안보냈나 확인
 bool bCreateMonster_check = false;
@@ -241,7 +242,6 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			}
 			LeaveCriticalSection(&cs);
 		}
-
 		break;
 		case CS_PACKET_PLAYERINFO_MOVE:
 		{
@@ -504,6 +504,71 @@ DWORD WINAPI ClientThread(LPVOID arg)
 						err_display("send()");
 						break;
 					}
+				}
+			}
+
+			LeaveCriticalSection(&cs);
+		}
+		break;
+		case CS_PACKET_SKILL_CREATE:
+		{
+			EnterCriticalSection(&cs);
+			// 클라이언트로부터 스킬이 생성되었다는 메시지를 받았다.
+			// 1. 새로 생성된 스킬의 skillinfo를 recv 해 온다.
+			// 2. g_vecskill에 skillinfo를 push 한다.
+			// 3. 새로 생성된 스킬에게 부여할 id를 정한다.
+			// 4. 다른 클라이언트에게도 스킬 생성 메시지를 send 한다.
+
+			// ---------------- Process -------------------
+			// 0. 필요한 변수들
+			SKILLINFO skillinfo;
+			int skillid;
+			// 1. 새로 생성된 스킬의 skillinfo를 recv 해 온다.
+			{
+				ZeroMemory(buf, sizeof(buf));
+				retval = recvn(client_sock, buf, BUFSIZE, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("recvn() - CS_PACKET_SKILL_CREATE");
+					break;
+				}
+				memcpy(&skillinfo, buf, sizeof(skillinfo));
+			}
+			// 2. g_vecskill에 skillinfo를 push 한다.
+			{
+				g_vecskill.push_back(skillinfo);
+			}
+			// 3. 새로 생성된 스킬에게 부여할 id를 정한다.
+			{
+				skillid = g_vecskill.size() - 1;
+			}
+			// 4. 다른 클라이언트에게도 스킬 생성 메시지를 send 한다.
+			if(g_vecplayer.size() >= 2) {
+				// 받을 다른 클라이언트의 id는?
+				int recvid{ -1 };
+				if (packetinfo.id == 0) recvid = 1;
+				else		recvid = 0;
+
+				// 고정 길이.
+				ZeroMemory(&packetinfo, sizeof(PACKETINFO));
+				packetinfo.id = skillid;
+				packetinfo.size = sizeof(packetinfo);
+				packetinfo.type = SC_PACKET_SKILL_CREATE;
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &packetinfo, sizeof(packetinfo));
+
+				retval = send(g_vecsocket[recvid], buf, BUFSIZE, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send() - SC_PACKET_SKILL_CREATE");
+					break;
+				}
+
+				// 가변 길이.
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &skillinfo, sizeof(skillinfo));
+				retval = send(g_vecsocket[recvid], buf, BUFSIZE, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send() - SC_PACKET_SKILL_CREATE");
+					break;
 				}
 			}
 

@@ -158,7 +158,7 @@ int CMakingPlayer::Update()
 						g_bIsProgramEnd = true;	// 프로그램 종료
 						break;
 					}
-					else{
+					else {
 #ifdef DEBUG
 						cout << "YOUR_PLAYERINFO - 가변 길이 패킷을 받아왔어요!" << endl;
 #endif
@@ -176,6 +176,8 @@ int CMakingPlayer::Update()
 						break;
 					}
 				}
+				else
+					break;
 			}
 		}
 	}

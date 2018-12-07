@@ -1,10 +1,10 @@
 ﻿#include "StdAfx.h"
 #include "Maingame.h"
 #include "Player.h"
+#include "Fire.h"
 #include "Field.h"
 #include "Stage1.h"
 
-IMPLEMENT_SINGLETON(CMaingame)
 
 // 서버와 통신
 SOCKET g_sock;
@@ -313,6 +313,34 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			g_vecgreen[monsterinfo.id] = monsterinfo;
 		}
 			break;
+		case SC_PACKET_SKILL_CREATE:
+		{
+			// 서버로부터 스킬 생성 명령을 받았다.
+			// 1. 가변 길이 패킷을 받아온다.
+			SKILLINFO skillinfo = {};
+			{
+				ZeroMemory(buf, BUFSIZE);
+				g_retval = recvn(g_sock, buf, BUFSIZE, 0);
+				if (g_retval == SOCKET_ERROR) {
+					MessageBox(g_hWnd, L"recvn()", L"recvn() - SC_PACKET_SKILL_CREATE", NULL);
+					break;
+				}
+				else
+					memcpy(&skillinfo, buf, sizeof(skillinfo));
+			}
+			// 무슨 스킬인지 알아낸 후, 타입에 맞게 객체를 생성한다.
+			{
+				CObj* pSkill = nullptr;
+				switch (skillinfo.type) {
+				case SKILL_FIRE:
+				{
+					CObjMgr::GetInstance()->AddObject(CreateSkill<CFire>(skillinfo.pt), OBJ_SKILL_FIRE);
+				}
+				break;
+				}
+			}
+		}
+		break;
 		}
 
 		LeaveCriticalSection(&cs);
