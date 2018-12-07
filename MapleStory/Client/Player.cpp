@@ -145,6 +145,9 @@ int CPlayer::Update(void)
 	Jump();
 	InInvincible();
 
+	int id = WhatIsID();
+	UpdateImageInJob(g_vecplayer[id].dir); // 이제 키 입력 받을 때뿐만 아니라, 계속해서 이미지 업데이트 해줘야 함.
+
 	// 조종 가능한 클라이언트일 때만 계속 보내는 걸로.
 	/// 계속해서 보내니까 부하 생기고 키 입력도 안 받아지넹..
 	//if (/*m_IsMaster*/1) {
@@ -711,6 +714,7 @@ void CPlayer::SendMovePacket()
 			g_vecplayer[id].pt.y = m_tInfo.pt.y;
 			g_vecplayer[id].frame = m_tInfo.frame;
 			g_vecplayer[id].state = m_eCurState;
+			g_vecplayer[id].dir = m_eDir;
 		}
 		// 2. 보낼 공간 playerinfo를 만든다.
 		PLAYERINFO playerinfo;
