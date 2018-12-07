@@ -147,6 +147,7 @@ int CStage1::Update()
 		for (; iter_begin != iter_end; ++iter_begin)
 		{
 			(*iter_begin)->SetPos(g_vecgreen[j].pt.x, g_vecgreen[j].pt.y);
+			(*iter_begin)->SetDir(g_vecgreen[j].dir);
 			++j;
 		}
 	}

@@ -2,7 +2,6 @@
 #include "Green.h"
 #include "Gold.h"
 
-bool test_check = true;
 
 CGreen::CGreen(void)
 {
@@ -66,7 +65,7 @@ void CGreen::Initialize( void )
 
 	UpdateCollRect();
 }
-
+DWORD m_ServerOldTime = GetTickCount();
 int CGreen::Update(void)
 {
 	if (1 == m_iPattern)
@@ -132,8 +131,13 @@ int CGreen::Update(void)
 	// 		}
 	// 	}
 
-	if(test_check == true)
+	m_ServerCurTime = GetTickCount();
+
+	if (m_ServerCurTime - m_ServerOldTime > 50)
+	{
 		SendMovePacket();
+		m_ServerOldTime = GetTickCount();
+	}
 	CObj::UpdateRect();
 	
 	return 0;
@@ -443,8 +447,6 @@ void CGreen::SendMovePacket()
 					MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_GRRENMUSH", MB_OK);
 					g_bIsProgramEnd = true;	// 프로그램 종료
 				}
-				else
-					test_check = false;
 			}
 		}
 }

@@ -472,14 +472,14 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				{
 					MONSTERINFO monsterinfo{};
 					monsterinfo.id = id;
-					monsterinfo.hp = 100;
-					monsterinfo.money = 10;
-					monsterinfo.pt.x = greenposX[id];
-					monsterinfo.pt.y = greenposY;
-					monsterinfo.dir = greenDir[id];
-					monsterinfo.pattern = greenPtr[id];
+					monsterinfo.hp = g_vecgreen[id].hp;
+					monsterinfo.money = g_vecgreen[id].money;
+					monsterinfo.pt.x = g_vecgreen[id].pt.x;
+					monsterinfo.pt.y = g_vecgreen[id].pt.y;
+					monsterinfo.dir = g_vecgreen[id].dir;
+					monsterinfo.pattern = g_vecgreen[id].pattern;
+					monsterinfo.state = g_vecgreen[id].state;
 
-					g_vecgreen[id] = monsterinfo;
 
 					ZeroMemory(&packetinfo, sizeof(packetinfo));
 					packetinfo.id = id;
@@ -513,6 +513,15 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	return 0;
 }
 
+DWORD WINAPI CalculateThread(LPVOID arg)
+{
+	while (1)
+	{
+		GreenMushRoom_MoveInPattern();
+	}
+	return 0;
+}
+
 int main()
 {	
 	// 임계 영역 초기화
@@ -525,7 +534,8 @@ int main()
 
 	HANDLE hThread[2];
 
-
+	// 몬스터 좌표 초기화
+	InitializeMonsterInfo();
 	// 윈속 초기화.
 	InitializeNetwork();
 
@@ -580,12 +590,12 @@ int main()
 		else					
 			 CloseHandle(hThread[0]);
 
-		//몬스터 스레드 생성
-		//hThread[1] = CreateThread(NULL, 0, MonsterThread, (LPVOID)client_sock, 0, NULL);
-		// if (hThread[1] == NULL)	
-		//	 closesocket(client_sock);
-		//else					
-		//	 CloseHandle(hThread[1]);
+		 //계산 스레드 생성
+		 hThread[1] = CreateThread(NULL, 0, CalculateThread, NULL, 0, NULL);
+		 if (hThread[1] == NULL)
+			 closesocket(client_sock);
+		 else
+			 CloseHandle(hThread[1]);
 	}
 	// 두 개의 스레드 종료 대기
 	WaitForMultipleObjects(1, hThread, TRUE, INFINITE);
@@ -637,6 +647,68 @@ int recvn(SOCKET s, char *buf, int len, int flags)
 	return len - left;
 }
 
+void GreenMushRoom_MoveInPattern()
+{
+	float m_fSpeed = 0.0001f;
+
+	for (int i = 0; i < MAX_GREEN; ++i)
+	{
+
+		if (DIR_LEFT == g_vecgreen[i].dir)
+		{
+			switch (g_vecgreen[i].state)
+			{
+			case MONSTER_WALK:
+			{
+				g_vecgreen[i].pt.x -= m_fSpeed;
+
+				if (g_vecgreen[i].pt.x < 465.f)
+					g_vecgreen[i].dir = DIR_RIGHT;
+			}
+			break;
+			case MONSTER_STAND:
+				break;
+			}
+
+		}
+		else
+		{
+			switch (g_vecgreen[i].state)
+			{
+			case MONSTER_WALK:
+			{
+				g_vecgreen[i].pt.x += m_fSpeed;
+				if (g_vecgreen[i].pt.x > 1390.f)
+					g_vecgreen[i].dir = DIR_LEFT;
+			}
+			break;
+			case MONSTER_STAND:
+				break;
+			}
+
+		}
+	}
+}
+
+void InitializeMonsterInfo()
+{
+	// 초록보섯 초기화
+	for (int i = 0; i < MAX_GREEN; ++i)
+	{
+		MONSTERINFO monsterinfo{};
+		monsterinfo.id = i;
+		monsterinfo.hp = 100;
+		monsterinfo.money = 10;
+		monsterinfo.pt.x = greenposX[i];
+		monsterinfo.pt.y = greenposY;
+		monsterinfo.dir = greenDir[i];
+		monsterinfo.pattern = greenPtr[i];
+		monsterinfo.state = MONSTER_WALK;
+
+		g_vecgreen[i] = monsterinfo;
+	}
+
+}
 
 //DWORD WINAPI SendThread(LPVOID arg)
 //{
