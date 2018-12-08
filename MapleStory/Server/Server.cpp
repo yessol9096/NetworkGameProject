@@ -20,7 +20,8 @@ vector<SKILLINFO> g_vecskill;
 
 // monster 정보 보냈나 안보냈나 확인
 bool bCreateMonster_check = false;
-vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
+//vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
+MONSTERPACKET g_monster_packet;
 int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
 int greenposY = HENESISCY - 460.f;
 OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
@@ -485,13 +486,13 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				{
 					MONSTERINFO monsterinfo{};
 					monsterinfo.id = id;
-					monsterinfo.hp = g_vecgreen[id].hp;
-					monsterinfo.money = g_vecgreen[id].money;
-					monsterinfo.pt.x = g_vecgreen[id].pt.x;
-					monsterinfo.pt.y = g_vecgreen[id].pt.y;
-					monsterinfo.dir = g_vecgreen[id].dir;
-					monsterinfo.pattern = g_vecgreen[id].pattern;
-					monsterinfo.state = g_vecgreen[id].state;
+					monsterinfo.hp = g_monster_packet.green[id].hp;
+					monsterinfo.money = g_monster_packet.green[id].money;
+					monsterinfo.pt.x = g_monster_packet.green[id].pt.x;
+					monsterinfo.pt.y = g_monster_packet.green[id].pt.y;
+					monsterinfo.dir = g_monster_packet.green[id].dir;
+					monsterinfo.pattern = g_monster_packet.green[id].pattern;
+					monsterinfo.state = g_monster_packet.green[id].state;
 
 
 					ZeroMemory(&packetinfo, sizeof(packetinfo));
@@ -506,7 +507,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 						err_display("send() - SC_PACKET_GRRENMUSH_INITIALLY");
 						break;
 					}
-					retval = send(client_sock, (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+					retval = send(client_sock, (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
 
 					if (retval == SOCKET_ERROR) {
 						err_display("send()");
@@ -595,9 +596,16 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 DWORD WINAPI CalculateThread(LPVOID arg)
 {
+	Monster_Old_Movetime = GetTickCount();
+	Monster_Cur_Movetime;
 	while (1)
 	{
-		GreenMushRoom_MoveInPattern();
+		Monster_Cur_Movetime = GetTickCount();
+		if (Monster_Cur_Movetime - Monster_Old_Movetime >= 30)
+		{
+			GreenMushRoom_MoveInPattern();
+			Monster_Old_Movetime = GetTickCount();
+		}
 	}
 	return 0;
 }
@@ -620,20 +628,11 @@ DWORD WINAPI MonsterThread(LPVOID)
 			if (test == true)
 			{
 				cout << "g_Vec사이즈:" << g_vecsocket.size() << endl;
-				for (int id = 0; id < MAX_GREEN; ++id)
+				//for (int id = 0; id < MAX_GREEN; ++id)
 				{
-					MONSTERINFO monsterinfo{};
-					monsterinfo.id = id;
-					monsterinfo.hp = g_vecgreen[id].hp;
-					monsterinfo.money = g_vecgreen[id].money;
-					monsterinfo.pt.x = g_vecgreen[id].pt.x;
-					monsterinfo.pt.y = g_vecgreen[id].pt.y;
-					monsterinfo.dir = g_vecgreen[id].dir;
-					monsterinfo.pattern = g_vecgreen[id].pattern;
-					monsterinfo.state = g_vecgreen[id].state;
 
 					ZeroMemory(&packetinfo, sizeof(packetinfo));
-					packetinfo.id = id;
+					packetinfo.id = 0;
 					packetinfo.size = sizeof(MONSTERINFO);
 					packetinfo.type = SC_PACKET_GRRENMUSH;
 					//고정 데이터 보내기 
@@ -651,13 +650,13 @@ DWORD WINAPI MonsterThread(LPVOID)
 					// 가변데이터 보내기 
 					
 					{
-						retval = send(g_vecsocket[0], (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+						retval = send(g_vecsocket[0], (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
 					
 					}
 					if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
 					{
 						retval = send(g_vecsocket[1], buf, BUFSIZE, 0);
-						retval = send(g_vecsocket[1], (char*)&monsterinfo, sizeof(MONSTERINFO), 0);
+						retval = send(g_vecsocket[1], (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
 					}
 					if (retval == SOCKET_ERROR) {
 						err_display("send()");
@@ -817,21 +816,21 @@ int recvn(SOCKET s, char *buf, int len, int flags)
 
 void GreenMushRoom_MoveInPattern()
 {
-	float m_fSpeed = 0.0001f;
+	float m_fSpeed = 0.4f;
 
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{
 
-		if (DIR_LEFT == g_vecgreen[i].dir)
+		if (DIR_LEFT == g_monster_packet.green[i].dir)
 		{
-			switch (g_vecgreen[i].state)
+			switch (g_monster_packet.green[i].state)
 			{
 			case MONSTER_WALK:
 			{
-				g_vecgreen[i].pt.x -= m_fSpeed;
+				g_monster_packet.green[i].pt.x -= m_fSpeed;
 
-				if (g_vecgreen[i].pt.x < 465.f)
-					g_vecgreen[i].dir = DIR_RIGHT;
+				if (g_monster_packet.green[i].pt.x < 465.f)
+					g_monster_packet.green[i].dir = DIR_RIGHT;
 			}
 			break;
 			case MONSTER_STAND:
@@ -841,13 +840,13 @@ void GreenMushRoom_MoveInPattern()
 		}
 		else
 		{
-			switch (g_vecgreen[i].state)
+			switch (g_monster_packet.green[i].state)
 			{
 			case MONSTER_WALK:
 			{
-				g_vecgreen[i].pt.x += m_fSpeed;
-				if (g_vecgreen[i].pt.x > 1390.f)
-					g_vecgreen[i].dir = DIR_LEFT;
+				g_monster_packet.green[i].pt.x += m_fSpeed;
+				if (g_monster_packet.green[i].pt.x > 1390.f)
+					g_monster_packet.green[i].dir = DIR_LEFT;
 			}
 			break;
 			case MONSTER_STAND:
@@ -873,7 +872,7 @@ void InitializeMonsterInfo()
 		monsterinfo.pattern = greenPtr[i];
 		monsterinfo.state = MONSTER_WALK;
 
-		g_vecgreen[i] = monsterinfo;
+		g_monster_packet.green[i] = monsterinfo;
 	}
 
 }

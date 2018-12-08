@@ -307,14 +307,19 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		case SC_PACKET_GRRENMUSH:
 		{
 			cout << "SC_PACKET_GRRENMUSH" << endl;
+			MONSTERPACKET temp_monster;
 			int id = packetinfo.id;
 			ZeroMemory(buf, sizeof(buf));
-			g_retval = recvn(g_sock, (char*)&monsterinfo, sizeof(monsterinfo), 0);
+			g_retval = recvn(g_sock, (char*)&temp_monster, sizeof(MONSTERPACKET), 0);
 			if (g_retval == SOCKET_ERROR)
 				MessageBoxW(g_hWnd, L"recvn() - SC_MONSTER_ID", MB_OK, MB_OK);
 			else
-			g_vecgreen[monsterinfo.id] = monsterinfo;
-			cout << g_vecgreen[monsterinfo.id].pt.x << endl;
+			{ 
+				for(int i = 0 ; i < MAX_GREEN ; ++i)
+				g_vecgreen[i] = temp_monster.green[i];
+			}
+			
+			cout << g_vecgreen[0].pt.x << endl;
 		}
 			break;
 		case SC_PACKET_SKILL_CREATE:

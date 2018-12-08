@@ -61,6 +61,10 @@ typedef struct MonsterInfo {
 	MONSTER_STATE	state;
 }MONSTERINFO;
 
+typedef struct MonsterPacket {
+	MONSTERINFO		green[MAX_GREEN];
+}MONSTERPACKET;
+
 typedef struct PacketInfo {
 	PACKET_TYPE type;
 	int					size;

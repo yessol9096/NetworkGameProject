@@ -15,3 +15,6 @@ int recvn(SOCKET, char *, int, int);
 void InitializeMonsterInfo();
 // 초록버섯 이동패턴
 void GreenMushRoom_MoveInPattern();
+
+DWORD Monster_Old_Movetime;
+DWORD Monster_Cur_Movetime;
