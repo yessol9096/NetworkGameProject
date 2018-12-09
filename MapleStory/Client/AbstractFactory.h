@@ -32,12 +32,12 @@ public:
 		pObj->SetAngle(fAngle);
 		return pObj;
 	}
-	static CObj* CreateMonster(float fX, float fY, OBJECT_DIR eDir, int iPattern)
+	static CObj* CreateMonster(float fX, float fY, OBJECT_DIR eDir, int iPattern, int iMoney)
 	{
 		CObj* pObj = new T;
 		pObj->SetDir(eDir);
 		pObj->SetPos(fX, fY);
-		(dynamic_cast<CMonster*>(pObj))->SetPattern(iPattern);
+		(dynamic_cast<CMonster*>(pObj))->SetMoney(iMoney);
 		pObj->Initialize();
 		return pObj;
 	}

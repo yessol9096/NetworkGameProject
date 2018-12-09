@@ -41,7 +41,7 @@ public:
 public:
 	const STATE& GetState()	 { return m_tState; }
 	const STATE* GetStatePointer()	 { return &m_tState; }
-	void		 SetState(STATE& rState) { m_tState = rState; }
+	void		 SetState(STATE& rState) { m_tState = rState; };
 	void		 SetDamage(int iAtt) { m_tState.iHp -= iAtt; }
 
 public:

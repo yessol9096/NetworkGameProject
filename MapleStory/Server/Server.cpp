@@ -1,6 +1,7 @@
 #include <winsock2.h>
 #include <iostream>
 #include <vector>
+#include <time.h>
 #include "Server.h"
 #include "Include.h"
 using namespace std;
@@ -9,44 +10,36 @@ using namespace std;
 
 #define DEBUG
 
+// 클라이언트
+vector<SOCKET> g_vecsocket;
+vector<PLAYERINFO> g_vecplayer;
+vector<SKILLINFO> g_vecskill;
+bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
+
+// 몬스터
+MONSTERPACKET g_monster_packet;
+
 // 스레드 동기화
 CRITICAL_SECTION cs;
 
-// 클라이언트
-vector<PLAYERINFO> g_vecplayer;
-bool g_arrayconnected[MAX_USER]; // connected 배열 (id 부여 위함)
-vector<SOCKET> g_vecsocket;
-vector<SKILLINFO> g_vecskill;
-
-// monster 정보 보냈나 안보냈나 확인
-bool bCreateMonster_check = false;
-//vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
-MONSTERPACKET g_monster_packet;
-int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
-int greenposY = HENESISCY - 460.f;
-OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
-int greenPtr[] = { 1,1,3,1,1,3 };
-
 //소켓 클라이언트 체크 
-
 bool test = false;
 bool test2 = false;
+
+bool isEnd = false;
+
 DWORD WINAPI ClientThread(LPVOID arg)
 {
-	int retval{ 0 };
-
 	SOCKET client_sock = (SOCKET)arg;
 	SOCKADDR_IN clientaddr;
-
 	// 클라이언트 정보 얻기
 	int addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
-
+	int retval{ 0 };
 	PACKETINFO packetinfo;
 	PLAYERINFO playerinfo;
 
-	
 	// -------------------------------------------
 	// 구조 : 고정 길이 + 가변 길이.
 	while (true) {
@@ -252,6 +245,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			LeaveCriticalSection(&cs);
 		}
 		break;
+
 		case CS_PACKET_PLAYERINFO_MOVE:
 		{
 			EnterCriticalSection(&cs);
@@ -373,6 +367,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			LeaveCriticalSection(&cs);
 		}
 		break;
+
 		case CS_PACKET_PLAYERINFO_INCHANGINGSCENE:
 		{
 			EnterCriticalSection(&cs);
@@ -453,18 +448,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			LeaveCriticalSection(&cs);
 		}
 		break;
-		case SC_PACKET_CLIENT_END:
-		{
-			// closesocket()
-			closesocket(client_sock);
-			cout << "[클라이언트 정상 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
-				"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
-			//CloseHandle(hThread[0]);
-			//CloseHandle(hThread[1]);
-			//SetEvent(hPlayerEvent);
-			return 0;
-		}
-		break;
+
 		case CS_PACKET_GRRENMUSH:
 		{
 			EnterCriticalSection(&cs);
@@ -519,6 +503,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			LeaveCriticalSection(&cs);
 		}
 		break;
+
 		case CS_PACKET_SKILL_CREATE:
 		{
 			EnterCriticalSection(&cs);
@@ -551,7 +536,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				skillid = g_vecskill.size() - 1;
 			}
 			// 4. 다른 클라이언트에게도 스킬 생성 메시지를 send 한다.
-			if(g_vecplayer.size() >= 2) {
+			if (g_vecplayer.size() >= 2) {
 				// 받을 다른 클라이언트의 id는?
 				int recvid{ -1 };
 				if (packetinfo.id == 0) recvid = 1;
@@ -584,6 +569,17 @@ DWORD WINAPI ClientThread(LPVOID arg)
 			LeaveCriticalSection(&cs);
 		}
 		break;
+
+		case SC_PACKET_CLIENT_END:
+		{
+			isEnd = true;
+
+			closesocket(client_sock);
+			cout << "[클라이언트 정상 종료] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
+				"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
+			return 0;
+		}
+		break;
 		}
 	}
 
@@ -613,205 +609,96 @@ DWORD test_old_time = GetTickCount();
 
 DWORD WINAPI MonsterThread(LPVOID)
 {
-	int retval{ 0 };
-
-
 	PACKETINFO packetinfo;
+	int retval{ 0 };
 	char buf[BUFSIZE];
 	DWORD test_cur_time;
+
 	while (1)
 	{
+		if (isEnd)	// 클라이언트 소켓이 종료되면 몬스터 소켓도 종료
+		{
+			cout << "[클라이언트 정상 종료: 몬스터 스레드 정상 종료]" << endl;
+			break;
+		}
+
 		test_cur_time = GetTickCount();
 		if (test_cur_time - test_old_time > 50)
 		{
 			EnterCriticalSection(&cs);
 			if (test == true)
 			{
-				cout << "g_Vec사이즈:" << g_vecsocket.size() << endl;
-				//for (int id = 0; id < MAX_GREEN; ++id)
-				{
+				//cout << "g_Vec사이즈:" << g_vecsocket.size() << endl;
 
-					ZeroMemory(&packetinfo, sizeof(packetinfo));
-					packetinfo.id = 0;
-					packetinfo.size = sizeof(MONSTERINFO);
-					packetinfo.type = SC_PACKET_GRRENMUSH;
-					//고정 데이터 보내기 
-					ZeroMemory(buf, sizeof(buf));
-					memcpy(buf, &packetinfo, sizeof(packetinfo));
-				
-					retval = send(g_vecsocket[0], buf, BUFSIZE, 0);
-					
-					
-					cout << "몬스터 고정 값 보내기" << endl;
-					if (retval == SOCKET_ERROR) {
-						err_display("send() - SC_PACKET_GRRENMUSH");
-						break;
-					}
-					// 가변데이터 보내기 
-					
-					{
-						retval = send(g_vecsocket[0], (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
-					
-					}
-					if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
-					{
-						retval = send(g_vecsocket[1], buf, BUFSIZE, 0);
-						retval = send(g_vecsocket[1], (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
-					}
-					if (retval == SOCKET_ERROR) {
-						err_display("send()");
-						break;
-					}
+				ZeroMemory(&packetinfo, sizeof(packetinfo));
+				packetinfo.id = 0;
+				packetinfo.size = sizeof(MONSTERINFO);
+				packetinfo.type = SC_PACKET_GRRENMUSH;
+
+				//고정 데이터 보내기 
+				ZeroMemory(buf, sizeof(buf));
+				memcpy(buf, &packetinfo, sizeof(packetinfo));
+				retval = send(g_vecsocket[0], buf, BUFSIZE, 0);
+				cout << "몬스터 고정 값 보내기" << endl;
+				if (retval == SOCKET_ERROR) {
+					err_display("send() - SC_PACKET_GRRENMUSH");
+					break;
+				}
+
+				// 가변데이터 보내기 					
+				{
+					retval = send(g_vecsocket[0], (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
+
+				}
+				if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
+				{
+					retval = send(g_vecsocket[1], buf, BUFSIZE, 0);
+					retval = send(g_vecsocket[1], (char*)&g_monster_packet, sizeof(MONSTERPACKET), 0);
+				}
+				if (retval == SOCKET_ERROR) {
+					err_display("send()");
+					break;
 				}
 			}
 			LeaveCriticalSection(&cs);
 			test_old_time = GetTickCount();
 		}
 	}
+
 	closesocket(g_vecsocket[0]);
-	if(g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
+	if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
 		closesocket(g_vecsocket[1]);
-	return 0;
-}
 
-int main()
-{	
-	// 임계 영역 초기화
-	InitializeCriticalSection(&cs);
-	
-	// 공간 2개 예약.
-	g_vecplayer.reserve(MAX_USER);
-
-	int retval;
-
-	HANDLE hThread[3];
-
-	// 몬스터 좌표 초기화
-	InitializeMonsterInfo();
-	// 윈속 초기화.
-	InitializeNetwork();
-
-	// socket()
-	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (listen_sock == INVALID_SOCKET)
-		err_quit("socket()");
-
-	// 주소 구조체 생성
-	SOCKADDR_IN serveraddr;
-	ZeroMemory(&serveraddr, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serveraddr.sin_port = htons(SERVERPORT);
-
-	// bind()
-	retval = bind(listen_sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR)
-		err_quit("bind()");
-
-	// listen()
-	retval = listen(listen_sock, SOMAXCONN);
-	if (retval == SOCKET_ERROR)
-		err_quit("listen()");
-
-	// 데이터 통신에 사용할 변수
-	SOCKET client_sock;
-	SOCKADDR_IN clientaddr;
-	int addrlen;
-
-	int test_num{};
-	while (true) {
-		// accept()
-		addrlen = sizeof(clientaddr);
-		client_sock = accept(listen_sock, (SOCKADDR *)&clientaddr, &addrlen);
-		if (client_sock == INVALID_SOCKET) {
-			err_display("accept()");
-			break;
-		}
-
-		// 접속한 클라이언트 socket을 배열에 담는다. (1201)
-		g_vecsocket.push_back(client_sock);
-		cout << "연결!:" << g_vecsocket.size() << endl;
-		// 접속한 클라이언트 정보 출력
-		cout << "[클라이언트 접속] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
-			"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
-
-		// 클라이언트 스레드 생성
-		hThread[0] = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
-		 if (hThread[0] == NULL)	
-			 closesocket(client_sock);
-		else					
-			 CloseHandle(hThread[0]);
-		 
-		 //계산 스레드 생성
-		 if (g_vecsocket.size() < 2)
-		 {
-			 cout << "스레드 생성 test" << endl;
-			 hThread[1] = CreateThread(NULL, 0, CalculateThread, NULL, 0, NULL);
-			 if (hThread[1] == NULL)
-				 closesocket(client_sock);
-			 else
-				 CloseHandle(hThread[1]);
-
-			// //몬스터 스레드 생성
-
-			 hThread[2] = CreateThread(NULL, 0, MonsterThread, NULL, 0, NULL);
-			 if (hThread[2] == NULL)
-			 {
-				 closesocket(client_sock);
-			 }
-			 else
-				 CloseHandle(hThread[2]);
-		 }
-
-	}
-	// 두 개의 스레드 종료 대기
-	WaitForMultipleObjects(1, hThread, TRUE, INFINITE);
-
-	// 임계 영역 삭제
-	DeleteCriticalSection(&cs);
-
-	// closesocket()
-	closesocket(listen_sock);
-
-
-	EndNetwork();
+	if (!isEnd)
+		cout << "[클라이언트 강제 종료: 몬스터 스레드 강제 종료]" << endl;
 
 	return 0;
 }
 
-void InitializeNetwork()
+void InitializeMonsterInfo()
 {
-	// 윈속 초기화.
-	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		err_quit("WSAStartup()");
-}
+	int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
+	int greenposY = HENESISCY - 460.f;
+	OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
+	int greenPtr[] = { 1,1,3,1,1,3 };
 
-void EndNetwork()
-{
-	// 윈속 종료
-	WSACleanup();
-}
+	srand(time(NULL));
 
-int recvn(SOCKET s, char *buf, int len, int flags)
-{
-	int received;
-	char *ptr = buf;
-	int left = len;
+	// 초록보섯 초기화
+	for (int i = 0; i < MAX_GREEN; ++i)
+	{
+		MONSTERINFO monsterinfo{};
+		monsterinfo.id = i;
+		monsterinfo.hp = 100;
+		monsterinfo.money = rand() % 1000 + 1;	// 랜덤한 돈 부여
+		monsterinfo.pt.x = greenposX[i];
+		monsterinfo.pt.y = greenposY;
+		monsterinfo.dir = greenDir[i];
+		monsterinfo.pattern = greenPtr[i];
+		monsterinfo.state = MONSTER_WALK;
 
-	while (left > 0) {
-		received = recv(s, ptr, left, flags);
-
-		if (received == SOCKET_ERROR)
-			return SOCKET_ERROR;
-
-		else if (received == 0)
-			break;
-
-		left -= received;
-		ptr += received;
+		g_monster_packet.green[i] = monsterinfo;
 	}
-	return len - left;
 }
 
 void GreenMushRoom_MoveInPattern()
@@ -852,63 +739,141 @@ void GreenMushRoom_MoveInPattern()
 			case MONSTER_STAND:
 				break;
 			}
-
 		}
 	}
 }
 
-void InitializeMonsterInfo()
+int main()
 {
-	// 초록보섯 초기화
-	for (int i = 0; i < MAX_GREEN; ++i)
-	{
-		MONSTERINFO monsterinfo{};
-		monsterinfo.id = i;
-		monsterinfo.hp = 100;
-		monsterinfo.money = 10;
-		monsterinfo.pt.x = greenposX[i];
-		monsterinfo.pt.y = greenposY;
-		monsterinfo.dir = greenDir[i];
-		monsterinfo.pattern = greenPtr[i];
-		monsterinfo.state = MONSTER_WALK;
+	// 임계 영역 초기화
+	InitializeCriticalSection(&cs);
 
-		g_monster_packet.green[i] = monsterinfo;
+	// 윈속 초기화
+	InitializeNetwork();
+
+	// 공간 2개 예약.
+	g_vecplayer.reserve(MAX_USER);
+	// 몬스터 좌표 초기화
+	InitializeMonsterInfo();
+
+	int retval;
+
+	// socket()
+	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_sock == INVALID_SOCKET)
+		err_quit("socket()");
+
+	// 주소 구조체 생성
+	SOCKADDR_IN serveraddr;
+	ZeroMemory(&serveraddr, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serveraddr.sin_port = htons(SERVERPORT);
+
+	// bind()
+	retval = bind(listen_sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR)
+		err_quit("bind()");
+
+	// listen()
+	retval = listen(listen_sock, SOMAXCONN);
+	if (retval == SOCKET_ERROR)
+		err_quit("listen()");
+
+	// 데이터 통신에 사용할 변수
+	HANDLE hThread[3];
+	SOCKET client_sock;
+	SOCKADDR_IN clientaddr;
+	int addrlen;
+
+	int test_num{};
+	while (true) {
+		// accept()
+		addrlen = sizeof(clientaddr);
+		client_sock = accept(listen_sock, (SOCKADDR *)&clientaddr, &addrlen);
+		if (client_sock == INVALID_SOCKET) {
+			err_display("accept()");
+			break;
+		}
+
+		// 접속한 클라이언트 socket을 배열에 담는다. (1201)
+		g_vecsocket.push_back(client_sock);
+		cout << "연결!:" << g_vecsocket.size() << endl;
+		// 접속한 클라이언트 정보 출력
+		cout << "[클라이언트 접속] IP 주소 (" << inet_ntoa(clientaddr.sin_addr) <<
+			"), 포트 번호 (" << ntohs(clientaddr.sin_port) << ")" << endl;
+
+		// 클라이언트 스레드 생성
+		hThread[0] = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
+		if (hThread[0] == NULL)
+			closesocket(client_sock);
+		else
+			CloseHandle(hThread[0]);
+
+		//계산 스레드 생성
+		if (g_vecsocket.size() < 2)
+		{
+			cout << "스레드 생성 test" << endl;
+			hThread[1] = CreateThread(NULL, 0, CalculateThread, NULL, 0, NULL);
+			if (hThread[1] == NULL)
+				closesocket(client_sock);
+			else
+				CloseHandle(hThread[1]);
+
+			// //몬스터 스레드 생성
+			hThread[2] = CreateThread(NULL, 0, MonsterThread, NULL, 0, NULL);
+			if (hThread[2] == NULL)
+				closesocket(client_sock);
+			else
+				CloseHandle(hThread[2]);
+		}
+
 	}
+	// 두 개의 스레드 종료 대기
+	WaitForMultipleObjects(1, hThread, TRUE, INFINITE);
 
+	// 임계 영역 삭제
+	DeleteCriticalSection(&cs);
+
+	// closesocket()
+	closesocket(listen_sock);
+
+	EndNetwork();
+
+	return 0;
 }
 
-//DWORD WINAPI SendThread(LPVOID arg)
-//{
-//	return 0;
-//
-//	//SOCKET client_sock = (SOCKET)arg;
-//	//PACKETINFO packetinfo;
-//	//char buf[BUFSIZE];
-//	//int retval{ 0 };
-//
-//	//while (true) {
-//	//	for (int i = 0; i < g_vecplayer.size(); ++i) {
-//	//		/// 고정 길이 데이터 전송,,
-//	//		ZeroMemory(&packetinfo, sizeof(packetinfo)); /// packetinfo 재사용.
-//	//		packetinfo.type = SC_PACKET_PLAYERINFO;
-//	//		packetinfo.size = sizeof(g_vecplayer[i]);
-//	//		packetinfo.id = i;
-//	//		ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-//	//		memcpy(buf, &packetinfo, sizeof(packetinfo));
-//	//		retval == send(client_sock, buf, BUFSIZE, 0);
-//	//		cout << "고정 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
-//	//		if (retval == SOCKET_ERROR) {
-//	//			err_display("send() - SC_PACKET_PLAYERINFO");
-//	//		}
-//
-//	//		/// 가변 길이 데이터 전송,,
-//	//		ZeroMemory(buf, sizeof(buf)); /// 버퍼 재사용.
-//	//		memcpy(buf, &(g_vecplayer[i]), sizeof(g_vecplayer[i]));
-//	//		retval == send(client_sock, buf, BUFSIZE, 0);
-//	//		cout << "가변 길이 전송 - SC_PACKET_PLAYERINFO - " << i << "번째 클라이언트" << endl;
-//	//		if (retval == SOCKET_ERROR) {
-//	//			err_display("send() - SC_PACKET_PLAYERINFO");
-//	//		}
-//	//	}
-//	//}
-//}
+void InitializeNetwork()
+{
+	// 윈속 초기화.
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		err_quit("WSAStartup()");
+}
+
+void EndNetwork()
+{
+	// 윈속 종료
+	WSACleanup();
+}
+
+int recvn(SOCKET s, char *buf, int len, int flags)
+{
+	int received;
+	char *ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+
+		else if (received == 0)
+			break;
+
+		left -= received;
+		ptr += received;
+	}
+	return len - left;
+}

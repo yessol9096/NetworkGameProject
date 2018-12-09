@@ -15,19 +15,14 @@ void CGreen::Initialize( void )
 {
 	m_tInfo.size.cx = 60.f;
 	m_tInfo.size.cy = 60.f;
-
 	m_fSpeed = 4.f;
-	//
+
 	m_tState.iAtt = 50;
 	m_tState.iHp  = 300;
 	m_tState.iLevel = 15;
 	m_tState.iExp = 100;
 	m_tState.iMaxExp = 100;
 	m_tState.iMaxHp = 300;
-	m_tState.iGold = 50;
-
-	m_fKnockBackMax = 0.2f;
-	//
 
 	m_eCurState = MONSTER_WALK;
 	m_ePreState = m_eCurState;
@@ -35,16 +30,6 @@ void CGreen::Initialize( void )
 	//
 	m_dwCreateCurTime = GetTickCount();
 	m_dwCreateOldTime = m_dwCreateCurTime;
-
-	// 데미지 상태 지속시간
-	m_dwDamageCurTime = GetTickCount();
-	m_dwDamageOldTime = m_dwDamageCurTime;
-	m_dwDamageTime = 1200;
-
-	// 죽음 상태 지속 시간
-	m_dwDeadCurTime = GetTickCount();
-	m_dwDeadOldTime = m_dwDeadCurTime;
-	m_dwDeadTime = 4000;
 
 	// 이미지
 	m_dwFrameOldTime = GetTickCount();
@@ -65,90 +50,44 @@ void CGreen::Initialize( void )
 
 	UpdateCollRect();
 }
-DWORD m_ServerOldTime = GetTickCount();
+
 int CGreen::Update(void)
 {
-	if (1 == m_iPattern)
+	if (m_tState.iHp <= 0)
 	{
-		m_tState.iGold = 50;
-	}
-	else if (2 == m_iPattern)
-	{
-		m_tState.iGold = 20;
-	}
-	if (true == m_bIsDead)
-	{
-		g_iTakedMob1++;
-		g_iExp += m_tState.iExp;
-		// 		CObjMgr::GetInstance()->AddObject(
-		//  			CAbstractFactory<CGold>::CreateGold(m_tInfo.pt.x, m_tInfo.pt.y, GOLD_0), OBJ_ITEM);	
-		CSoundMgr::GetInstance()->PlaySound(L"MonsterDead.MP3", CSoundMgr::CHANNEL_EFFECT);
+		m_bIsDead = true;
+		m_eCurState = MONSTER_DEAD;
 
-		if (m_iPattern != 3)
+		if (true == m_bIsDead)
+		{
+			g_iTakedMob1++;
+			g_iExp += m_tState.iExp;
+
 			CObjMgr::GetInstance()->AddObject(CreateGold<CGold>(), OBJ_ITEM);
-		return 1;
+			CSoundMgr::GetInstance()->PlaySound(L"MonsterDead.MP3", CSoundMgr::CHANNEL_EFFECT);
+
+			return 1;
+		}
 	}
 
+	UpdateCollRect();
+	FrameMove();
+
+	CObj::UpdateRect();
+
+	return 0;
+}
+
+void CGreen::Render( HDC hDc )
+{
 	// 방향 설정
 	if (m_eDir == DIR_LEFT)
 		m_pImgName = L"GreenMush_LEFT";
 	else if (m_eDir == DIR_RIGHT)
 		m_pImgName = L"GreenMush_RIGHT";
 
-	// 데미지 cur time 설정
-	m_dwDamageCurTime = GetTickCount();
-
-
-	// 패턴에 따른 움직임
-	//MoveInPattern();
-	//KnockBack();
-	UpdateCollRect();
-	//LineCollision();
-	//FrameMove();
-
-	if (m_tState.iHp <= 0)
-	{
-		//m_bIsDead = true;
-		m_eCurState = MONSTER_DEAD;
-	}
-
-	// 	if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
-	// 	{
-	// 		// 죽었을 때는 스프라이트 한번 돌리고 죽을것!
-	// 		if(m_bIsDead)
-	// 		{
-	// 			return 1;
-	// 		}
-	// 	}
-
-	// 	if(MONSTER_DEAD == m_eCurState)
-	// 	{
-	// 		m_dwDeadCurTime = GetTickCount();
-	// 		if(m_dwDeadOldTime + m_dwDeadTime < m_dwDamageCurTime)
-	// 		{
-	// 			//m_dwDeadOldTime = m_dwDeadCurTime;
-	// 			return 1;
-	// 		}
-	// 	}
-
-	//m_ServerCurTime = GetTickCount();
-
-	//if (m_ServerCurTime - m_ServerOldTime > 50)
-	//{
-	//	// SendMovePacket();
-	//	m_ServerOldTime = GetTickCount();
-	//}
-	CObj::UpdateRect();
-	
-	return 0;
-}
-
-void CGreen::Render( HDC hDc )
-{
 	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-
 	if(NULL == pBit)  return;
-
 
 	TransparentBlt(hDc,
 		static_cast<int>(m_tRect.left + g_fScrollX),
@@ -171,8 +110,6 @@ void CGreen::Render( HDC hDc )
 			static_cast<int>(m_tCollRect.right + g_fScrollX),
 			static_cast<int>(m_tCollRect.bottom + g_fScrollY));
 	}
-
-	
 }
 
 void CGreen::FrameMove()
@@ -220,159 +157,10 @@ void CGreen::FrameMove()
 	{
 		m_tFrame.iFrameStart = 0;
 	}
-
 }
-
-void CGreen::MoveInPattern()
-{
-	m_dwCreateCurTime = GetTickCount();
-
-	if(DIR_LEFT == m_eDir)
-	{
-		switch(m_eCurState)
-		{
-		case MONSTER_WALK:
-			{
-				m_tInfo.pt.x -= m_fSpeed;
-
-				if(m_tInfo.pt.x < 465.f)
-					m_eDir = DIR_RIGHT;
-			}
-			break;
-		case MONSTER_STAND:
-			break;
-		}
-		
-	}
-	else
-	{
-		switch(m_eCurState)
-		{
-		case MONSTER_WALK:
-			{
-				m_tInfo.pt.x += m_fSpeed;
-				if(m_tInfo.pt.x > 1390.f)
-					m_eDir = DIR_LEFT;
-			}
-			break;
-		case MONSTER_STAND:
-			break;
-		}
-
-	}
-
-	switch(m_iPattern)
-	{
-	case 1:
-		{
-			if(MONSTER_DAMAGED == m_eCurState)
-			{
-				if(m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
-				{
-
-					m_eCurState = MONSTER_WALK;
-					m_dwDamageOldTime = m_dwDamageCurTime;
-				}
-				return;
-			}
-
-			if(MONSTER_DEAD == m_eCurState)
-			{
-				return;
-			}
-
-			else
-			{
-				if(m_dwCreateOldTime + 3000 < m_dwCreateCurTime)
-				{
-					m_eCurState = MONSTER_STAND;
-				}
-				if(m_dwCreateOldTime + 6000 < m_dwCreateCurTime)
-				{
-					m_eCurState = MONSTER_WALK;
-					m_dwCreateOldTime = m_dwCreateCurTime;
-					m_bIsFloorBoxColl = false;
-				}
-
-			}
-			
-		}
-		break;
-	case 2:
-		{
-			if(MONSTER_DAMAGED == m_eCurState)
-			{
-				if(m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
-				{
-					m_eCurState = MONSTER_WALK;
-					m_dwDamageOldTime = m_dwDamageCurTime;
-				}
-				return;
-			}
-			if(MONSTER_DEAD == m_eCurState)
-			{
-				return;
-			}
-
-			else
-			{
-				if(m_dwCreateOldTime + 7000 < m_dwCreateCurTime)
-				{
-					m_eCurState = MONSTER_STAND;
-				}
-				if(m_dwCreateOldTime + 11000 < m_dwCreateCurTime)
-				{
-					m_eCurState = MONSTER_WALK;
-					m_dwCreateOldTime = m_dwCreateCurTime;
-					m_bIsFloorBoxColl = false;
-				}
-
-			}
-			
-		}
-		break;
-	case 3:
-		{
-			if(MONSTER_DAMAGED == m_eCurState)
-			{
-				if(m_dwDamageOldTime + m_dwDamageTime < m_dwDamageCurTime)
-				{
-					m_dwDamageOldTime = m_dwDamageCurTime;
-					m_eCurState = MONSTER_WALK;
-				}
-				return;
-			}
-			if(MONSTER_DEAD == m_eCurState)
-			{
-				return;
-			}
-
-
-			else
-			{
-				if(m_dwCreateOldTime + 10000 < m_dwCreateCurTime)
-				{
-					m_eCurState = MONSTER_STAND;
-				}
-				if(m_dwCreateOldTime + 15000 < m_dwCreateCurTime)
-				{
-					m_eCurState = MONSTER_WALK;
-					m_dwCreateOldTime = m_dwCreateCurTime;
-					m_bIsFloorBoxColl = false;
-				}
-
-			}
-			
-		}
-		break;
-	}
-
-}
-
 
 void CGreen::Release( void )
 {
-
 }
 
 void CGreen::LineCollision()
@@ -382,71 +170,4 @@ void CGreen::LineCollision()
 void CGreen::UpdateCollRect()
 {
 	m_tCollRect = m_tRect;
-
-
-}
-
-void CGreen::KnockBack()
-{
-	if(MONSTER_DAMAGED == m_eCurState)
-	{
-		if(DIR_RIGHT == this->GetDir())
-			m_tInfo.pt.x -= m_fKnockBack * 0.5f;
-		else
-			m_tInfo.pt.x += m_fKnockBack * 0.5f;
-
-		if(m_fKnockBack > m_fKnockBackMax)
-		{
-			m_fKnockBack = 0;
-			m_eCurState = MONSTER_WALK;
-		}
-
-	}
-	
-}
-
-
-void CGreen::SendMovePacket()
-{
-	// 1201.
-	// Server에게 내 Monsterinfo를 send한다. (CS_PACKET_GRRENMUSH)
-
-		cout << "Server에게 Monsterinfo를 send" << endl;
-
-		// ----------------------Progress-------------------------
-		// 1. 
-		for (int i = 0; i < MAX_GREEN; ++i)
-		{
-			// 2. 보낼 공간 playerinfo를 만든다.
-			MONSTERINFO monsterinfo{};
-			// 3. monsterinfo에 moster정보를 담는다.
-			{
-				
-			}
-			// 4. monsterinfo를 서버에 send 한다.
-			{
-				char buf[BUFSIZE] = {};
-				ZeroMemory(buf, sizeof(buf));
-				// 고정 길이
-				PACKETINFO packetinfo;
-				packetinfo.id = i;
-				packetinfo.size = sizeof(MONSTERINFO);
-				packetinfo.type = CS_PACKET_GRRENMUSH;
-				memcpy(buf, &packetinfo, sizeof(packetinfo));
-				g_retval = send(g_sock, buf, BUFSIZE, 0);
-				if (g_retval == SOCKET_ERROR) {
-					MessageBox(g_hWnd, L"send()", L"send - 고정 - CS_PACKET_GRRENMUSH", MB_OK);
-					g_bIsProgramEnd = true;	// 프로그램 종료
-				}
-
-				// 가변 길이
-				ZeroMemory(buf, sizeof(buf));
-				memcpy(buf, &monsterinfo, sizeof(monsterinfo));
-				g_retval = send(g_sock, buf, BUFSIZE, 0);
-				if (g_retval == SOCKET_ERROR) {
-					MessageBox(g_hWnd, L"send()", L"send - 가변 - CS_PACKET_GRRENMUSH", MB_OK);
-					g_bIsProgramEnd = true;	// 프로그램 종료
-				}
-			}
-		}
 }

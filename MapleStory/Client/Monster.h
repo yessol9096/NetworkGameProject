@@ -10,18 +10,12 @@ public:
 	virtual ~CMonster(void);
 
 public:
-	void SetPattern(int iPattern) { m_iPattern = iPattern; }
+	virtual void	UpdateCollRect() = 0;
+
+	void SetMoney(int iMoney) { m_tState.iGold = iMoney; }
 
 	void SetIsFloorBoxColl(bool bFloorBoxColl) { m_bIsFloorBoxColl = bFloorBoxColl; }
 	bool GetIsFloorBoxColl() { return m_bIsFloorBoxColl; }
-
-	virtual void	MoveInPattern() = 0;
-	virtual void	UpdateCollRect() = 0;
-	virtual void	KnockBack() = 0;
-
-	void SetKnockBack(float fKnockBack) { m_fKnockBack += fKnockBack; }
-
-	float GetKnockBackMax() { return m_fKnockBackMax; }
 
 public:
 	MONSTER_STATE GetMonsterState() { return m_eCurState; }
@@ -45,13 +39,9 @@ protected:
 	MONSTER_STATE	m_ePreState;
 
 	bool		m_bCombatible;
-	int			m_iPattern;
 
 	DWORD		m_dwCreateCurTime;
 	DWORD		m_dwCreateOldTime;
 
 	bool		m_bIsFloorBoxColl;
-
-	float		m_fKnockBack;
-	float		m_fKnockBackMax;
 };

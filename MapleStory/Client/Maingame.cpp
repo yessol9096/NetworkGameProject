@@ -5,7 +5,6 @@
 #include "Field.h"
 #include "Stage1.h"
 
-
 // 서버와 통신
 SOCKET g_sock;
 int g_retval;
@@ -26,8 +25,6 @@ int g_myid = -1;	// 내 플레이어 정보 key(인덱스 값)
 
 //몬스터 정보 받기 
 vector<MONSTERINFO> g_vecgreen(MAX_GREEN);
-bool bMonster_check = false;
-MONSTERINFO monsterinfo{};
 
 //
 float g_fScrollX = 0.f;
@@ -250,7 +247,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 						}
 					}
 				}
-				 if (SCENE_STAGE1 == g_eScene) {
+				if (SCENE_STAGE1 == g_eScene) {
 					CScene* pScene = CSceneMgr::GetInstance()->GetScene();
 					if (pScene != nullptr) {
 						CPlayer* pOtherPlayer = dynamic_cast<CStage1*>(pScene)->GetOtherPlayer();
@@ -284,23 +281,23 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			/// 서버로부터 받아온 좌표를 직접 넘겨준다.
 			if (SCENE_FIELD == g_eScene) {
 				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
-					if (pScene != nullptr) {
-						CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
-							if (pPlayer != nullptr) {
-								pPlayer->SetInfoPt(g_vecplayer[id].pt);
-								cout << "★★ your player set Info ★★" << endl;
-							}
+				if (pScene != nullptr) {
+					CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
+					if (pPlayer != nullptr) {
+						pPlayer->SetInfoPt(g_vecplayer[id].pt);
+						cout << "★★ your player set Info ★★" << endl;
 					}
+				}
 			}
 			if (SCENE_STAGE1 == g_eScene) {
 				CScene* pScene = CSceneMgr::GetInstance()->GetScene();
-					if (pScene != nullptr) {
-						CPlayer* pPlayer = dynamic_cast<CStage1*>(pScene)->GetPlayer();
-						if (pPlayer != nullptr) {
-							pPlayer->SetInfoPt(g_vecplayer[id].pt);
-							cout << "★★ your player set Info ★★" << endl;
-						}
+				if (pScene != nullptr) {
+					CPlayer* pPlayer = dynamic_cast<CStage1*>(pScene)->GetPlayer();
+					if (pPlayer != nullptr) {
+						pPlayer->SetInfoPt(g_vecplayer[id].pt);
+						cout << "★★ your player set Info ★★" << endl;
 					}
+				}
 			}
 		}
 		break;
@@ -314,14 +311,14 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 			if (g_retval == SOCKET_ERROR)
 				MessageBoxW(g_hWnd, L"recvn() - SC_MONSTER_ID", MB_OK, MB_OK);
 			else
-			{ 
-				for(int i = 0 ; i < MAX_GREEN ; ++i)
-				g_vecgreen[i] = temp_monster.green[i];
+			{
+				for (int i = 0; i < MAX_GREEN; ++i)
+					g_vecgreen[i] = temp_monster.green[i];
 			}
-			
+
 			cout << g_vecgreen[0].pt.x << endl;
 		}
-			break;
+		break;
 		case SC_PACKET_SKILL_CREATE:
 		{
 			// 서버로부터 스킬 생성 명령을 받았다.

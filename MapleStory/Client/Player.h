@@ -67,7 +67,12 @@ public:
 	void		 SetIsLeveling(bool bLeveling) { m_bIsLeveling = bLeveling; }
 
 	void		SetDamaged(int iDamage) { m_tState.iHp -= iDamage; }
-	void		SetGold(int iGold) { m_tState.iGold += iGold; }
+	void		SetGold(int iGold) {
+		m_tState.iGold += iGold;
+
+		g_bIsSend = true;
+		g_vecplayer[g_myid].money += iGold;
+	}
 
 	void		SetHp(int iHp) 
 	{

@@ -15,15 +15,10 @@ void CGold::Initialize(void)
 	m_tInfo.size.cx = 35.f;
 	m_tInfo.size.cy = 35.f;
 
-	m_tState.iGold = m_iGold;
-
-	m_fOriginalY = m_tInfo.pt.y;
-
 	m_fSpeed = 0.f;
 
 	m_fAngle = 45.f;
 	m_fXAngle = 30.f;
-
 
 	m_fJumpAcc = 0.f;
 	m_fJumpSpeed = 20.f;
@@ -31,32 +26,7 @@ void CGold::Initialize(void)
 	m_bIsJump = true;
 	m_bIsJumpUp = true;
 
-
 	m_pImgName = L"Gold";
-	if(m_iGold >= 0 && m_iGold <= 49)
-		m_eID = GOLD_0;
-	else if(m_iGold >= 50 && m_iGold <= 99)
-		m_eID = GOLD_1;
-	else if(m_iGold >= 100 && m_iGold <= 999)
-		m_eID = GOLD_2;
-	else if(m_iGold >= 1000 && m_iGold <= 9999)
-		m_eID = GOLD_3;
-
-	switch(m_eID)
-	{
-	case GOLD_0:
-		m_tFrame.iScene = 0;
-		break;
-	case GOLD_1:
-		m_tFrame.iScene = 1;
-		break;
-	case GOLD_2:
-		m_tFrame.iScene = 2;
-		break;
-	case GOLD_3:
-		m_tFrame.iScene = 3;
-		break;
-	}
 
 	// 이미지
 	m_dwFrameOldTime = GetTickCount();
@@ -72,40 +42,14 @@ void CGold::Initialize(void)
 
 int CGold::Update(void)
 {
-	m_tState.iGold = m_iGold;
-
 	if (m_bIsDead) return 1;
-
-	if (m_iGold >= 0 && m_iGold <= 49)
-		m_eID = GOLD_0;
-	else if (m_iGold >= 50 && m_iGold <= 99)
-		m_eID = GOLD_1;
-	else if (m_iGold >= 100 && m_iGold <= 999)
-		m_eID = GOLD_2;
-	else if (m_iGold >= 1000 && m_iGold <= 9999)
-		m_eID = GOLD_3;
-
-	switch (m_eID)
-	{
-	case GOLD_0:
-		m_tFrame.iScene = 0;
-		break;
-	case GOLD_1:
-		m_tFrame.iScene = 1;
-		break;
-	case GOLD_2:
-		m_tFrame.iScene = 2;
-		break;
-	case GOLD_3:
-		m_tFrame.iScene = 3;
-		break;
-	}
 
 	CObj::UpdateRect();
 
-	Move();	// 점프	
+	Jump();
 	UpdateCollRect();	// 충돌박스 세팅	
-	FrameMove();	// 프레임 돌리기
+	FrameMove();		// 프레임 돌리기
+
 	return 0;
 }
 
@@ -139,21 +83,6 @@ void CGold::Render(HDC hDc)
 
 void CGold::FrameMove()
 {
-	switch (m_eID)
-	{
-	case GOLD_0:
-		m_tFrame.iScene = 0;
-		break;
-	case GOLD_1:
-		m_tFrame.iScene = 1;
-		break;
-	case GOLD_2:
-		m_tFrame.iScene = 2;
-		break;
-	case GOLD_3:
-		m_tFrame.iScene = 3;
-		break;
-	}
 	m_dwFrameCurTime = GetTickCount();
 
 	if (m_dwFrameOldTime + m_tFrame.dwFrameSpd < m_dwFrameCurTime)
@@ -176,7 +105,7 @@ void CGold::UpdateCollRect()
 	m_tCollRect = m_tRect;
 }
 
-void CGold::Move()
+void CGold::Jump()
 {
 	if (m_bIsJump)
 	{
@@ -199,5 +128,36 @@ void CGold::Move()
 			m_fJumpAcc = 0.f;
 			m_bIsJump = 0.f;
 		}
+	}
+}
+
+void CGold::SetGold(int iGold)
+{
+	m_iGold = iGold;
+	m_tState.iGold = iGold;
+
+	if (m_iGold > 0 && m_iGold <= 49)
+		m_eID = GOLD_0;
+	else if (m_iGold >= 50 && m_iGold <= 99)
+		m_eID = GOLD_1;
+	else if (m_iGold >= 100 && m_iGold <= 499)
+		m_eID = GOLD_2;
+	else if (m_iGold >= 500 && m_iGold <= 1000)
+		m_eID = GOLD_3;
+
+	switch (m_eID)
+	{
+	case GOLD_0:
+		m_tFrame.iScene = 0;
+		break;
+	case GOLD_1:
+		m_tFrame.iScene = 1;
+		break;
+	case GOLD_2:
+		m_tFrame.iScene = 2;
+		break;
+	case GOLD_3:
+		m_tFrame.iScene = 3;
+		break;
 	}
 }

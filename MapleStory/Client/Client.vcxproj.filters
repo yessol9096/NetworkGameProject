@@ -46,9 +46,6 @@
     <Filter Include="01. Object\02. Monster\00. Green">
       <UniqueIdentifier>{b345cf97-b3c0-40ea-82bf-9ac3a22d02e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Object\02. Monster\01. MushCouple">
-      <UniqueIdentifier>{34501254-3496-488d-bf8b-e9f049748137}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Object\04. Skills\00. Shoot">
       <UniqueIdentifier>{51097f39-9fb2-45d6-ab99-ad5f116a9567}</UniqueIdentifier>
     </Filter>
@@ -207,9 +204,6 @@
     <ClInclude Include="Green.h">
       <Filter>01. Object\02. Monster\00. Green</Filter>
     </ClInclude>
-    <ClInclude Include="MushCouple.h">
-      <Filter>01. Object\02. Monster\01. MushCouple</Filter>
-    </ClInclude>
     <ClInclude Include="Shoot.h">
       <Filter>01. Object\04. Skills\00. Shoot</Filter>
     </ClInclude>
@@ -367,9 +361,6 @@
     </ClCompile>
     <ClCompile Include="Green.cpp">
       <Filter>01. Object\02. Monster\00. Green</Filter>
-    </ClCompile>
-    <ClCompile Include="MushCouple.cpp">
-      <Filter>01. Object\02. Monster\01. MushCouple</Filter>
     </ClCompile>
     <ClCompile Include="Shoot.cpp">
       <Filter>01. Object\04. Skills\00. Shoot</Filter>

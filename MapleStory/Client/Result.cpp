@@ -99,8 +99,8 @@ void CResult::Render(HDC hDc)
 			TextOut(hDc, 260, y, name, strlen(temp[i].nickname));
 
 			// 직업
-			if (temp[i].job == JOB_CAPTIN)	TextOut(hDc, 375, y, L"Captain", 7);
-			else							TextOut(hDc, 375, y, L"Striker", 7);
+			if (temp[i].job == JOB_CAPTIN)	TextOut(hDc, 373, y, L"Captain", 7);
+			else							TextOut(hDc, 373, y, L"Striker", 7);
 
 			// 메소
 			char bur[512];
@@ -109,7 +109,7 @@ void CResult::Render(HDC hDc)
 			wchar_t money[512];
 			mbstowcs(money, bur, strlen(bur) + 1);
 
-			TextOut(hDc, 490, y, money, strlen(bur));
+			TextOut(hDc, 475, y, money, strlen(bur));
 
 			// 킬 관여율
 			char bur2[512];

@@ -14,10 +14,10 @@ public:
 	void	Render(HDC hDc);
 	void	Release(void);
 	void	FrameMove();
-	void	Move();
-	void	UpdateCollRect();	
+	void	Jump();
+	void	UpdateCollRect();
 
-	void SetGold(int iGold) { m_iGold = iGold; }
+	void SetGold(int iGold);
 	void SetIsXReverse(bool bIsXReverse) { m_bIsXReverse = bIsXReverse; }
 	void SetOriginalY(float fOriginalY) { m_fOriginalY = fOriginalY; }
 

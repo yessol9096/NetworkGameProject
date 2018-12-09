@@ -9,7 +9,6 @@
 #include "FifthFloor.h"
 #include "FourthFloor.h"
 #include "Green.h"
-#include "MushCouple.h"
 #include "Shoot.h"
 #include "UI.h"
 #include "Result.h"
@@ -90,41 +89,14 @@ void CStage1::Initialize()
 		CAbstractFactory<CResult>::CreateObj(), OBJ_UI);
 
 	///////////////////////////////// 몬스터
-	//RecvMonsterInitalInfo();	// 서버로 부터 몬스터 초기 좌표값 받기
-
 	// 초록버섯  (2층)
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{
 		CObjMgr::GetInstance()->AddObject(
-			CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[i].pt.x, g_vecgreen[i].pt.y, g_vecgreen[i].dir, g_vecgreen[i].pattern), OBJ_MONSTER);
-		cout << "그림그리는데" << g_vecgreen[i].pt.x << endl;
+			CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[i].pt.x, g_vecgreen[i].pt.y, g_vecgreen[i].dir, 
+				g_vecgreen[i].pattern, g_vecgreen[i].money), OBJ_MONSTER);
+		//cout << "그림그리는데" << g_vecgreen[i].pt.x << endl;
 	}
-	//// 커플버섯  (3층)
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 700.f, DIR_RIGHT, 2), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.7f, HENESISCY - 700.f, DIR_RIGHT, 3), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
-
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 700.f, DIR_LEFT, 3), OBJ_MONSTER);
-
-	//// (4층)
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CMushCouple>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 2), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.8f, HENESISCY - 935.f, DIR_LEFT, 1), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.5f, HENESISCY - 935.f, DIR_RIGHT, 1), OBJ_MONSTER);
-	//CObjMgr::GetInstance()->AddObject(
-	//	CAbstractFactory<CGreen>::CreateMonster(HENESISCX * 0.4f, HENESISCY - 935.f, DIR_RIGHT, 3), OBJ_MONSTER);
 }
 
 int CStage1::Update()
@@ -138,7 +110,7 @@ int CStage1::Update()
 	CObjMgr::GetInstance()->UpdateObj();
 	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 
-	//// 몬스터 좌표 
+	// 몬스터 좌표 
 	for (int i = 0; i < OBJ_END; ++i)
 	{
 		OBJITER iter_begin = MonsterList.begin();
@@ -170,12 +142,4 @@ void CStage1::Render(HDC hDc)
 void CStage1::Release()
 {
 	CObjMgr::GetInstance()->ReleaseAll();
-}
-
-void CStage1::RecvMonsterInitalInfo()
-{
-	/*g_retval = recv(g_sock, (char*)pGreenMushroom_server, sizeof(MonsterInfo), 0);
-	pGreen.pt.x = pGreenMushroom_server->pt.x;
-	pGreen.pt.y = pGreenMushroom_server->pt.y;
-	cout << pGreen.pt.x << endl;*/
 }

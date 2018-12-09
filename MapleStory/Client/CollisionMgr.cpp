@@ -11,7 +11,6 @@ static unsigned int state[16];
 static unsigned int index = 0;
 static bool			m_bIsFontCreated = false;
 
-
 CollisionMgr::CollisionMgr(void)
 {
 }
@@ -20,48 +19,13 @@ CollisionMgr::~CollisionMgr(void)
 {
 }
 
-void CollisionMgr::CollisionSphere(OBJLIST& DstList, OBJLIST& SrcList)
-{
-
-	OBJITER dst_begin = DstList.begin();
-	OBJITER dst_end = DstList.end();
-
-	for(; dst_begin != dst_end; ++dst_begin)
-	{
-		OBJITER src_begin = SrcList.begin();
-		OBJITER src_end = SrcList.end();
-
-		//// 이미 죽었다면 충돌 연산은 건너뛴다.
-		//if((*dst_begin)->GetDead())
-		//	continue;
-
-		for(; src_begin != src_end; ++src_begin )
-		{
-			//// 이미 죽었다면 충돌 연산은 건너뛴다.
-			//if((*src_begin)->GetDead())
-			//	continue;
-
-			// 각 리스트를 순회하면서 원소끼리 충돌 검출.
-			if(CheckSphere((*dst_begin), (*src_begin)))
-			{
-				(*dst_begin)->IsDead();
-				(*src_begin)->IsDead();
-			}	
-		}
-	}
-}
-
-// 사각형 충돌
 void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_ID eID)
 {
-
 	// 각 리스트를 순회한다.
 	OBJITER dst_begin = DstList.begin();
 	OBJITER dst_end = DstList.end();
 
 	RECT rcTemp = {};
-
-
 
 	if (true == g_bIsSceneChange)
 		return;
@@ -71,7 +35,6 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 		OBJITER src_begin = SrcList.begin();
 		OBJITER src_end = SrcList.end();
 
-
 		if ((*dst_begin)->GetDeadState())
 			continue;
 
@@ -79,7 +42,6 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 		{
 			if ((*src_begin)->GetDeadState())
 				continue;
-
 
 			/////////////////////////////////////////////////////////////////////////////////////
 			// 1) 오브젝트 둘 다 히트박스로 충돌하는 경우
@@ -95,20 +57,15 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						// 몬스터 방향을 기준으로 플레이어를 밀어낸다
 						if (DIR_RIGHT == (*src_begin)->GetDir())
 						{
-							//							(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x + (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
-							/*dynamic_cast<CPlayer*>(*dst_begin)->SetMinusAngle(3.f);*/
 						}
 						else
 						{
-							//	(*dst_begin)->SetPos((*dst_begin)->GetInfo().pt.x - (*dst_begin)->GetInfo().size.cx * 0.3f, (*dst_begin)->GetInfo().pt.y);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetIsJump(true);
 							dynamic_cast<CPlayer*>(*dst_begin)->SetAngle(45.f);
-							/*dynamic_cast<CPlayer*>(*dst_begin)->SetPlusAngle(3.f);*/
 						}
 						dynamic_cast<CPlayer*>(*dst_begin)->SetPlayerState(PLAYER_DAMAGED);
-						/*dynamic_cast<CPlayer*>(*dst_begin)->SetDamage((*src_begin)->GetState().iAtt);*/
 
 
 						///////////// ** 데미지 폰트
@@ -127,19 +84,16 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 
 								dynamic_cast<CPlayer*>(*dst_begin)->SetDamage(iDamage);
 							}
-
 						}
 
 						// 데미지 폰트 띄우고 나서 무적 상태 세팅
 						dynamic_cast<CPlayer*>(*dst_begin)->SetIsInvincible(true);
-
 					}
 					break;
 
 					// ** 0717
 				case COL_MONSTER_ARROW:
-					if (/*MONSTER_DAMAGED != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState() &&*/
-						MONSTER_DEAD != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState() &&
+					if (MONSTER_DEAD != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState() &&
 						(*src_begin)->GetCollMode())
 					{
 						dynamic_cast<CMonster*>(*dst_begin)->SetMonsterState(MONSTER_DAMAGED);
@@ -148,18 +102,11 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						(*src_begin)->SetCollMode(false); // 한번 부딪혔으면 그만 부딪히게 충돌 off로 꺼줌
 
 						if (DIR_RIGHT == (*src_begin)->GetDir())
-						{
 							(*dst_begin)->SetDir(DIR_LEFT);
-						}
 						else
-						{
 							(*dst_begin)->SetDir(DIR_RIGHT);
-						}
 
 						(*src_begin)->SetDeadState(true);
-
-
-
 
 						///////////// ** 데미지 폰트
 						{
@@ -194,8 +141,8 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 								OBJ_MYFONT);
 						}
 					}
-
 					break;
+
 				case COL_MONSTER_SWING:
 					if (MONSTER_DAMAGED != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState()
 						&& MONSTER_DEAD != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState())
@@ -204,24 +151,17 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						dynamic_cast<CMonster*>(*dst_begin)->SetDamage((*src_begin)->GetState().iAtt);
 
 						if (DIR_RIGHT == (*src_begin)->GetDir())
-						{
 							(*dst_begin)->SetDir(DIR_LEFT);
-							// 							dynamic_cast<CMonster*>(*dst_begin)->
-							//								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
-						}
 						else
-						{
 							(*dst_begin)->SetDir(DIR_RIGHT);
-							// 							dynamic_cast<CMonster*>(*dst_begin)->
-							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
-						}
+
 						CSoundMgr::GetInstance()->PlaySound(L"MonsterDamaged.MP3", CSoundMgr::CHANNEL_MONSTER);
+
 						///////////// ** 데미지 폰트
 						{
 							int iCipher = CalculatingCipher((*src_begin)->GetState().iAtt);
 							int iDamage = ReturningRandomNumber((*src_begin)->GetState().iAtt);
 							FONT_TYPE eFontType = ReturningFontType(iCipher);
-
 
 							CObjMgr::GetInstance()->AddObject(CreateFont<CFont>((*dst_begin),
 								iDamage,
@@ -230,6 +170,7 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						}
 					}
 					break;
+
 				case COL_MONSTER_EFFECT:
 					if (MONSTER_DAMAGED != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState()
 						&& MONSTER_DEAD != dynamic_cast<CMonster*>(*dst_begin)->GetMonsterState())
@@ -238,24 +179,16 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 						dynamic_cast<CMonster*>(*dst_begin)->SetDamage((*src_begin)->GetState().iAtt);
 
 						if (DIR_RIGHT == (*src_begin)->GetDir())
-						{
 							(*dst_begin)->SetDir(DIR_LEFT);
-							// 							dynamic_cast<CMonster*>(*dst_begin)->
-							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
-						}
 						else
-						{
 							(*dst_begin)->SetDir(DIR_RIGHT);
-							// 							dynamic_cast<CMonster*>(*dst_begin)->
-							// 								SetKnockBack(dynamic_cast<CMonster*>(*dst_begin)->GetKnockBackMax());
-						}
 						CSoundMgr::GetInstance()->PlaySound(L"MonsterDamaged.MP3", CSoundMgr::CHANNEL_MONSTER);
+
 						///////////// ** 데미지 폰트
 						{
 							int iCipher = CalculatingCipher((*src_begin)->GetState().iAtt);
 							int iDamage = ReturningRandomNumber((*src_begin)->GetState().iAtt);
 							FONT_TYPE eFontType = ReturningFontType(iCipher);
-
 
 							CObjMgr::GetInstance()->AddObject(CreateFont<CFont>((*dst_begin),
 								iDamage,
@@ -414,117 +347,10 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 					}
 					break;
 				}
-				//(*dst_begin)->IsDead();
-				//(*src_begin)->IsDead();
 			}
-			// 			if(!IntersectRect(&rcTemp, &((*dst_begin)->GetCollRect()), &((*src_begin)->GetRect())))
-			// 			{
-			// 				switch(eID)
-			// 				{
-			// 				case COL_PLAYER_ROPE:
-			// 					dynamic_cast<CPlayer*>(*dst_begin)->SetIsRopeColl(false);
-			// 					return;
-			// 				}
-			// 			}
-		}
-	}}
-
-void CollisionMgr::CollisionRectEX(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_ID eID)
-{
-	// 각 리스트를 순회한다.
-	OBJITER dst_begin = DstList.begin();
-	OBJITER dst_end = DstList.end();	
-
-	int iMoveX = 0, iMoveY = 0;
-
-	for(; dst_begin != dst_end; ++dst_begin)
-	{
-		OBJITER src_begin = SrcList.begin();
-		OBJITER src_end = SrcList.end();
-
-		//if((*dst_begin)->GetDead())
-		//	continue;
-
-		for(; src_begin != src_end; ++src_begin )
-		{
-
-			//if((*src_begin)->GetDead())
-			//	continue;
-
-			if(CheckRect((*dst_begin), (*src_begin), &iMoveX, &iMoveY))
-			{
-	
-				if(iMoveX > iMoveY)
-				{
-					int fX = static_cast<int>((*src_begin)->GetInfo().pt.x);
-					int fY = static_cast<int>((*src_begin)->GetInfo().pt.y);
-
-					if(fY < (*dst_begin)->GetInfo().pt.y)
-						iMoveY *= -1;
-
-					(*src_begin)->SetPos(static_cast<float>(fX), static_cast<float>(fY) + static_cast<float>(iMoveY));
-				}
-				else
-				{
-					int fX = static_cast<int>((*src_begin)->GetInfo().pt.x);
-					int fY = static_cast<int>((*src_begin)->GetInfo().pt.y);
-
-					if(fX < (*dst_begin)->GetInfo().pt.x)
-						iMoveX *= -1;
-
-					(*src_begin)->SetPos(static_cast<float>(fX) + static_cast<float>(iMoveX), static_cast<float>(fY));
-				}
-			}	
 		}
 	}
 }
-
-bool CollisionMgr::CheckSphere(CObj* pDst, CObj* pSrc)
-{
-	// 객체 간 거리부터구한다.
-	float fWidth = float( pDst->GetInfo().pt.x - pSrc->GetInfo().pt.x );
-	float fHeight = float( pDst->GetInfo().pt.y - pSrc->GetInfo().pt.y );
-
-	// 피타고라스를 이용하여 두 점 간의 거리를 구한다.
-	float fDist = sqrtf(fWidth * fWidth + fHeight * fHeight);
-
-
-	// 반지름의 합을 구한다.
-	float fRadSum = float( pDst->GetInfo().size.cx / 2 + pSrc->GetInfo().size.cx / 2 );
-
-	if(fRadSum >= fDist)
-		return true;
-
-	return false;
-}
-
-bool CollisionMgr::CheckRect(CObj* pDst, CObj* pSrc, int* pMoveX, int* pMoveY)
-{
-	// 두 사각형의 가로 반지름 합.
-	int iWidth =  static_cast<int>(pDst->GetInfo().size.cx / 2 + pSrc->GetInfo().size.cx / 2);
-
-	// 두 사각형의 세로 반지름 합.
-	int iHeigth =  static_cast<int>(pDst->GetInfo().size.cy / 2 + pSrc->GetInfo().size.cy / 2);
-
-	// 두 사각형의 x, y축 각 거리를 구한다.
-	int iDistX = static_cast<int>(abs(pDst->GetInfo().pt.x - pSrc->GetInfo().pt.x));
-	int iDistY = static_cast<int>(abs(pDst->GetInfo().pt.y - pSrc->GetInfo().pt.y));
-
-	if((iWidth >= iDistX) && (iHeigth >= iDistY))
-	{
-		// 충돌 되면 파고든 x, y거리를 구해주어야 한다.
-		// 각 축의 반지름 합에서 거리를 빼면 파고든 x, y를 구할 수 있다.
-		*pMoveX = iWidth - iDistX;
-		*pMoveY = iHeigth - iDistY;
-
-		return true;
-	}
-
-	return false;
-}
-
-
-
 
 int CollisionMgr::CalculatingCipher(int iNumber)
 {
@@ -541,8 +367,6 @@ int CollisionMgr::CalculatingCipher(int iNumber)
 
 int CollisionMgr::ReturningRandomNumber(int iNumber)
 {
-
-
 	// ** 30000~ 39999 범위의 수를 뱉어낸다.
 
 	// 자리수 구한다음에
@@ -562,37 +386,31 @@ int CollisionMgr::ReturningRandomNumber(int iNumber)
 
 	// 앞에서 두번째, 세번째, 네번째.. 자릿수의 각각의 랜덤수 세팅
 	// iNumber가 5자리수면 secondcipher은 4, 1자리수면 secondcipher은 0이므로 이땐 if를 안탐.
-
-	/*int iRandom = (rand() % 10) * (static_cast<int>(pow(10.0, iCipher - 1)));*/
 	int iRandom = 0;
 	int iSecondRandom = 0;
 	int iThirdRandom = 0;
 	int iFourthRandom = 0;
 	int iFifthRandom = 0;
 
-	if(iSecondCipher >= 1)
+	if (iSecondCipher >= 1)
 	{
 		iSecondRandom = (WELLRNG512() % 10) * (static_cast<int>(pow(10.0, iSecondCipher - 1)));
 
-		if(iThirdCipher >= 1)
+		if (iThirdCipher >= 1)
 		{
 			iThirdRandom = (WELLRNG512() % 10) * (static_cast<int>(pow(10.0, iThirdCipher - 1)));
 
-			if(iFourthCipher >= 1)
+			if (iFourthCipher >= 1)
 			{
 				iFourthRandom = (WELLRNG512() % 10) * (static_cast<int>(pow(10.0, iFourthCipher - 1)));
 
-				if(iFifthCipher >= 1)
-				{
+				if (iFifthCipher >= 1)
 					iFifthRandom = (WELLRNG512() % 10) * (static_cast<int>(pow(10.0, iFifthCipher - 1)));
-				}
 			}
 		}
 	}
 
 	iRandom = iHigherNumber + iSecondRandom + iThirdRandom + iFourthRandom + iFifthRandom;
-
-	
 
 	return iRandom;
 }
@@ -638,15 +456,10 @@ unsigned long CollisionMgr::WELLRNG512(void)
 	a = state[index]; 
 	state[index] = a^b^d^(a<<2)^(b<<18)^(c<<28); 
 	return state[index]; 
-
 }
 
 void CollisionMgr::InitWELLRNG512(unsigned long seed)
 {
-	{
-		for(int i = 0; i < 16; ++i)
-		{
-			state[i] = seed;
-		}
-	}
+	for (int i = 0; i < 16; ++i)
+		state[i] = seed;
 }
