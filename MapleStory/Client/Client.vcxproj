@@ -178,7 +178,6 @@
     <ClInclude Include="MathMgr.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Mouse.h" />
-    <ClInclude Include="MushCouple.h" />
     <ClInclude Include="MyBmp.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Obj.h" />
@@ -234,7 +233,6 @@
     <ClCompile Include="MathMgr.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Mouse.cpp" />
-    <ClCompile Include="MushCouple.cpp" />
     <ClCompile Include="MyBmp.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Obj.cpp" />
