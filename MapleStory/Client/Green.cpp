@@ -18,7 +18,6 @@ void CGreen::Initialize( void )
 	m_fSpeed = 4.f;
 
 	m_tState.iAtt = 50;
-	m_tState.iHp  = 300;
 	m_tState.iLevel = 15;
 	m_tState.iExp = 100;
 	m_tState.iMaxExp = 100;
@@ -53,6 +52,9 @@ void CGreen::Initialize( void )
 
 int CGreen::Update(void)
 {
+	if (m_bIsDead)
+		return 0;
+
 	if (m_tState.iHp <= 0)
 	{
 		m_bIsDead = true;
@@ -62,6 +64,8 @@ int CGreen::Update(void)
 		{
 			g_iTakedMob1++;
 			g_iExp += m_tState.iExp;
+
+			g_vecplayer[g_myid].attackAccValue += 100;
 
 			CObjMgr::GetInstance()->AddObject(CreateGold<CGold>(), OBJ_ITEM);
 			CSoundMgr::GetInstance()->PlaySound(L"MonsterDead.MP3", CSoundMgr::CHANNEL_EFFECT);
@@ -78,37 +82,40 @@ int CGreen::Update(void)
 	return 0;
 }
 
-void CGreen::Render( HDC hDc )
+void CGreen::Render(HDC hDc)
 {
-	// 방향 설정
-	if (m_eDir == DIR_LEFT)
-		m_pImgName = L"GreenMush_LEFT";
-	else if (m_eDir == DIR_RIGHT)
-		m_pImgName = L"GreenMush_RIGHT";
-
-	CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
-	if(NULL == pBit)  return;
-
-	TransparentBlt(hDc,
-		static_cast<int>(m_tRect.left + g_fScrollX),
-		static_cast<int>(m_tRect.top + g_fScrollY), 
-		static_cast<int>(m_tInfo.size.cx),
-		static_cast<int>(m_tInfo.size.cy),
-		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
-		static_cast<int>(m_tInfo.size.cx),
-		static_cast<int>(m_tInfo.size.cy),
-		RGB(255, 0, 255));
-
-	// 히트박스
-	if(GetAsyncKeyState('2'))
+	if (!m_bIsDead)
 	{
-		Rectangle(hDc, 
-			static_cast<int>(m_tCollRect.left + g_fScrollX),
-			static_cast<int>(m_tCollRect.top + g_fScrollY), 
-			static_cast<int>(m_tCollRect.right + g_fScrollX),
-			static_cast<int>(m_tCollRect.bottom + g_fScrollY));
+		// 방향 설정
+		if (m_eDir == DIR_LEFT)
+			m_pImgName = L"GreenMush_LEFT";
+		else if (m_eDir == DIR_RIGHT)
+			m_pImgName = L"GreenMush_RIGHT";
+
+		CMyBmp* pBit = CBitmapMgr::GetInstance()->FindImage(m_pImgName);
+		if (NULL == pBit)  return;
+
+		TransparentBlt(hDc,
+			static_cast<int>(m_tRect.left + g_fScrollX),
+			static_cast<int>(m_tRect.top + g_fScrollY),
+			static_cast<int>(m_tInfo.size.cx),
+			static_cast<int>(m_tInfo.size.cy),
+			pBit->GetMemDC(),
+			static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
+			static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
+			static_cast<int>(m_tInfo.size.cx),
+			static_cast<int>(m_tInfo.size.cy),
+			RGB(255, 0, 255));
+
+		// 히트박스
+		if (GetAsyncKeyState('2'))
+		{
+			Rectangle(hDc,
+				static_cast<int>(m_tCollRect.left + g_fScrollX),
+				static_cast<int>(m_tCollRect.top + g_fScrollY),
+				static_cast<int>(m_tCollRect.right + g_fScrollX),
+				static_cast<int>(m_tCollRect.bottom + g_fScrollY));
+		}
 	}
 }
 

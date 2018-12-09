@@ -32,13 +32,14 @@ public:
 		pObj->SetAngle(fAngle);
 		return pObj;
 	}
-	static CObj* CreateMonster(float fX, float fY, OBJECT_DIR eDir, int iPattern, int iMoney)
+	static CObj* CreateMonster(MONSTERINFO monInfo)
 	{
 		CObj* pObj = new T;
-		pObj->SetDir(eDir);
-		pObj->SetPos(fX, fY);
-		(dynamic_cast<CMonster*>(pObj))->SetMoney(iMoney);
 		pObj->Initialize();
+		pObj->SetPos(monInfo.pt.x, monInfo.pt.y);
+		pObj->SetDir(monInfo.dir);
+		pObj->SetHp(monInfo.hp);
+		(dynamic_cast<CMonster*>(pObj))->SetMoney(monInfo.money);
 		return pObj;
 	}
 	static CObj* CreateObj(float fX, float fY, float cx, float cy)

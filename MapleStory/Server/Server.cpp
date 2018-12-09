@@ -475,7 +475,6 @@ DWORD WINAPI ClientThread(LPVOID arg)
 					monsterinfo.pt.x = g_monster_packet.green[id].pt.x;
 					monsterinfo.pt.y = g_monster_packet.green[id].pt.y;
 					monsterinfo.dir = g_monster_packet.green[id].dir;
-					monsterinfo.pattern = g_monster_packet.green[id].pattern;
 					monsterinfo.state = g_monster_packet.green[id].state;
 
 
@@ -694,7 +693,6 @@ void InitializeMonsterInfo()
 		monsterinfo.pt.x = greenposX[i];
 		monsterinfo.pt.y = greenposY;
 		monsterinfo.dir = greenDir[i];
-		monsterinfo.pattern = greenPtr[i];
 		monsterinfo.state = MONSTER_WALK;
 
 		g_monster_packet.green[i] = monsterinfo;

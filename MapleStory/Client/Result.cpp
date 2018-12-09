@@ -43,6 +43,15 @@ int CResult::Update(void)
 	if (CKeyMgr::GetInstance()->OnceKeyUp('P'))	// 임시
 		SetShowed(!m_bIsShowed);
 
+	// 몬스터의 모든 hp가 0이면 결과창 활성화
+	for (int i = 0; i < g_vecgreen.size(); ++i)
+	{
+		if (g_vecgreen[i].hp > 0)
+			break;
+
+		SetShowed(true);
+	}
+
 	if (m_bIsShowed)
 	{
 		// 마우스가 들어오는지
@@ -119,7 +128,7 @@ void CResult::Render(HDC hDc)
 			mbstowcs(kill, bur2, strlen(bur2) + 1);
 
 			SetTextColor(hDc, RGB(255, 0, 0));
-			TextOut(hDc, 590, y, kill, strlen(bur2));
+			TextOut(hDc, 580, y, kill, strlen(bur2));
 			SetTextColor(hDc, RGB(0, 0, 0));
 		}
 	}

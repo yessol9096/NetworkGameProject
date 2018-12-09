@@ -57,7 +57,6 @@ typedef struct MonsterInfo {
 	int			hp;
 	int			money;
 	OBJECT_DIR  dir;
-	int			pattern;
 	MONSTER_STATE	state;
 }MONSTERINFO;
 

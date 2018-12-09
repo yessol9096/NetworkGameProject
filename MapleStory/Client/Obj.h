@@ -33,6 +33,7 @@ public:
 	void SetDeadState(bool bIsDead) { m_bIsDead = bIsDead; }
 	void SetSpeed(float fSpeed) { m_fSpeed = fSpeed; }
 
+	void SetHp(int iHp) { m_tState.iHp = iHp; }
 	void SetAtt(int iAtt) { m_tState.iAtt = iAtt; }
 
 	void SetCollMode(bool bCollMode) { m_bCollMode = bCollMode; }

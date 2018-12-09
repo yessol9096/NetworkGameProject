@@ -93,8 +93,7 @@ void CStage1::Initialize()
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{
 		CObjMgr::GetInstance()->AddObject(
-			CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[i].pt.x, g_vecgreen[i].pt.y, g_vecgreen[i].dir, 
-				g_vecgreen[i].pattern, g_vecgreen[i].money), OBJ_MONSTER);
+			CAbstractFactory<CGreen>::CreateMonster(g_vecgreen[i]), OBJ_MONSTER);
 		//cout << "그림그리는데" << g_vecgreen[i].pt.x << endl;
 	}
 }
@@ -108,8 +107,8 @@ int CStage1::Update()
 #endif
 
 	CObjMgr::GetInstance()->UpdateObj();
-	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 
+	OBJLIST MonsterList = CObjMgr::GetInstance()->GetMonsterOBJList();
 	// 몬스터 좌표 
 	for (int i = 0; i < OBJ_END; ++i)
 	{
@@ -120,6 +119,7 @@ int CStage1::Update()
 		{
 			(*iter_begin)->SetPos(g_vecgreen[j].pt.x, g_vecgreen[j].pt.y);
 			(*iter_begin)->SetDir(g_vecgreen[j].dir);
+			g_vecgreen[j].hp = (*iter_begin)->GetState().iHp;
 			++j;
 		}
 	}
