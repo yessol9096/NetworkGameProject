@@ -359,8 +359,6 @@ void CPlayer::Scroll()
 
 void CPlayer::KeyCheck()
 {
-	if (m_IsMaster == false)
-		return;
 
 	// 플레이어 기본 동작
 	if(CKeyMgr::GetInstance()->StayKeyDown(VK_LEFT))
@@ -399,6 +397,7 @@ void CPlayer::KeyCheck()
 	}
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_UP) && m_bIsRopeColl)
 	{
+		m_eDir = DIR_ROPE;
 		m_eCurState = PLAYER_ROPE;
 		UpdateImageInJob(DIR_ROPE);
 		m_tInfo.pt.y -= m_fSpeedY;
@@ -607,32 +606,33 @@ void CPlayer::FrameMove()
 		}
 	}
 
-	// 레벨업 이펙트 프레임 돌리기
-	// 레벨링 중이 아니더라도 프레임은 계속 돌고 있다
-	m_dwLevelUpCurTime = GetTickCount();
+	// 레벨업 이펙트는 안 함.
+	//// 레벨업 이펙트 프레임 돌리기
+	//// 레벨링 중이 아니더라도 프레임은 계속 돌고 있다
+	//m_dwLevelUpCurTime = GetTickCount();
 
-	if (m_dwLevelUpOldTime + m_tLevelUpFrame.dwFrameSpd > m_dwLevelUpCurTime)
-	{
-		++m_tLevelUpFrame.iFrameStart;
-		m_dwLevelUpOldTime = m_dwLevelUpCurTime;
-	}
+	//if (m_dwLevelUpOldTime + m_tLevelUpFrame.dwFrameSpd > m_dwLevelUpCurTime)
+	//{
+	//	++m_tLevelUpFrame.iFrameStart;
+	//	m_dwLevelUpOldTime = m_dwLevelUpCurTime;
+	//}
 
-	// 프레임을 돌리던 중 레벨링변수가 true이면 start를 100으로 세팅 (위에 render에서 처리해준다)
-	if (m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && m_bIsLeveling)
-	{
-		m_tLevelUpFrame.iFrameStart = 101;
-		// 		g_iExp = 0;
-		// 		m_tState.iMaxExp += 1000;
-		// 		m_tState.iMaxHp += 3000;
-		// 		m_tState.iHp = m_tState.iMaxHp;
-		// 		g_iLevel++;
-				//m_bIsLeveling = false;
-	}
-	// 레벨링 변수가 false이면 start를 100으로 세팅해버린다
-	if (m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && !m_bIsLeveling)
-	{
-		m_tLevelUpFrame.iFrameStart = 100;
-	}
+	//// 프레임을 돌리던 중 레벨링변수가 true이면 start를 100으로 세팅 (위에 render에서 처리해준다)
+	//if (m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && m_bIsLeveling)
+	//{
+	//	m_tLevelUpFrame.iFrameStart = 101;
+	//	// 		g_iExp = 0;
+	//	// 		m_tState.iMaxExp += 1000;
+	//	// 		m_tState.iMaxHp += 3000;
+	//	// 		m_tState.iHp = m_tState.iMaxHp;
+	//	// 		g_iLevel++;
+	//			//m_bIsLeveling = false;
+	//}
+	//// 레벨링 변수가 false이면 start를 100으로 세팅해버린다
+	//if (m_tLevelUpFrame.iFrameStart >= m_tLevelUpFrame.iFrameEnd && !m_bIsLeveling)
+	//{
+	//	m_tLevelUpFrame.iFrameStart = 100;
+	//}
 
 	
 }
