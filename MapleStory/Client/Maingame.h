@@ -12,8 +12,11 @@ private:
 	template <typename T>
 	static CObj*	CreateSkill(MYPOINT pt, OBJECT_DIR dir)
 	{
+		int fireX = 250; int fireY = 50;
+		if (dir == DIR_LEFT)
+			fireX *= -1.f;
 		CObj* pSkill = CAbstractFactory<T>::CreateObj(
-			pt.x, pt.y);
+			pt.x + fireX, pt.y + fireY);
 		pSkill->SetAtt(100);
 		pSkill->SetDir(dir);
 		return pSkill;
