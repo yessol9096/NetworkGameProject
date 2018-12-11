@@ -541,7 +541,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 
 				// 고정 길이.
 				ZeroMemory(&packetinfo, sizeof(PACKETINFO));
-				packetinfo.id = skillid;
+				packetinfo.id = /*skillid*/packetinfo.id;
 				packetinfo.size = sizeof(packetinfo);
 				packetinfo.type = SC_PACKET_SKILL_CREATE;
 				ZeroMemory(buf, sizeof(buf));

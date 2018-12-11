@@ -333,7 +333,7 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 				switch (skillinfo.type) {
 				case SKILL_FIRE:
 				{
-					CObjMgr::GetInstance()->AddObject(CreateSkill<CFire>(skillinfo.pt, g_vecplayer[packetinfo.id].dir), OBJ_SKILL_FIRE);
+					CObjMgr::GetInstance()->AddObject(CreateSkill<CFire>(skillinfo.pt,  g_vecplayer[packetinfo.id].dir), OBJ_SKILL_FIRE);
 				}
 				break;
 				}
