@@ -199,12 +199,9 @@ void CollisionMgr::CollisionRect(OBJLIST& DstList, OBJLIST& SrcList, COLLISION_I
 					break;
 				case COL_PLAYER_ITEM:
 				{
-					if (CKeyMgr::GetInstance()->OnceKeyDown('Z'))
-					{
-						dynamic_cast<CPlayer*>(*dst_begin)->SetGold((*src_begin)->GetState().iGold);
-						CSoundMgr::GetInstance()->PlaySound(L"ItemTake.mp3", CSoundMgr::CHANNEL_EFFECT);
-						(*src_begin)->SetDeadState(true);
-					}
+					dynamic_cast<CPlayer*>(*dst_begin)->SetGold((*src_begin)->GetState().iGold);
+					CSoundMgr::GetInstance()->PlaySound(L"ItemTake.mp3", CSoundMgr::CHANNEL_EFFECT);
+					(*src_begin)->SetDeadState(true);
 				}
 				break;
 				}
