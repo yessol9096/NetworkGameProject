@@ -53,6 +53,10 @@ int CFire::Update(void)
 
 	UpdateCollRect();
 
+	cout << "m_tRect.left : " << m_tRect.left << endl;
+	cout << "m_tRect.top : " << m_tRect.top << endl;
+	cout << "m_tRect.right : " << m_tRect.right << endl;
+	cout << "m_tRect.bottom : " << m_tRect.bottom << endl;
 
 	CObj::UpdateRect();
 
