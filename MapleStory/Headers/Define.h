@@ -5,7 +5,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE			4000
 #define MAX_USER		2
-#define MAX_GREEN		6
+#define MAX_GREEN		12
 
 // #define DEBUG
 // #define DEBUG_SCROLL

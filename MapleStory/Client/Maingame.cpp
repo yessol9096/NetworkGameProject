@@ -213,9 +213,9 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 
 			// 5. 확인해 본다.
 			{
-				cout << "----------현재 접속 정보-----------" << endl;
-				cout << "[0번째 클라이언트] 닉네임 : " << g_vecplayer[0].nickname << ", 직업 : " << g_vecplayer[0].job << endl;
-				cout << "[1번째 클라이언트] 닉네임 : " << g_vecplayer[1].nickname << ", 직업 : " << g_vecplayer[1].job << endl;
+				//cout << "----------현재 접속 정보-----------" << endl;
+				//cout << "[0번째 클라이언트] 닉네임 : " << g_vecplayer[0].nickname << ", 직업 : " << g_vecplayer[0].job << endl;
+				//cout << "[1번째 클라이언트] 닉네임 : " << g_vecplayer[1].nickname << ", 직업 : " << g_vecplayer[1].job << endl;
 			}
 		}
 		break;
