@@ -620,7 +620,7 @@ DWORD WINAPI MonsterThread(LPVOID)
 		}
 
 		test_cur_time = GetTickCount();
-		if (test_cur_time - test_old_time > 50)
+		if (test_cur_time - test_old_time > 100)
 		{
 			EnterCriticalSection(&cs);
 			if (g_vecplayer.size() >= 1 && g_vecsocket.size() >= 1)
