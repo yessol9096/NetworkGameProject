@@ -701,7 +701,7 @@ void InitializeMonsterInfo()
 
 void GreenMushRoom_MoveInPattern()
 {
-	float m_fSpeed = 0.6f;
+	float m_fSpeed = 0.3f;
 
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{
