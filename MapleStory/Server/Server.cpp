@@ -23,8 +23,6 @@ MONSTERPACKET g_monster_packet;
 CRITICAL_SECTION cs;
 
 //소켓 클라이언트 체크 
-bool test = false;
-bool test2 = false;
 
 bool isEnd = false;
 
@@ -44,10 +42,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 	// 구조 : 고정 길이 + 가변 길이.
 	while (true) {
 		cout << "--Player Thread--" << endl;
-		if (g_vecplayer.size() >= 1)
-			test = true;
-		if (g_vecplayer.size() >= 2 && g_vecsocket.size() >= 2)
-			test2 = true;
+		
 		cout << "플레이어벡터크기:" << g_vecplayer.size() << endl;
 		char buf[BUFSIZE];
 
@@ -142,7 +137,7 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				cout << "정보가 채워진 playerinfo를 g_vecplayer에 push 했어요!" << endl;
 #endif
 				g_vecplayer.push_back(playerinfo);
-				test = true;
+				
 			}
 
 			// 4. 새로 접속한 클라이언트에게 "니 정보는 이거야!" 라고 send 하여 알린다.
@@ -628,7 +623,7 @@ DWORD WINAPI MonsterThread(LPVOID)
 		if (test_cur_time - test_old_time > 50)
 		{
 			EnterCriticalSection(&cs);
-			if (test == true)
+			if (g_vecplayer.size() >= 1 && g_vecsocket.size() >= 1)
 			{
 				//cout << "g_Vec사이즈:" << g_vecsocket.size() << endl;
 
@@ -641,7 +636,6 @@ DWORD WINAPI MonsterThread(LPVOID)
 				ZeroMemory(buf, sizeof(buf));
 				memcpy(buf, &packetinfo, sizeof(packetinfo));
 				retval = send(g_vecsocket[0], buf, BUFSIZE, 0);
-				cout << "몬스터 고정 값 보내기" << endl;
 				if (retval == SOCKET_ERROR) {
 					err_display("send() - SC_PACKET_GRRENMUSH");
 					break;
@@ -679,14 +673,17 @@ DWORD WINAPI MonsterThread(LPVOID)
 
 void InitializeMonsterInfo()
 {
-	int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f };
-	int greenposY = HENESISCY - 460.f;
-	OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT };
-	int greenPtr[] = { 1,1,3,1,1,3 };
+	int greenposX[] = { HENESISCX * 0.5f,HENESISCX * 0.7f , HENESISCX * 0.6f ,HENESISCX * 0.7f,HENESISCX * 0.5f, HENESISCX * 0.4f,
+		HENESISCX * 0.53f,HENESISCX * 0.68f , HENESISCX * 0.6f ,HENESISCX * 0.72f,HENESISCX * 0.55f, HENESISCX * 0.41f };
+	int greenposY[] = { HENESISCY - 460.f,HENESISCY - 460.f, HENESISCY - 460.f, HENESISCY - 460.f, HENESISCY - 460.f, HENESISCY - 460.f, 
+		HENESISCY - 220.f, HENESISCY - 220.f, HENESISCY - 220.f, HENESISCY - 220.f, HENESISCY - 220.f, HENESISCY - 220.f, };
+	OBJECT_DIR greenDir[] = { DIR_LEFT, DIR_RIGHT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_RIGHT,
+		DIR_RIGHT, DIR_LEFT ,DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_LEFT };
+	int greenPtr[] = { 1,1,3,1,1,3,1,1,3,1,1,3 };
 
 	srand(time(NULL));
 
-	// 초록보섯 초기화
+	// 초록버섯 초기화
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{
 		MONSTERINFO monsterinfo{};
@@ -694,7 +691,7 @@ void InitializeMonsterInfo()
 		monsterinfo.hp = 100;
 		monsterinfo.money = rand() % 1000 + 1;	// 랜덤한 돈 부여
 		monsterinfo.pt.x = greenposX[i];
-		monsterinfo.pt.y = greenposY;
+		monsterinfo.pt.y = greenposY[i];
 		monsterinfo.dir = greenDir[i];
 		monsterinfo.state = MONSTER_WALK;
 
@@ -704,7 +701,7 @@ void InitializeMonsterInfo()
 
 void GreenMushRoom_MoveInPattern()
 {
-	float m_fSpeed = 0.4f;
+	float m_fSpeed = 0.6f;
 
 	for (int i = 0; i < MAX_GREEN; ++i)
 	{

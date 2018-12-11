@@ -298,7 +298,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		break;
 		case SC_PACKET_GRRENMUSH:
 		{
-			cout << "SC_PACKET_GRRENMUSH" << endl;
 			MONSTERPACKET temp_monster;
 			int id = packetinfo.id;
 			ZeroMemory(buf, sizeof(buf));
@@ -311,7 +310,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 					g_vecgreen[i] = temp_monster.green[i];
 			}
 
-			cout << g_vecgreen[0].pt.x << endl;
 		}
 		break;
 		case SC_PACKET_SKILL_CREATE:
