@@ -51,14 +51,21 @@ int CFire::Update(void)
 	if(m_tFrame.iFrameStart > m_tFrame.iFrameEnd)
 		return 1;
 
+	//cout << "m_tRect.left : " << m_tRect.left << endl;
+	//cout << "m_tRect.top : " << m_tRect.top << endl;
+	//cout << "m_tRect.right : " << m_tRect.right << endl;
+	//cout << "m_tRect.bottom : " << m_tRect.bottom << endl;
+
+//	CObj::UpdateRect();
+
+	m_tRect.left = static_cast<LONG>(m_tInfo.pt.x - 208.f / 2);
+	m_tRect.top = static_cast<LONG>(m_tInfo.pt.y - 251.f / 2);
+	m_tRect.right = static_cast<LONG>(m_tInfo.pt.x + 208.f / 2);
+	m_tRect.bottom = static_cast<LONG>(m_tInfo.pt.y + 251.f / 2);
+
+
 	UpdateCollRect();
 
-	cout << "m_tRect.left : " << m_tRect.left << endl;
-	cout << "m_tRect.top : " << m_tRect.top << endl;
-	cout << "m_tRect.right : " << m_tRect.right << endl;
-	cout << "m_tRect.bottom : " << m_tRect.bottom << endl;
-
-	CObj::UpdateRect();
 
 	return 0;
 
