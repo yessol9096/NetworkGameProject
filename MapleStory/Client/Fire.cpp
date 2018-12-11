@@ -20,10 +20,10 @@ void CFire::Initialize(void)
 
 	m_pImgName = L"Fire";
  
- 	if(DIR_LEFT == m_eDir )
- 		m_pImgName = L"Fire_LEFT";
- 	else
- 		m_pImgName = L"Fire_RIGHT";
+ 	//if(DIR_LEFT == m_eDir )
+ 	//	m_pImgName = L"Fire_LEFT";
+ 	//else
+ 	//	m_pImgName = L"Fire_RIGHT";
 
 	m_tFrame.iFrameStart = 0;
 	m_tFrame.iFrameEnd = 7;
@@ -35,10 +35,10 @@ void CFire::Initialize(void)
 
 int CFire::Update(void)
 {
- 	if(DIR_LEFT == m_eDir )
- 		m_pImgName = L"Fire_LEFT";
- 	else
- 		m_pImgName = L"Fire_RIGHT";
+ 	//if(DIR_LEFT == m_eDir )
+ 	//	m_pImgName = L"Fire_LEFT";
+ 	//else
+ 	//	m_pImgName = L"Fire_RIGHT";
 
 	m_dwFrameCurTime = GetTickCount();
 

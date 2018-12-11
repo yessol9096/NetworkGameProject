@@ -506,21 +506,21 @@ void CPlayer::KeyCheck()
 
 	if(CKeyMgr::GetInstance()->OnceKeyUp(VK_SPACE) && !m_bIsPressed)
 	{
-		m_eCurState = PLAYER_JUMP;
-		g_vecplayer[id].state = PLAYER_JUMP;
-		m_fAngle = 90.f;
-		if(PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
-		{
-			m_eCurState = PLAYER_STAND;
-			g_vecplayer[id].state = PLAYER_STAND;
-		}
-		m_bIsJump = true;
-		m_bIsPressed = true;
-		m_bIsRopeColl = false;
-		CSoundMgr::GetInstance()->PlaySound(L"Player_Jump.mp3", CSoundMgr::CHANNEL_PLAYER);
-		//m_pImgName = L"Player_RIGHT";
+		//m_eCurState = PLAYER_JUMP;
+		//g_vecplayer[id].state = PLAYER_JUMP;
+		//m_fAngle = 90.f;
+		//if(PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
+		//{
+		//	m_eCurState = PLAYER_STAND;
+		//	g_vecplayer[id].state = PLAYER_STAND;
+		//}
+		//m_bIsJump = true;
+		//m_bIsPressed = true;
+		//m_bIsRopeColl = false;
+		//CSoundMgr::GetInstance()->PlaySound(L"Player_Jump.mp3", CSoundMgr::CHANNEL_PLAYER);
+		////m_pImgName = L"Player_RIGHT";
 
-		g_bIsSend = true;
+		//g_bIsSend = true;
 	}
 	else
 	{
