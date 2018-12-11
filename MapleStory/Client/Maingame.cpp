@@ -242,7 +242,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 					if (pScene != nullptr) {
 						CPlayer* pOtherPlayer = dynamic_cast<CField*>(pScene)->GetOtherPlayer();
 						if (pOtherPlayer != nullptr) {
-							cout << "★★ other player set Info ★★" << endl;
 							pOtherPlayer->SetInfoPt(g_vecplayer[id].pt);
 						}
 					}
@@ -252,7 +251,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 					if (pScene != nullptr) {
 						CPlayer* pOtherPlayer = dynamic_cast<CStage1*>(pScene)->GetOtherPlayer();
 						if (pOtherPlayer != nullptr) {
-							cout << "★★ other player set Info ★★" << endl;
 							pOtherPlayer->SetInfoPt(g_vecplayer[id].pt);
 						}
 					}
@@ -263,7 +261,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 		break;
 		case SC_PACKET_YOUR_PLAYERINFO:
 		{
-			cout << "SC_PACKET_YOUR_PLAYERINFO" << endl;
 			// 상태가 바뀐 나의 플레이어 info를 받아온다.
 			int id = packetinfo.id; // 바꿀 클라이언트의 id를 받아온다.
 			ZeroMemory(buf, sizeof(buf));
@@ -285,7 +282,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 					CPlayer* pPlayer = dynamic_cast<CField*>(pScene)->GetPlayer();
 					if (pPlayer != nullptr) {
 						pPlayer->SetInfoPt(g_vecplayer[id].pt);
-						cout << "★★ your player set Info ★★" << endl;
 					}
 				}
 			}
@@ -295,7 +291,6 @@ DWORD WINAPI CMaingame::RecvThread(LPVOID arg)
 					CPlayer* pPlayer = dynamic_cast<CStage1*>(pScene)->GetPlayer();
 					if (pPlayer != nullptr) {
 						pPlayer->SetInfoPt(g_vecplayer[id].pt);
-						cout << "★★ your player set Info ★★" << endl;
 					}
 				}
 			}

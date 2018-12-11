@@ -38,6 +38,8 @@ public:
 	void InChangingScene();
 	void InInvincible();
 
+	void FrameMove_otherclient();
+
 
 	// ---------------------
 	// 서버 추가

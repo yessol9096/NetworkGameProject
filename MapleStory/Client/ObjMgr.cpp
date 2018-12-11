@@ -20,15 +20,8 @@ void CObjMgr::UpdateObj()
 	{
 		OBJITER iter_begin = m_ObjList[i].begin();
 		OBJITER iter_end = m_ObjList[i].end();
-		int id = 0;
 		for (; iter_begin != iter_end;)
 		{
-			if (i == OBJ_PLAYER) {
-				cout << "플레이어 " << ++id << "(" << (*iter_begin)->GetInfo().pt.x << ", " << (*iter_begin)->GetInfo().pt.y << endl;
-				if (id == 1)
-					id = 0;
-			}
-
 			if (1 == (*iter_begin)->Update())
 			{
 				SafeDelete<CObj*>(*iter_begin);

@@ -131,6 +131,9 @@ DWORD WINAPI ClientThread(LPVOID arg)
 				playerinfo.size.cy = 100.f;
 				playerinfo.attackAccValue = 0.f;
 				playerinfo.money = 0;
+				playerinfo.frame = { 0, 0, 0, 50 };
+				playerinfo.state = PLAYER_STAND;
+				playerinfo.prestate = PLAYER_STAND;
 			}
 
 			// 3. 나머지 멤버 변수들이 채워진 playerinfo를 벡터에 push 한다.

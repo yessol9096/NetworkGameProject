@@ -42,6 +42,7 @@ typedef struct PlayerInfo {
 	char		nickname[512];
 	PLAYER_JOB	job;
 	PLAYER_STATE state; // 1201 Ãß°¡
+	PLAYER_STATE prestate;
 	int			hp;
 	int			money;
 	float		attackAccValue;

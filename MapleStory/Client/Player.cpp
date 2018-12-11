@@ -52,8 +52,8 @@ void CPlayer::Initialize(void)
 	InitializeCriticalSection(&cs2);
 
 	//// 이 부분은 이제 안 해도 될듯..?
-	m_tInfo.pt.x = 100.f;
-	m_tInfo.pt.y = 500.f;
+	//m_tInfo.pt.x = 100.f;
+	//m_tInfo.pt.y = 500.f;
 
 	m_tInfo.size.cx = 100.f;
 	m_tInfo.size.cy = 100.f;
@@ -110,13 +110,13 @@ void CPlayer::Initialize(void)
 	m_eRenderType = RENDER_OBJ;
 
 	// 레벨업 이펙트
-	m_tLevelUpFrame.iFrameStart = 0;
-	m_tLevelUpFrame.iFrameEnd = 20;
-	m_tLevelUpFrame.iScene = 0;
-	m_tLevelUpFrame.dwFrameSpd = 150;
+	//m_tLevelUpFrame.iFrameStart = 0;
+	//m_tLevelUpFrame.iFrameEnd = 20;
+	//m_tLevelUpFrame.iScene = 0;
+	//m_tLevelUpFrame.dwFrameSpd = 150;
 
-	m_dwLevelUpCurTime = 0;
-	m_dwLevelUpOldTime = GetTickCount();
+	//m_dwLevelUpCurTime = 0;
+	//m_dwLevelUpOldTime = GetTickCount();
 
 	UpdateCollRect();
 
@@ -142,6 +142,10 @@ int CPlayer::Update(void)
 		LineCollision();
 		InChangingScene();
 	}
+	else {
+
+	}
+
 	Jump();
 	InInvincible();
 
@@ -185,13 +189,13 @@ void CPlayer::Render(HDC hDc)
 	TransparentBlt(hDc,
 		static_cast<int>(rc.left + g_fScrollX),
 		static_cast<int>(rc.top + g_fScrollY),
-		static_cast<int>(m_tInfo.size.cx),
-		static_cast<int>(m_tInfo.size.cy),
+		static_cast<int>(g_vecplayer[id].size.cx),
+		static_cast<int>(g_vecplayer[id].size.cy),
 		pBit->GetMemDC(),
-		static_cast<int>(m_tFrame.iFrameStart * m_tInfo.size.cx),
-		static_cast<int>(m_tFrame.iScene * m_tInfo.size.cy),
-		static_cast<int>(m_tInfo.size.cx),
-		static_cast<int>(m_tInfo.size.cy),
+		static_cast<int>(g_vecplayer[id].frame.iFrameStart * g_vecplayer[id].size.cx),
+		static_cast<int>(g_vecplayer[id].frame.iScene * g_vecplayer[id].size.cy),
+		static_cast<int>(g_vecplayer[id].size.cx),
+		static_cast<int>(g_vecplayer[id].size.cy),
 		RGB(0, 255, 0));
 
 
@@ -359,14 +363,17 @@ void CPlayer::Scroll()
 
 void CPlayer::KeyCheck()
 {
+	int id = WhatIsID();
 
 	// 플레이어 기본 동작
 	if(CKeyMgr::GetInstance()->StayKeyDown(VK_LEFT))
 	{
 		m_tInfo.pt.x -= m_fSpeed;
 		m_eDir = DIR_LEFT;
-		if(PLAYER_DAMAGED != m_eCurState)
+		if (PLAYER_DAMAGED != m_eCurState) {
 			m_eCurState = PLAYER_WALK;
+			g_vecplayer[id].state = PLAYER_WALK;
+		}
 		m_bIsRopeColl = false;
 		UpdateImageInJob(DIR_LEFT);
 
@@ -376,8 +383,10 @@ void CPlayer::KeyCheck()
 	{
 		m_tInfo.pt.x += m_fSpeed;
 		m_eDir = DIR_RIGHT;
-		if(PLAYER_DAMAGED != m_eCurState)
+		if (PLAYER_DAMAGED != m_eCurState) {
 			m_eCurState = PLAYER_WALK;
+			g_vecplayer[id].state = PLAYER_WALK;
+		}
 		m_bIsRopeColl = false;
 		UpdateImageInJob(DIR_RIGHT);
 
@@ -386,11 +395,14 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && !m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_CRAWL;
+		g_vecplayer[id].state = PLAYER_CRAWL;
 
 		if(CKeyMgr::GetInstance()->StayKeyDown(VK_CONTROL))
 		{
 			m_eCurState = PLAYER_CRAWLATTACK;
+			g_vecplayer[id].state = PLAYER_CRAWLATTACK;
 			m_tFrame.dwFrameSpd = 50;
+			g_vecplayer[id].frame.dwFrameSpd = 50;
 		}
 
 		g_bIsSend = true;
@@ -399,12 +411,14 @@ void CPlayer::KeyCheck()
 	{
 		m_eDir = DIR_ROPE;
 		m_eCurState = PLAYER_ROPE;
+		g_vecplayer[id].state = PLAYER_ROPE;
 		UpdateImageInJob(DIR_ROPE);
 		m_tInfo.pt.y -= m_fSpeedY;
 
 		if(CKeyMgr::GetInstance()->OnceKeyDown(VK_SPACE))
 		{
 			m_eCurState = PLAYER_JUMP;
+			g_vecplayer[id].state = PLAYER_JUMP;
 			UpdateImageInJob(DIR_LEFT);
 			m_bIsRopeColl = false;
 		}
@@ -414,6 +428,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->StayKeyDown(VK_DOWN) && m_bIsRopeColl)
 	{
 		m_eCurState = PLAYER_ROPE;
+		g_vecplayer[id].state = PLAYER_ROPE;
 		UpdateImageInJob(DIR_ROPE);
 		m_tInfo.pt.y += m_fSpeedY;
 
@@ -424,6 +439,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('Q'))
 	{
 		m_eCurState = PLAYER_SWING;
+		g_vecplayer[id].state = PLAYER_SWING;
 		CObjMgr::GetInstance()->AddObject(CreateSkill<CSwing>(), OBJ_SKILL_SWING);
 		CObjMgr::GetInstance()->AddObject(CreateEffect<CSwingEffect>(), OBJ_EFFECT);
 
@@ -432,6 +448,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('W'))
 	{
 		m_eCurState = PLAYER_SHOOT;
+		g_vecplayer[id].state = PLAYER_SHOOT;
 		CObjMgr::GetInstance()->AddObject(CreateSkill<CShoot>(), OBJ_SKILL_SHOOT);
 		CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(0.f, 0.f, ARROW_BASIC, 0), OBJ_ARROW);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Shoot.MP3", CSoundMgr::CHANNEL_SKILL);
@@ -441,6 +458,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('E'))
 	{
 		m_eCurState = PLAYER_SHOOT;
+		g_vecplayer[id].state = PLAYER_SHOOT;
 		CObjMgr::GetInstance()->AddObject(CreateDragon<CDragon>(), OBJ_SKILL_DRAGON);
 
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Dragon.MP3", CSoundMgr::CHANNEL_SKILL);
@@ -459,6 +477,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('R'))
 	{
 		m_eCurState = PLAYER_SHOOT;
+		g_vecplayer[id].state = PLAYER_SHOOT;
 		CObjMgr::GetInstance()->AddObject(CreateFire<CFire>(), OBJ_SKILL_FIRE);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Fire.wav", CSoundMgr::CHANNEL_SKILL);
 		m_tState.iMp -= 100;
@@ -469,6 +488,7 @@ void CPlayer::KeyCheck()
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('A'))
 	{
 		m_eCurState = PLAYER_SHOOT;
+		g_vecplayer[id].state = PLAYER_SHOOT;
 		CObjMgr::GetInstance()->AddObject(CreateWing<CWing>(), OBJ_SKILL_WING);
 		CSoundMgr::GetInstance()->PlaySound(L"Skill_Wing.wav", CSoundMgr::CHANNEL_SKILL);
 		m_tState.iMp -= 500;
@@ -477,18 +497,22 @@ void CPlayer::KeyCheck()
 	}
 	else
 	{
-		if(!m_bIsRopeColl && PLAYER_SHOOT != m_eCurState && PLAYER_SWING != m_eCurState && 
-			PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
+		if (!m_bIsRopeColl && PLAYER_SHOOT != m_eCurState && PLAYER_SWING != m_eCurState &&
+			PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState) {
 			m_eCurState = PLAYER_STAND;
+			g_vecplayer[id].state = PLAYER_STAND;
+		}
 	}
 
 	if(CKeyMgr::GetInstance()->OnceKeyUp(VK_SPACE) && !m_bIsPressed)
 	{
 		m_eCurState = PLAYER_JUMP;
+		g_vecplayer[id].state = PLAYER_JUMP;
 		m_fAngle = 90.f;
 		if(PLAYER_DAMAGED != m_eCurState && PLAYER_JUMP != m_eCurState)
 		{
 			m_eCurState = PLAYER_STAND;
+			g_vecplayer[id].state = PLAYER_STAND;
 		}
 		m_bIsJump = true;
 		m_bIsPressed = true;
@@ -502,6 +526,7 @@ void CPlayer::KeyCheck()
 	{
 		m_bIsPressed = false;
 		m_tFrame.dwFrameSpd = 150;
+		g_vecplayer[id].frame.dwFrameSpd = 150;
 	}
 }
 
@@ -556,9 +581,10 @@ void CPlayer::FrameMove()
 
 		m_ePreState = m_eCurState;
 
-
 		if (m_eCurState != PLAYER_ROPE)
 			m_bIsRopeColl = false;
+
+		g_bIsSend = true;
 	}
 
 	m_dwFrameCurTime = GetTickCount();
@@ -567,6 +593,8 @@ void CPlayer::FrameMove()
 	{
 		++(m_tFrame.iFrameStart);
 		m_dwFrameOldTime = m_dwFrameCurTime;
+
+		g_bIsSend = true;
 	}
 
 	if (m_eCurState == PLAYER_DAMAGED)
@@ -713,8 +741,9 @@ void CPlayer::SendMovePacket()
 		{
 			g_vecplayer[id].pt.x = m_tInfo.pt.x;
 			g_vecplayer[id].pt.y = m_tInfo.pt.y;
-			g_vecplayer[id].frame = m_tInfo.frame;
+			g_vecplayer[id].frame = m_tFrame;
 			g_vecplayer[id].state = m_eCurState;
+			g_vecplayer[id].prestate = m_ePreState;
 			g_vecplayer[id].dir = m_eDir;
 		}
 		// 2. 보낼 공간 playerinfo를 만든다.
@@ -1040,6 +1069,109 @@ void CPlayer::InInvincible()
 			m_bCollMode = true;
 		}
 
+	}
+}
+
+void CPlayer::FrameMove_otherclient()
+{
+	int id = WhatIsID();
+	// 조종 불가능한 클라이언트일 때.
+	if (g_vecplayer[id].state != g_vecplayer[id].prestate)
+	{
+		switch (g_vecplayer[id].state)
+		{
+		case PLAYER_STAND:
+			g_vecplayer[id].frame.iFrameEnd = 4;
+			g_vecplayer[id].frame.iScene = 0;
+			break;
+		case PLAYER_JUMP:
+			g_vecplayer[id].frame.iFrameEnd = 0;
+			g_vecplayer[id].frame.iScene = 6;
+			break;
+		case PLAYER_WALK:
+			g_vecplayer[id].frame.iFrameEnd = 2;
+			g_vecplayer[id].frame.iScene = 1;
+			break;
+		case PLAYER_ATTACK:
+			g_vecplayer[id].frame.iFrameEnd = 2;
+			g_vecplayer[id].frame.iScene = 2;
+			break;
+		case PLAYER_SWING:
+			g_vecplayer[id].frame.iFrameEnd = 3;
+			g_vecplayer[id].frame.iScene = 3;
+			break;
+		case PLAYER_CRAWLATTACK:
+			g_vecplayer[id].frame.iFrameEnd = 1;
+			g_vecplayer[id].frame.iScene = 4;
+			break;
+		case PLAYER_CRAWL:
+			g_vecplayer[id].frame.iFrameEnd = 0;
+			g_vecplayer[id].frame.iScene = 5;
+			break;
+		case PLAYER_SHOOT:
+			g_vecplayer[id].frame.iFrameEnd = 3;
+			g_vecplayer[id].frame.iScene = 6;
+			break;
+		case PLAYER_DAMAGED:
+			g_vecplayer[id].frame.iFrameEnd = 2;
+			g_vecplayer[id].frame.iScene = 7;
+			break;
+		case PLAYER_ROPE:
+			g_vecplayer[id].frame.iFrameEnd = 1;
+			g_vecplayer[id].frame.iScene = 0;
+			break;
+		}
+
+		g_vecplayer[id].prestate = g_vecplayer[id].state;
+
+
+		if (g_vecplayer[id].state != PLAYER_ROPE)
+			m_bIsRopeColl = false;
+	}
+
+	m_dwFrameCurTime = GetTickCount();
+
+	if (m_dwFrameOldTime + g_vecplayer[id].frame.dwFrameSpd < m_dwFrameCurTime)
+	{
+		++(g_vecplayer[id].frame.iFrameStart);
+		m_dwFrameOldTime = m_dwFrameCurTime;
+	}
+
+	if (g_vecplayer[id].state == PLAYER_DAMAGED)
+	{
+		if (g_vecplayer[id].frame.iFrameStart == g_vecplayer[id].frame.iFrameEnd)
+			g_vecplayer[id].state = PLAYER_STAND;
+	}
+
+	if (g_vecplayer[id].state != PLAYER_ROPE)
+	{
+		if (g_vecplayer[id].frame.iFrameStart >= g_vecplayer[id].frame.iFrameEnd)
+		{
+			// 스킬 상태시엔 스프라이트 한번 돌리고 IDLE 상태로 둘것.
+			if (PLAYER_SWING == g_vecplayer[id].state || PLAYER_SHOOT == g_vecplayer[id].state)
+			{
+
+				g_vecplayer[id].state = PLAYER_STAND;
+				g_vecplayer[id].frame.iFrameStart = 0;
+				return;
+			}
+			g_vecplayer[id].frame.iFrameStart = 0;
+		}
+	}
+	else
+	{
+		if (g_vecplayer[id].frame.iFrameStart > g_vecplayer[id].frame.iFrameEnd)
+		{
+			// 스킬 상태시엔 스프라이트 한번 돌리고 IDLE 상태로 둘것.
+			if (PLAYER_SWING == g_vecplayer[id].state || PLAYER_SHOOT == g_vecplayer[id].state)
+			{
+
+				g_vecplayer[id].state = PLAYER_STAND;
+				g_vecplayer[id].frame.iFrameStart = 0;
+				return;
+			}
+			g_vecplayer[id].frame.iFrameStart = 0;
+		}
 	}
 }
 
