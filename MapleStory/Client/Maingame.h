@@ -16,7 +16,7 @@ private:
 		if (dir == DIR_LEFT)
 			fireX *= -1.f;
 		CObj* pSkill = CAbstractFactory<T>::CreateObj(
-			pt.x + fireX, pt.y + fireY);
+			pt.x + fireX, pt.y - fireY);
 		pSkill->SetAtt(100);
 		pSkill->SetDir(dir);
 		return pSkill;
