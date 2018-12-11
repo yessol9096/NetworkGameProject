@@ -438,41 +438,41 @@ void CPlayer::KeyCheck()
 	// ½ºÅ³
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('Q'))
 	{
-		m_eCurState = PLAYER_SWING;
-		g_vecplayer[id].state = PLAYER_SWING;
-		CObjMgr::GetInstance()->AddObject(CreateSkill<CSwing>(), OBJ_SKILL_SWING);
-		CObjMgr::GetInstance()->AddObject(CreateEffect<CSwingEffect>(), OBJ_EFFECT);
+		//m_eCurState = PLAYER_SWING;
+		//g_vecplayer[id].state = PLAYER_SWING;
+		//CObjMgr::GetInstance()->AddObject(CreateSkill<CSwing>(), OBJ_SKILL_SWING);
+		//CObjMgr::GetInstance()->AddObject(CreateEffect<CSwingEffect>(), OBJ_EFFECT);
 
-		g_bIsSend = true;
+		//g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('W'))
 	{
-		m_eCurState = PLAYER_SHOOT;
-		g_vecplayer[id].state = PLAYER_SHOOT;
-		CObjMgr::GetInstance()->AddObject(CreateSkill<CShoot>(), OBJ_SKILL_SHOOT);
-		CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(0.f, 0.f, ARROW_BASIC, 0), OBJ_ARROW);
-		CSoundMgr::GetInstance()->PlaySound(L"Skill_Shoot.MP3", CSoundMgr::CHANNEL_SKILL);
+		//m_eCurState = PLAYER_SHOOT;
+		//g_vecplayer[id].state = PLAYER_SHOOT;
+		//CObjMgr::GetInstance()->AddObject(CreateSkill<CShoot>(), OBJ_SKILL_SHOOT);
+		//CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(0.f, 0.f, ARROW_BASIC, 0), OBJ_ARROW);
+		//CSoundMgr::GetInstance()->PlaySound(L"Skill_Shoot.MP3", CSoundMgr::CHANNEL_SKILL);
 
-		g_bIsSend = true;
+		//g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('E'))
 	{
-		m_eCurState = PLAYER_SHOOT;
-		g_vecplayer[id].state = PLAYER_SHOOT;
-		CObjMgr::GetInstance()->AddObject(CreateDragon<CDragon>(), OBJ_SKILL_DRAGON);
+		//m_eCurState = PLAYER_SHOOT;
+		//g_vecplayer[id].state = PLAYER_SHOOT;
+		//CObjMgr::GetInstance()->AddObject(CreateDragon<CDragon>(), OBJ_SKILL_DRAGON);
 
-		CSoundMgr::GetInstance()->PlaySound(L"Skill_Dragon.MP3", CSoundMgr::CHANNEL_SKILL);
-		for(int i = 0; i < 5; ++i)
-		{
-			float fX = 15.f;
-			float fY = 10.f;
-			float fY2 = 2.f;
-			CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(i * fX, (i - fY2) * fY, ARROW_DRAGON, i), OBJ_ARROW);
-		}
+		//CSoundMgr::GetInstance()->PlaySound(L"Skill_Dragon.MP3", CSoundMgr::CHANNEL_SKILL);
+		//for(int i = 0; i < 5; ++i)
+		//{
+		//	float fX = 15.f;
+		//	float fY = 10.f;
+		//	float fY2 = 2.f;
+		//	CObjMgr::GetInstance()->AddObject(CreateArrow<CArrow>(i * fX, (i - fY2) * fY, ARROW_DRAGON, i), OBJ_ARROW);
+		//}
 
-		m_tState.iMp -= 100;
+		//m_tState.iMp -= 100;
 
-		g_bIsSend = true;
+		//g_bIsSend = true;
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('R'))
 	{
@@ -487,13 +487,13 @@ void CPlayer::KeyCheck()
 	}
 	else if(CKeyMgr::GetInstance()->OnceKeyUp('A'))
 	{
-		m_eCurState = PLAYER_SHOOT;
-		g_vecplayer[id].state = PLAYER_SHOOT;
-		CObjMgr::GetInstance()->AddObject(CreateWing<CWing>(), OBJ_SKILL_WING);
-		CSoundMgr::GetInstance()->PlaySound(L"Skill_Wing.wav", CSoundMgr::CHANNEL_SKILL);
-		m_tState.iMp -= 500;
+		//m_eCurState = PLAYER_SHOOT;
+		//g_vecplayer[id].state = PLAYER_SHOOT;
+		//CObjMgr::GetInstance()->AddObject(CreateWing<CWing>(), OBJ_SKILL_WING);
+		//CSoundMgr::GetInstance()->PlaySound(L"Skill_Wing.wav", CSoundMgr::CHANNEL_SKILL);
+		//m_tState.iMp -= 500;
 
-		g_bIsSend = true;
+		//g_bIsSend = true;
 	}
 	else
 	{

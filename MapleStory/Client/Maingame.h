@@ -10,11 +10,12 @@ public:
 	// 스킬 생성
 private:
 	template <typename T>
-	static CObj*	CreateSkill(MYPOINT pt)
+	static CObj*	CreateSkill(MYPOINT pt, OBJECT_DIR dir)
 	{
 		CObj* pSkill = CAbstractFactory<T>::CreateObj(
 			pt.x, pt.y);
 		pSkill->SetAtt(100);
+		pSkill->SetDir(dir);
 		return pSkill;
 	}
 
