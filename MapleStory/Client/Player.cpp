@@ -862,7 +862,10 @@ void CPlayer::SendSkillCreatePacket(SKILL_TYPE eType)
 	{
 		SKILLINFO skillinfo = {};
 		skillinfo.type = eType;
-		skillinfo.pt = MYPOINT{ g_vecplayer[id].pt.x - FIREX, g_vecplayer[id].pt.y - FIREY };
+		if(m_eDir == DIR_LEFT)
+			skillinfo.pt = MYPOINT{ g_vecplayer[id].pt.x - FIREX, g_vecplayer[id].pt.y - FIREY };
+		else
+			skillinfo.pt = MYPOINT{ g_vecplayer[id].pt.x + FIREX, g_vecplayer[id].pt.y - FIREY };
 		skillinfo.id = -1;
 
 		ZeroMemory(buf, sizeof(buf));
